@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { preconnect } from "react-dom";
 import Link from "next/link";
 import type { Map as LeafletMap, Marker } from "leaflet";
 import type { Park } from "@/lib/api";
@@ -16,6 +17,9 @@ function kind(p: Park): "both" | "mountains" | "lake" | "none" {
   return m && l ? "both" : m ? "mountains" : l ? "lake" : "none";
 }
 const KIND_LABEL = { both: "Mountains and lake", mountains: "Mountains", lake: "Lake", none: "Foothills" };
+
+const TILES = "https://tile.openstreetmap.org";
+const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
@@ -37,6 +41,12 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
   const markers = useRef(new Map<string, Marker>());
   const [state, setState] = useState("All");
   const [ready, setReady] = useState(false);
+  // Short tip shown over the map ("use two fingers", "click to zoom").
+  const [hint, setHint] = useState("");
+  const hintTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  // Start the connection to the map server before the first tiles are requested.
+  preconnect(TILES);
 
   const states = STATE_ORDER.filter((s) => parks.some((p) => p.state === s));
   const shown = useMemo(() => (state === "All" ? parks : parks.filter((p) => p.state === state)), [parks, state]);
@@ -48,13 +58,52 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
     import("leaflet").then((L) => {
       if (cancelled || !box.current || map.current) return;
       const touch = window.matchMedia("(pointer: coarse)").matches;
+      const narrow = box.current.clientWidth < 520;
+      const flash = (text: string) => {
+        setHint(text);
+        clearTimeout(hintTimer.current);
+        hintTimer.current = setTimeout(() => setHint(""), 1600);
+      };
       const m = L.map(box.current, {
-        scrollWheelZoom: false, // don't hijack page scrolling
-        dragging: !touch, // on phones, one finger scrolls the page; use the + and − buttons
+        // Phones: one finger scrolls the page, two fingers move and pinch-zoom the map.
+        dragging: !touch,
+        // Desktop: the scroll wheel zooms only after the map is clicked, so it never traps page scrolling.
+        scrollWheelZoom: false,
+        wheelPxPerZoomLevel: 110,
         zoomSnap: 0.25,
+        zoomDelta: 0.5,
+        inertiaDeceleration: 2600,
+        easeLinearity: 0.2,
+        zoomAnimation: !reducedMotion(),
+        fadeAnimation: !reducedMotion(),
       });
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      if (touch) {
+        // Only when a finger slides across the map, not when a pin is tapped.
+        box.current.addEventListener(
+          "touchmove",
+          (e) => {
+            if (e.touches.length === 1) flash("Use two fingers to move the map");
+            else setHint("");
+          },
+          { passive: true },
+        );
+      } else {
+        const wheelOn = () => m.scrollWheelZoom.enable();
+        const wheelOff = () => m.scrollWheelZoom.disable();
+        m.on("click focus", wheelOn);
+        m.on("mouseout blur", wheelOff);
+        box.current.addEventListener(
+          "wheel",
+          (e) => {
+            if (!m.scrollWheelZoom.enabled() && !e.ctrlKey) flash("Click the map to zoom with your scroll wheel");
+          },
+          { passive: true },
+        );
+      }
+      L.tileLayer(`${TILES}/{z}/{x}/{y}.png`, {
         maxZoom: 18,
+        keepBuffer: 6, // keep more tiles around the view so panning doesn't show gaps
+        updateWhenZooming: false, // load new tiles when a zoom ends, not on every animation frame
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
       }).addTo(m);
       for (const p of parks) {
@@ -66,7 +115,13 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
           popupAnchor: [0, -34],
         });
         const marker = L.marker([p.lat, p.lng], { icon, title: p.name, alt: p.name, keyboard: true })
-          .bindPopup(popupHtml(p), { maxWidth: 280, className: "pm-leaflet-popup" })
+          .bindPopup(popupHtml(p), {
+            maxWidth: narrow ? 230 : 280,
+            className: "pm-leaflet-popup",
+            // Keep popups clear of the + and − buttons in the top-left corner.
+            autoPanPaddingTopLeft: [58, 16],
+            autoPanPaddingBottomRight: [16, 16],
+          })
           .addTo(m);
         pins.set(p.slug, marker);
       }
@@ -79,6 +134,7 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
       map.current?.remove();
       map.current = null;
       pins.clear();
+      clearTimeout(hintTimer.current);
     };
   }, [parks]);
 
@@ -89,18 +145,35 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
       const m = map.current;
       if (!m) return;
       m.closePopup();
-      if (shown.length === 1) m.flyTo([shown[0].lat, shown[0].lng], 11, { duration: 0.8 });
-      else m.flyToBounds(L.latLngBounds(shown.map((p) => [p.lat, p.lng])), { padding: [50, 50], duration: 0.8, maxZoom: 10 });
+      const animate = !reducedMotion();
+      if (shown.length === 1) m.flyTo([shown[0].lat, shown[0].lng], 11, { animate, duration: 0.9 });
+      else m.flyToBounds(L.latLngBounds(shown.map((p) => [p.lat, p.lng])), { padding: [50, 50], maxZoom: 10, animate, duration: 0.9 });
     });
   }, [shown, ready]);
 
   function focus(p: Park) {
     const m = map.current;
     const marker = markers.current.get(p.slug);
-    if (!m || !marker) return;
-    box.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    m.flyTo([p.lat, p.lng], 12, { duration: 0.8 });
-    m.once("moveend", () => marker.openPopup());
+    const el = box.current;
+    if (!m || !marker || !el) return;
+    const animate = !reducedMotion();
+    const fly = () => {
+      m.once("moveend", () => marker.openPopup());
+      m.flyTo([p.lat, p.lng], 12, { animate, duration: 0.9 });
+    };
+    // Scroll first and fly once the page has stopped, so the two don't fight.
+    const r = el.getBoundingClientRect();
+    if (r.top >= 0 && r.bottom <= window.innerHeight) return fly();
+    let done = false;
+    const go = () => {
+      if (done) return;
+      done = true;
+      window.removeEventListener("scrollend", go);
+      fly();
+    };
+    window.addEventListener("scrollend", go);
+    setTimeout(go, 700); // browsers without the scrollend event
+    el.scrollIntoView({ behavior: animate ? "smooth" : "auto", block: "center" });
   }
 
   return (
@@ -124,8 +197,24 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
         <div className="relative">
-          <div ref={box} className="parks-map h-[26rem] overflow-hidden rounded-[1.75rem] border border-line bg-sand sm:h-[34rem] lg:h-[40rem]" aria-label="Map of campgrounds" />
-          <ul className="pointer-events-none absolute bottom-4 left-4 z-[400] flex flex-wrap gap-x-4 gap-y-1 rounded-xl bg-cream/95 px-4 py-2.5 text-xs text-bark shadow-md">
+          {/* The fade lives on a wrapper: Leaflet adds its own classes to the map
+              element, and React must never re-render that element's className. */}
+          <div className={`transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}>
+            <div
+              ref={box}
+              className="parks-map h-[26rem] overflow-hidden rounded-[1.75rem] border border-line sm:h-[34rem] lg:h-[40rem]"
+              aria-label="Map of campgrounds"
+            />
+          </div>
+          {!ready && <div className="absolute inset-0 animate-pulse rounded-[1.75rem] bg-sand/70" aria-hidden="true" />}
+          <p
+            aria-live="polite"
+            className={`pointer-events-none absolute inset-x-0 top-1/2 z-[500] mx-auto w-max max-w-[85%] -translate-y-1/2 rounded-full bg-ink/80 px-5 py-2.5 text-center text-sm text-cream transition-opacity duration-300 ${hint ? "opacity-100" : "opacity-0"}`}
+          >
+            {hint}
+          </p>
+          {/* Colour key: under the map on phones, over its corner on bigger screens. */}
+          <ul className="pointer-events-none mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-bark sm:absolute sm:bottom-4 sm:left-4 sm:z-[400] sm:mt-0 sm:rounded-xl sm:bg-cream/95 sm:px-4 sm:py-2.5 sm:shadow-md">
             {(["mountains", "lake", "both", "none"] as const).map((k) => (
               <li key={k} className="flex items-center gap-2">
                 <span className={`pm-dot pm-${k}`} /> {KIND_LABEL[k]}

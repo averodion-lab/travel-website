@@ -298,6 +298,13 @@ body {
 .parks-map .leaflet-tile-pane {
   filter: sepia(0.22) saturate(0.85) brightness(1.02);
 }
+/* The colour of an empty map tile, so areas still loading don't flash grey */
+.parks-map.leaflet-container {
+  background: #efe9dc;
+}
+.parks-map .leaflet-tile {
+  transition: opacity 0.35s ease-out;
+}
 .parks-map .leaflet-control-attribution {
   font-size: 10px;
 }
