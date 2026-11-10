@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+.playwright-mcp/
+node_modules/
+.next/
+out/
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+backend/uploads/
+.DS_Store
