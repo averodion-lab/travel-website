@@ -1,5 +1,6 @@
 """Outgoing email through Gmail SMTP (app password)."""
 from __future__ import annotations
+from decimal import Decimal
 
 import smtplib
 from email.message import EmailMessage
@@ -38,6 +39,15 @@ def _dates(b: Booking) -> str:
     return f"{b.start_date.strftime(fmt)} to {b.end_date.strftime(fmt)} ({b.days} nights)"
 
 
+def _trip(b: Booking) -> str:
+    """Campground and extras lines, shared by both emails."""
+    park = b.park_info()
+    lines = [f"Campground: {park['name'] if park else 'Not chosen yet'}"]
+    for a in b.addons or []:
+        lines.append(f"Extra: {a['name']}, {a['days']} days, {_money(Decimal(a['total']))}")
+    return "\n".join(lines)
+
+
 def send_customer_confirmation(b: Booking) -> bool:
     cfg = current_app.config
     site = cfg["SITE_NAME"]
@@ -48,6 +58,7 @@ Your booking is confirmed. Here are the details:
 Booking number: {b.reference}
 Camper: {b.camper.name}
 Dates: {_dates(b)}
+{_trip(b)}
 
 Rental total: {_money(b.total_price)}
 Deposit paid today: {_money(b.deposit_due)}
@@ -81,6 +92,7 @@ Booking number: {b.reference}
 Customer: {b.customer.first_name} {b.customer.last_name}
 Camper: {b.camper.name}
 Dates: {_dates(b)}
+{_trip(b)}
 
 Rental total: {_money(b.total_price)}
 Deposit paid: {_money(b.deposit_due)}

@@ -53,10 +53,10 @@ export default function BookingsView({ bookings, selectedId, onOpen }: { booking
         />
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[46rem] text-left text-sm">
+        <table className="w-full min-w-[56rem] text-left text-sm">
           <thead className="border-y border-line/70">
             <tr>
-              {["Customer", "Booking", "Dates", "Nights", "Total", "Due at pickup", "Status"].map((h) => (
+              {["Customer", "Booking", "Campground", "Dates", "Nights", "Total", "Due at pickup", "Status"].map((h) => (
                 <th key={h} className="eyebrow px-5 py-3 text-muted">{h}</th>
               ))}
             </tr>
@@ -66,6 +66,10 @@ export default function BookingsView({ bookings, selectedId, onOpen }: { booking
               <tr key={b.id} onClick={() => onOpen(b.id)} className={`cursor-pointer transition-colors hover:bg-cream ${selectedId === b.id ? "bg-cream" : ""}`}>
                 <td className="px-5 py-4 font-medium">{b.customer_name}</td>
                 <td className="px-5 py-4 font-mono text-xs text-muted">{b.reference}</td>
+                <td className="px-5 py-4">
+                  <span className="block max-w-[12rem] truncate">{b.park?.name ?? "—"}</span>
+                  {b.addons.length > 0 && <span className="text-xs text-muted">+ {b.addons.map((a) => a.name).join(", ")}</span>}
+                </td>
                 <td className="px-5 py-4 whitespace-nowrap">{shortDate(b.start_date)} to {shortDate(b.end_date)}</td>
                 <td className="px-5 py-4 tabular-nums">{b.days}</td>
                 <td className="px-5 py-4 tabular-nums">{money(b.total_price)}</td>

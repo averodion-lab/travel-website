@@ -105,6 +105,11 @@ class Booking(db.Model):
     total_price = db.Column(db.Numeric(10, 2), nullable=False)
     deposit_due = db.Column(db.Numeric(10, 2), nullable=False)  # charged at checkout
     security_deposit = db.Column(db.Numeric(10, 2), nullable=False, default=0)
+    # Campground the trailer is delivered to (app/catalog.py slug); null = elsewhere.
+    park = db.Column(db.String(60))
+    # Extras snapshot at booking time: [{code, name, daily_rate, days, total}]
+    addons = db.Column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
+    addons_total = db.Column(db.Numeric(10, 2), nullable=False, default=0, server_default=text("0"))
     status = db.Column(db.String(20), nullable=False, default=BookingStatus.PENDING)
     stripe_session_id = db.Column(db.String(200), unique=True)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=utcnow)
@@ -153,7 +158,18 @@ class Booking(db.Model):
             "deposit_due": str(self.deposit_due),
             "balance_due": str(self.total_price - self.deposit_due),
             "security_deposit": str(self.security_deposit),
+            "park": self.park_info(),
+            "addons": self.addons or [],
+            "addons_total": str(self.addons_total or 0),
         }
+
+    def park_info(self) -> dict | None:
+        from .catalog import PARKS
+
+        park = PARKS.get(self.park or "")
+        if park is None:
+            return {"slug": self.park, "name": self.park} if self.park else None
+        return {"slug": park.slug, "name": park.name, "city": park.city, "state": park.state}
 
 
 class User(db.Model):

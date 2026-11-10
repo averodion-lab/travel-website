@@ -14,6 +14,9 @@ export type Summary = Brief & {
   camper: string;
   deposit_due: string;
   created_at: string;
+  park: { slug: string; name: string; city?: string; state?: string } | null;
+  addons: { code: string; name: string; days: number; total: string }[];
+  addons_total: string;
 };
 
 export type Detail = Summary & {

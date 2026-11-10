@@ -43,7 +43,8 @@ Known trade-offs: Cloud Run and Neon scale to zero, so the first request after i
 backend/                Flask API (port 5001 locally)
   app/__init__.py       app factory
   app/config.py         all settings from env vars; validate() fails fast
-  app/models.py         Camper, Customer (PII), Booking, User
+  app/models.py         Camper, Customer (PII), Booking (incl. park, addons snapshot, addons_total), User
+  app/catalog.py        PARKS (11 campgrounds: coordinates, website, mountains/lake) and ADDONS (4-wheeler, jet ski)
   app/crypto.py         Fernet encryption for PII and license files
   app/api/              public.py (fleet, quote, bookings), webhooks.py (Stripe), admin.py
   app/services/         pricing, availability, bookings, payments, email, storage, reports (owner dashboard numbers)
@@ -53,7 +54,7 @@ backend/                Flask API (port 5001 locally)
   tests/                pytest, runs against real Postgres (database camper_test)
 frontend/               Next.js 16 App Router + Tailwind v4 (port 3210 locally)
   app/                  / , /fleet , /fleet/[slug] , /gallery , /how-it-works , /destinations , /faq , /book , /booking/confirmation , /admin
-  components/           Header, Footer, PageHero, BookCta, CamperCard, Gallery, BookingWidget, CardLogos, Reveal, CountUp, RoomTour
+  components/           Header, Footer, PageHero, BookCta, CamperCard, Gallery, BookingWidget, CardLogos, Reveal, CountUp, RoomTour, ParksMap (Leaflet + OpenStreetMap tiles)
   app/admin/            AdminApp (login + shell), types.tsx, views/ (Overview, Calendar, Bookings, Customers, BookingDrawer)
   lib/trailer.ts        getTrailer() for server components (first active camper)
   lib/                  api.ts (API client + types), format.ts (money, dates)
@@ -80,7 +81,7 @@ Ports 3000 and 3100 are used by the owner's other projects on this machine; this
 ## How the booking flow works
 
 1. `/fleet/[slug]`: `BookingWidget` loads booked ranges and shows a two-month calendar with month/year dropdowns. The visitor clicks a pickup day, then a return day (a return may land on another booking's pickup day). `POST /api/quote` returns the server-computed price.
-2. `/book`: a stepped page (Dates → Your details → Payment). The payment step reviews the details, shows the accepted cards and the deposit, then the form posts multipart to `POST /api/bookings`. Backend validates, encrypts PII, saves the encrypted license file, creates a **pending** booking (holds dates 35 min), returns `checkout_url`.
+2. `/book`: a stepped page (Dates → Your trip → Your details → Payment). "Your trip" picks the campground (`?park=` from the map preselects it) and switches extras on or off: a 4-wheeler at mountain parks, a jet ski at lake parks, charged per day. `POST /api/quote` and `POST /api/bookings` take `park` and `addons`; `catalog.resolve()` rejects an extra the park doesn't offer, and the server sets every price. The payment step reviews the details, shows the accepted cards and the deposit, then the form posts multipart to `POST /api/bookings`. Backend validates, encrypts PII, saves the encrypted license file, creates a **pending** booking (holds dates 35 min), returns `checkout_url`.
 3. Stripe Checkout (30 min session). `POST /api/webhooks/stripe` verifies the signature and calls `confirm_booking`, which marks it **confirmed** and sends the customer + owner emails. Idempotent.
 4. `/booking/confirmation?ref=...` polls `GET /api/bookings/<ref>` (no contact details in that response).
 5. Owner dashboard at `/admin` (full-screen, covers the site footer): Overview (revenue, occupancy, who has the trailer, open dates), Calendar (year view by status), Bookings, Customers. Data comes from `GET /api/admin/overview` and `/api/admin/customers`. Revenue definitions are at the top of `services/reports.py`. Owner marks a booking **completed** there; `flask purge-licenses` deletes license data 30 days later.
@@ -99,6 +100,7 @@ Dates are half-open `[start_date, end_date)`: a return day can be the next custo
 - If a new rule in `globals.css` doesn't show up in dev, touch the file again or restart `npm run dev` (the Turbopack CSS output was seen going stale once).
 - `Header` is a fixed client component (transparent over a hero with `overlay`, solid after scrolling). Anything that calls `usePathname()` must sit inside `<Suspense>` or `/fleet/[slug]` fails to prerender; that is why the nav links have their own boundary.
 - Motion: `Reveal` (scroll-in), `.hero-zoom`, `.rise`, `CountUp`, `RoomTour` (auto-advancing room tabs). All respect `prefers-reduced-motion`.
+- `/destinations` is the parks map: pins coloured by terrain, state filter buttons, a list where each park name links to the park's website, and "Book here" links to `/fleet?park=<slug>#book`. Data comes from `GET /api/parks`. The preview build uses the copy in `lib/preview.ts` (`PREVIEW_PARKS`), which must be kept in sync with `catalog.py`.
 - Site name comes from `NEXT_PUBLIC_SITE_NAME` (frontend) and `SITE_NAME` (backend emails). Currently the placeholder `YourName`.
 - No fake reviews, stats or testimonials. Add real ones when the owner supplies them.
 
@@ -160,4 +162,5 @@ Not done yet:
 3. **Hardening before launch:** rate limiting on `/api/admin/login` and `/api/bookings`, two-factor for admin, refund flow (cancelling in admin does not refund in Stripe), balance collection at pickup is manual.
 4. **Later PRD features:** 3D showcase, destination map, add-ons, blog, About/Contact pages (Contact waits on real contact details), rental terms page.
 5. The local database holds made-up bookings (references `DEMO-…`) so the dashboard has data; remove with `flask demo-data --clear`. The owner cannot yet block dates for personal use or add a booking taken by phone.
-6. The FAQ, How It Works and Destinations copy assumes delivery and setup by the owner and a 45 ft / 50 amp site requirement; the owner has not confirmed these.
+6. Unconfirmed by the owner: add-on prices ($150/day 4-wheeler, $250/day jet ski) and which parks count as mountain or lake (see `catalog.py`; Quail Creek offers neither; small park lakes like Vogel's are not treated as jet-ski lakes). The map uses OpenStreetMap's free tiles, which are meant for light use; switch to a tile provider (Mapbox is in the plan) before heavy traffic.
+7. The FAQ, How It Works and Destinations copy assumes delivery and setup by the owner and a 45 ft / 50 amp site requirement; the owner has not confirmed these.

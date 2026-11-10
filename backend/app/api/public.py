@@ -8,6 +8,7 @@ from decimal import Decimal, InvalidOperation
 from flask import Blueprint, current_app, jsonify, request
 from sqlalchemy import select
 
+from .. import catalog
 from ..errors import ApiError
 from ..extensions import db
 from ..models import Booking, Camper
@@ -33,6 +34,27 @@ def _get_camper(slug: str) -> Camper:
     if camper is None:
         raise ApiError("Camper not found.", 404)
     return camper
+
+
+def _addon_codes(value) -> list[str]:
+    if value is None:
+        return []
+    if isinstance(value, str):
+        value = [value]
+    if not isinstance(value, list) or not all(isinstance(v, str) for v in value):
+        raise ApiError("Invalid extras.")
+    return value
+
+
+@bp.get("/parks")
+def list_parks():
+    """Campgrounds we deliver to, with map coordinates and the extras each offers."""
+    return jsonify(
+        {
+            "parks": [p.to_dict() for p in catalog.PARKS.values()],
+            "addons": [a.to_dict() for a in catalog.ADDONS.values()],
+        }
+    )
 
 
 @bp.get("/health")
@@ -94,7 +116,8 @@ def quote():
     camper = _get_camper(str(data.get("camper", "")))
     start = _parse_date(data.get("start"), "pickup")
     end = _parse_date(data.get("end"), "return")
-    q = quote_for_camper(camper, start, end, current_app.config)
+    _, addons = catalog.resolve(str(data.get("park") or ""), _addon_codes(data.get("addons")))
+    q = quote_for_camper(camper, start, end, current_app.config, addons)
     availability.expire_stale_pending()
     return jsonify(
         {
@@ -138,10 +161,16 @@ def create_booking():
     if form.get("agree_terms") not in ("1", "true", "on", "yes"):
         raise ApiError("Please accept the rental terms to continue.")
 
+    park, addons = catalog.resolve(
+        _clean(form, "park", "Campground", 60, required=False), form.getlist("addons")
+    )
+
     booking = booking_service.create_booking(
         camper=camper,
         start=start,
         end=end,
+        park=park,
+        addons=addons,
         customer=customer,
         license_file=request.files.get("license"),
     )

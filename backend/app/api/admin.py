@@ -68,6 +68,9 @@ def _summary(b: Booking) -> dict:
         "deposit_due": str(b.deposit_due),
         "balance_due": str(b.total_price - b.deposit_due),
         "created_at": b.created_at.isoformat(),
+        "park": b.park_info(),
+        "addons": b.addons or [],
+        "addons_total": str(b.addons_total or 0),
     }
 
 

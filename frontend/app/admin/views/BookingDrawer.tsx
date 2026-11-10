@@ -68,9 +68,23 @@ export default function BookingDrawer({
           </section>
 
           <section>
+            <h3 className="eyebrow text-clay">Trip</h3>
+            <dl className="mt-2 divide-y divide-line/70">
+              <Row
+                label="Campground"
+                value={booking.park ? `${booking.park.name}${booking.park.state ? `, ${booking.park.state}` : ""}` : "Not chosen (confirm with customer)"}
+              />
+              {booking.addons.length === 0 && <Row label="Extras" value="None" />}
+              {booking.addons.map((a) => (
+                <Row key={a.code} label={`${a.name}, ${a.days} days`} value={money(a.total)} />
+              ))}
+            </dl>
+          </section>
+
+          <section>
             <h3 className="eyebrow text-clay">Money</h3>
             <dl className="mt-2 divide-y divide-line/70">
-              <Row label={`${booking.days} nights`} value={money(booking.total_price)} />
+              <Row label={`Total, ${booking.days} nights${booking.addons.length ? " + extras" : ""}`} value={money(booking.total_price)} />
               <Row label="Deposit paid" value={booking.status === "pending" ? "Not yet" : money(booking.deposit_due)} />
               <Row label="Due at pickup" value={<span className="font-semibold">{money(booking.balance_due)}</span>} />
               <Row label="Security hold" value={money(booking.security_deposit)} />

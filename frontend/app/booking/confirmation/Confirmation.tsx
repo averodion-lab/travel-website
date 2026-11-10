@@ -111,7 +111,19 @@ export default function Confirmation() {
               <dd>{booking.days} nights</dd>
             </div>
           </dl>
+          <p className="mt-5 text-sm">
+            <span className="text-muted">Campground: </span>
+            {booking.park ? `${booking.park.name}${booking.park.state ? `, ${booking.park.state}` : ""}` : "We'll confirm it with you"}
+          </p>
           <dl className="mt-6 space-y-2 text-sm">
+            {booking.addons.map((a) => (
+              <div key={a.code} className="flex justify-between text-muted">
+                <dt>
+                  Includes {a.name}, {a.days} days
+                </dt>
+                <dd>{money(a.total)}</dd>
+              </div>
+            ))}
             <div className="flex justify-between">
               <dt>Rental total</dt>
               <dd>{money(booking.total_price)}</dd>

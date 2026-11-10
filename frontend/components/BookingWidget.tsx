@@ -112,6 +112,9 @@ export default function BookingWidget({ camper }: { camper: Camper }) {
     (quote && !quote.available ? "Those dates are already booked. Please choose different dates." : "");
 
   const canReserve = !!quote?.available && !loading;
+  // A campground picked on the map carries through to the booking page.
+  const park = params.get("park");
+  const parkParam = park && /^[a-z0-9-]{1,60}$/.test(park) ? `&park=${park}` : "";
   const hint = !pickup
     ? "Choose your pickup day."
     : choosingReturn
@@ -209,7 +212,7 @@ export default function BookingWidget({ camper }: { camper: Camper }) {
         <button
           type="button"
           disabled={!canReserve}
-          onClick={() => router.push(`/book?camper=${camper.slug}&start=${start}&end=${end}`)}
+          onClick={() => router.push(`/book?camper=${camper.slug}&start=${start}&end=${end}${parkParam}`)}
           className="btn btn-primary mt-6 w-full"
         >
           {loading ? "Checking dates…" : canReserve ? "Reserve" : "Select your dates"}

@@ -2,7 +2,7 @@
  *  site before the booking system is online). The whole booking flow can be
  *  clicked through, but nothing is saved, charged or sent anywhere.
  *  Turn it on with NEXT_PUBLIC_BOOKING_MODE=preview (see `npm run build:preview`). */
-import type { Camper, QuoteResponse } from "./api";
+import type { AddonLine, Camper, ParksResponse, QuoteResponse } from "./api";
 
 export const PREVIEW = process.env.NEXT_PUBLIC_BOOKING_MODE === "preview";
 
@@ -71,6 +71,268 @@ export const PREVIEW_TRAILER: Camper = {
   "towing_weight_lbs": 13870
 };
 
+// Copy of GET /api/parks (backend/app/catalog.py). Keep in sync with it.
+export const PREVIEW_PARKS: ParksResponse = {
+  "addons": [
+    {
+      "code": "atv",
+      "daily_rate": "150.00",
+      "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+      "name": "4-wheeler",
+      "terrain": "mountains"
+    },
+    {
+      "code": "jetski",
+      "daily_rate": "250.00",
+      "description": "A jet ski delivered with the trailer, ready for the lake.",
+      "name": "Jet ski",
+      "terrain": "lake"
+    }
+  ],
+  "parks": [
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        }
+      ],
+      "city": "Blairsville",
+      "description": "At the base of Blood Mountain in the Chattahoochee National Forest, with a 22-acre mountain lake (Lake Trahlyta) and full-hookup RV sites.",
+      "lat": 34.76294,
+      "lng": -83.92843,
+      "name": "Vogel State Park",
+      "slug": "vogel",
+      "state": "Georgia",
+      "terrain": [
+        "mountains"
+      ],
+      "url": "https://gastateparks.org/Vogel"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        }
+      ],
+      "city": "Chatsworth",
+      "description": "High-elevation overlooks, hiking trails and a tucked-away mountain lake with a swimming beach. RV sites have water and electric hookups.",
+      "lat": 34.76069,
+      "lng": -84.69515,
+      "name": "Fort Mountain State Park",
+      "slug": "fort-mountain",
+      "state": "Georgia",
+      "terrain": [
+        "mountains"
+      ],
+      "url": "https://gastateparks.org/FortMountain"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        },
+        {
+          "code": "jetski",
+          "daily_rate": "250.00",
+          "description": "A jet ski delivered with the trailer, ready for the lake.",
+          "name": "Jet ski",
+          "terrain": "lake"
+        }
+      ],
+      "city": "Blairsville",
+      "description": "In the Blue Ridge Mountains, with full hookups, mountain views and direct access to Lake Nottely for boating and fishing.",
+      "lat": 34.872,
+      "lng": -84.006,
+      "name": "Lake Nottely RV Park",
+      "slug": "lake-nottely",
+      "state": "Georgia",
+      "terrain": [
+        "lake",
+        "mountains"
+      ],
+      "url": "https://lakenottelyrv.com/"
+    },
+    {
+      "addons": [
+        {
+          "code": "jetski",
+          "daily_rate": "250.00",
+          "description": "A jet ski delivered with the trailer, ready for the lake.",
+          "name": "Jet ski",
+          "terrain": "lake"
+        }
+      ],
+      "city": "Fair Play",
+      "description": "In the Appalachian foothills right on the shore of Lake Hartwell: classic lakeside camping with full hookups for large rigs.",
+      "lat": 34.499,
+      "lng": -82.97757,
+      "name": "Thousand Trails Carolina Landing",
+      "slug": "carolina-landing",
+      "state": "South Carolina",
+      "terrain": [
+        "lake"
+      ],
+      "url": "https://thousandtrails.com/south-carolina/carolina-landing-rv-resort"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        }
+      ],
+      "city": "Travelers Rest",
+      "description": "A peaceful park near the Blue Ridge Mountains, centered on a private 3-acre fishing lake, with spacious full-hookup sites.",
+      "lat": 35.04014,
+      "lng": -82.44025,
+      "name": "Sugar Lake RV Park",
+      "slug": "sugar-lake",
+      "state": "South Carolina",
+      "terrain": [
+        "mountains"
+      ],
+      "url": "https://www.sugarlakervpark.com/"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        }
+      ],
+      "city": "Spruce Pine",
+      "description": "High in the Blue Ridge Mountains, right off the Blue Ridge Parkway, with a private lake, forest trails and full RV hookups.",
+      "lat": 35.89239,
+      "lng": -81.97537,
+      "name": "Spacious Skies Bear Den",
+      "slug": "bear-den",
+      "state": "North Carolina",
+      "terrain": [
+        "mountains"
+      ],
+      "url": "https://spaciousskiescampgrounds.com/bear-den/"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        }
+      ],
+      "city": "Lake Toxaway",
+      "description": "A mountain retreat surrounded by creeks and waterfalls, a base for hiking, kayaking and rock climbing.",
+      "lat": 35.1438145,
+      "lng": -82.930422,
+      "name": "Blue Ridge Falls RV & Glamping Resort",
+      "slug": "blue-ridge-falls",
+      "state": "North Carolina",
+      "terrain": [
+        "mountains"
+      ],
+      "url": "https://blueridgefallsrvresort.com/"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        }
+      ],
+      "city": "Gatlinburg",
+      "description": "A wooded resort bordering Great Smoky Mountains National Park, with a running creek and fully equipped concrete RV pads.",
+      "lat": 35.72521,
+      "lng": -83.48267,
+      "name": "Twin Creek RV Resort",
+      "slug": "twin-creek",
+      "state": "Tennessee",
+      "terrain": [
+        "mountains"
+      ],
+      "url": "https://twincreekrvresort.com/"
+    },
+    {
+      "addons": [
+        {
+          "code": "jetski",
+          "daily_rate": "250.00",
+          "description": "A jet ski delivered with the trailer, ready for the lake.",
+          "name": "Jet ski",
+          "terrain": "lake"
+        }
+      ],
+      "city": "Hermitage",
+      "description": "Right on the shore of Percy Priest Lake: lakefront sites with concrete pads and full hookups, a short drive from Nashville.",
+      "lat": 36.15645,
+      "lng": -86.60642,
+      "name": "Nashville Shores RV Park",
+      "slug": "nashville-shores",
+      "state": "Tennessee",
+      "terrain": [
+        "lake"
+      ],
+      "url": "https://nashvilleshores.com/lodging/"
+    },
+    {
+      "addons": [
+        {
+          "code": "jetski",
+          "daily_rate": "250.00",
+          "description": "A jet ski delivered with the trailer, ready for the lake.",
+          "name": "Jet ski",
+          "terrain": "lake"
+        }
+      ],
+      "city": "Langston",
+      "description": "On the eastern shore of 68,000-acre Lake Guntersville, with waterfront access, mountain-lake views and full hookups.",
+      "lat": 34.46252,
+      "lng": -86.18366,
+      "name": "Mountain Lakes Resort",
+      "slug": "mountain-lakes",
+      "state": "Alabama",
+      "terrain": [
+        "lake"
+      ],
+      "url": "https://mountainlakesrvpark.com/"
+    },
+    {
+      "addons": [],
+      "city": "Hartselle",
+      "description": "A quiet, rural park in the Appalachian foothills with a fishing pond, a golf course and pull-through RV sites.",
+      "lat": 34.38876,
+      "lng": -86.86359,
+      "name": "Quail Creek Resort",
+      "slug": "quail-creek",
+      "state": "Alabama",
+      "terrain": [],
+      "url": "https://www.qcresort.com/"
+    }
+  ]
+};
+
 // Same rules as backend/app/services/pricing.py, for display only.
 const DEPOSIT_PERCENT = 30;
 const MAX_NIGHTS = 60;
@@ -88,7 +350,25 @@ class PreviewError extends Error {
 const cents = (n: number) => Math.round(n * 100) / 100;
 const fixed = (n: number) => cents(n).toFixed(2);
 
-function quote(body: { start?: string; end?: string }): QuoteResponse {
+const NEEDS = { mountains: "mountain parks", lake: "lake parks" } as const;
+
+/** Same checks as catalog.resolve() on the server. */
+function extras(parkSlug: string | undefined, codes: string[] | undefined, nights: number): AddonLine[] {
+  const park = parkSlug ? PREVIEW_PARKS.parks.find((p) => p.slug === parkSlug) : undefined;
+  if (parkSlug && !park) throw new PreviewError("Please choose a campground from the list.");
+  return [...new Set(codes ?? [])].map((code) => {
+    const addon = PREVIEW_PARKS.addons.find((a) => a.code === code);
+    if (!addon) throw new PreviewError("That extra isn't available.");
+    if (!park) throw new PreviewError("Choose your campground to add extras.");
+    if (!park.terrain.includes(addon.terrain)) {
+      throw new PreviewError(`${addon.name}s are only available at ${NEEDS[addon.terrain]}.`);
+    }
+    const rate = Number(addon.daily_rate);
+    return { code, name: addon.name, daily_rate: fixed(rate), days: nights, total: fixed(rate * nights) };
+  });
+}
+
+function quote(body: { start?: string; end?: string; park?: string; addons?: string[] }): QuoteResponse {
   const t = PREVIEW_TRAILER;
   const start = body.start ?? "";
   const end = body.end ?? "";
@@ -100,8 +380,10 @@ function quote(body: { start?: string; end?: string }): QuoteResponse {
   if (nights < t.min_nights) throw new PreviewError(`This camper has a ${t.min_nights}-night minimum rental.`);
   if (nights > MAX_NIGHTS) throw new PreviewError(`Rentals are limited to ${MAX_NIGHTS} nights. Contact us for longer trips.`);
 
+  const lines = extras(body.park, body.addons, nights);
+  const addonsTotal = cents(lines.reduce((sum, l) => sum + Number(l.total), 0));
   const subtotal = cents(Number(t.daily_rate) * nights);
-  const total = cents(subtotal + Number(t.cleaning_fee));
+  const total = cents(subtotal + Number(t.cleaning_fee) + addonsTotal);
   const deposit = cents((total * DEPOSIT_PERCENT) / 100);
   return {
     available: true,
@@ -115,6 +397,8 @@ function quote(body: { start?: string; end?: string }): QuoteResponse {
       deposit_due: fixed(deposit),
       balance_due: fixed(total - deposit),
       security_deposit: fixed(Number(t.security_deposit)),
+      addons: lines,
+      addons_total: fixed(addonsTotal),
     },
   };
 }
@@ -124,7 +408,8 @@ export async function previewApi<T>(path: string, init?: RequestInit): Promise<T
   const route = path.split("?")[0];
   const slug = PREVIEW_TRAILER.slug;
   let result: unknown;
-  if (route === "/api/campers") result = { campers: [PREVIEW_TRAILER] };
+  if (route === "/api/parks") result = PREVIEW_PARKS;
+  else if (route === "/api/campers") result = { campers: [PREVIEW_TRAILER] };
   else if (route === `/api/campers/${slug}`) result = { camper: PREVIEW_TRAILER };
   else if (route === `/api/campers/${slug}/availability`) result = { booked: [] };
   else if (route === "/api/quote") result = quote(JSON.parse(String(init?.body ?? "{}")));

@@ -83,6 +83,10 @@ async function Questions() {
           a: "Yes, if you have a one-ton truck with a fifth-wheel hitch. The trailer weighs 13,870 lb empty and is rated to 17,070 lb loaded, so smaller trucks are not suitable.",
         },
         {
+          q: "Can I rent a 4-wheeler or a jet ski?",
+          a: "Yes, as an optional extra when you book. 4-wheelers are available at our mountain parks and jet skis at our lake parks. We deliver them with the trailer, and they're charged per day of your trip. The Destinations page shows which park offers what.",
+        },
+        {
           q: "Why do you need a driver's license?",
           a: "To confirm who is responsible for the rental. The driver must be at least 25. Your license is stored encrypted, seen only by our staff and deleted 30 days after your trip.",
         },

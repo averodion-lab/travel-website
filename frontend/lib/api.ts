@@ -26,6 +26,32 @@ export type Camper = {
   featured: boolean;
 };
 
+export type Addon = {
+  code: string;
+  name: string;
+  daily_rate: string;
+  terrain: "mountains" | "lake";
+  description: string;
+};
+
+export type Park = {
+  slug: string;
+  name: string;
+  state: string;
+  city: string;
+  url: string;
+  description: string;
+  lat: number;
+  lng: number;
+  terrain: ("mountains" | "lake")[];
+  addons: Addon[];
+};
+
+export type ParksResponse = { parks: Park[]; addons: Addon[] };
+
+/** One extra on a quote or booking. */
+export type AddonLine = { code: string; name: string; daily_rate: string; days: number; total: string };
+
 export type Quote = {
   days: number;
   daily_rate: string;
@@ -35,6 +61,8 @@ export type Quote = {
   deposit_due: string;
   balance_due: string;
   security_deposit: string;
+  addons: AddonLine[];
+  addons_total: string;
 };
 
 export type QuoteResponse = { quote: Quote; available: boolean; deposit_percent: number };
@@ -53,6 +81,9 @@ export type PublicBooking = {
   deposit_due: string;
   balance_due: string;
   security_deposit: string;
+  park: { slug: string; name: string; city?: string; state?: string } | null;
+  addons: AddonLine[];
+  addons_total: string;
 };
 
 export class ApiError extends Error {

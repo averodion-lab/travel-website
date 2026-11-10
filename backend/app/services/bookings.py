@@ -24,10 +24,18 @@ def _new_reference() -> str:
 
 
 def create_booking(
-    *, camper: Camper, start: date, end: date, customer: dict, license_file: FileStorage | None
+    *,
+    camper: Camper,
+    start: date,
+    end: date,
+    customer: dict,
+    license_file: FileStorage | None,
+    park=None,
+    addons=(),
 ) -> Booking:
-    """Create a pending booking that holds the dates until payment."""
-    quote = quote_for_camper(camper, start, end, current_app.config)  # validates dates
+    """Create a pending booking that holds the dates until payment.
+    `park` and `addons` are already validated catalog objects."""
+    quote = quote_for_camper(camper, start, end, current_app.config, addons)  # validates dates
 
     availability.expire_stale_pending()
     if not availability.is_available(camper.id, start, end):
@@ -56,6 +64,11 @@ def create_booking(
             total_price=quote.total,
             deposit_due=quote.deposit_due,
             security_deposit=quote.security_deposit,
+            park=park.slug if park else None,
+            addons=[
+                {**a, "daily_rate": str(a["daily_rate"]), "total": str(a["total"])} for a in quote.addons
+            ],
+            addons_total=quote.addons_total,
             status=BookingStatus.PENDING,
         )
         db.session.add(booking)

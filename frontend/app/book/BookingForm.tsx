@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import CardLogos, { Lock } from "@/components/CardLogos";
 import { PREVIEW } from "@/lib/preview";
-import { api, ApiError, type Camper, type QuoteResponse } from "@/lib/api";
+import { api, ApiError, type Camper, type ParksResponse, type QuoteResponse } from "@/lib/api";
+import { STATE_ORDER } from "@/lib/parks";
 import { isISODate, longDate, money, rate } from "@/lib/format";
 
 export default function BookingForm() {
@@ -17,7 +18,13 @@ export default function BookingForm() {
   const valid = !!slug && isISODate(start) && isISODate(end);
 
   const [camper, setCamper] = useState<Camper | null>(null);
-  const [quote, setQuote] = useState<QuoteResponse | null>(null);
+  const [catalog, setCatalog] = useState<ParksResponse | null>(null);
+  // Latest quote, tagged with the choices it was priced for.
+  const [priced, setPriced] = useState<{ key: string; quote: QuoteResponse } | null>(null);
+  const [quoteError, setQuoteError] = useState("");
+  // Campground (slug, "" = somewhere else) and the extras switched on.
+  const [park, setPark] = useState(params.get("park") ?? "");
+  const [addons, setAddons] = useState<string[]>([]);
   const [loadError, setLoadError] = useState("");
   const [error, setError] = useState("");
   const [datesTaken, setDatesTaken] = useState(false);
@@ -25,7 +32,7 @@ export default function BookingForm() {
   // Preview site: the last step explains that nothing was booked.
   const [previewDone, setPreviewDone] = useState(false);
   // "details" collects the traveller's information; "payment" reviews it and pays.
-  const [step, setStep] = useState<"details" | "payment">("details");
+  const [step, setStep] = useState<"trip" | "details" | "payment">("trip");
   const [review, setReview] = useState({ name: "", email: "", phone: "" });
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -33,19 +40,49 @@ export default function BookingForm() {
     if (!valid) return;
     Promise.all([
       api<{ camper: Camper }>(`/api/campers/${encodeURIComponent(slug)}`),
-      api<QuoteResponse>("/api/quote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ camper: slug, start, end }),
-      }),
+      api<ParksResponse>("/api/parks"),
     ])
-      .then(([c, q]) => {
+      .then(([c, p]) => {
         setCamper(c.camper);
-        setQuote(q);
-        if (!q.available) setDatesTaken(true);
+        setCatalog(p);
       })
       .catch((e: Error) => setLoadError(e.message));
-  }, [valid, slug, start, end]);
+  }, [valid, slug]);
+
+  // Only a park from the list counts, and only extras that park offers.
+  const parkInfo = catalog?.parks.find((p) => p.slug === park) ?? null;
+  const parkSlug = parkInfo ? parkInfo.slug : "";
+  const chosen = useMemo(
+    () => addons.filter((code) => parkInfo?.addons.some((a) => a.code === code)),
+    [addons, parkInfo],
+  );
+  const choiceKey = `${parkSlug}|${chosen.join(",")}`;
+
+  // The server prices the trip, extras included, whenever the choices change.
+  useEffect(() => {
+    if (!valid || !catalog) return;
+    let cancelled = false;
+    api<QuoteResponse>("/api/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ camper: slug, start, end, park: parkSlug, addons: chosen }),
+    })
+      .then((q) => {
+        if (cancelled) return;
+        setPriced({ key: choiceKey, quote: q });
+        setQuoteError("");
+        if (!q.available) setDatesTaken(true);
+      })
+      .catch((e: Error) => {
+        if (!cancelled) setQuoteError(e.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [valid, catalog, slug, start, end, parkSlug, chosen, choiceKey]);
+
+  const quote = priced?.quote ?? null;
+  const repricing = !!priced && priced.key !== choiceKey && !quoteError;
 
   if (!valid) {
     return (
@@ -65,7 +102,16 @@ export default function BookingForm() {
       </Notice>
     );
   }
-  if (!camper || !quote) {
+  if (quoteError && !quote) {
+    return (
+      <Notice title="We couldn't price this trip." text={quoteError}>
+        <Link href={`/fleet/${slug}`} className="btn btn-primary mt-8">
+          Back to the trailer
+        </Link>
+      </Notice>
+    );
+  }
+  if (!camper || !catalog || !quote) {
     return <div className="h-[40rem] animate-pulse bg-sand/60" />;
   }
   if (datesTaken) {
@@ -97,6 +143,7 @@ export default function BookingForm() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (step === "trip") return setStep("details");
     if (step === "details") return goToPayment();
     if (PREVIEW) {
       // No booking system online yet: nothing is sent anywhere.
@@ -110,6 +157,9 @@ export default function BookingForm() {
     data.set("camper", slug);
     data.set("start", start!);
     data.set("end", end!);
+    data.set("park", parkSlug);
+    data.delete("addons");
+    chosen.forEach((code) => data.append("addons", code));
     try {
       const res = await api<{ reference: string; checkout_url: string }>(
         "/api/bookings",
@@ -167,21 +217,33 @@ export default function BookingForm() {
 
   const steps = [
     { id: "dates", label: "Dates" },
+    { id: "trip", label: "Your trip" },
     { id: "details", label: "Your details" },
     { id: "payment", label: "Payment" },
   ];
-  const stepIndex = step === "details" ? 1 : 2;
+  const stepIndex = { trip: 1, details: 2, payment: 3 }[step];
+  const parksByState = STATE_ORDER.map((state) => ({
+    state,
+    parks: catalog.parks.filter((p) => p.state === state),
+  })).filter((g) => g.parks.length > 0);
+  const toggle = (code: string) =>
+    setAddons((list) => (list.includes(code) ? list.filter((c) => c !== code) : [...list, code]));
+  const needs = { mountains: "mountain parks", lake: "lake parks" } as const;
+  const goTo = (next: "trip" | "details") => {
+    setStep(next);
+    window.scrollTo({ top: 0 });
+  };
 
   return (
     <>
-      <ol className="mb-12 grid grid-cols-3 border border-line bg-white/60 text-left">
+      <ol className="mb-12 grid grid-cols-4 border border-line bg-white/60 text-left">
         {steps.map((item, i) => {
           const done = i < stepIndex;
           const active = i === stepIndex;
           return (
             <li
               key={item.id}
-              className={`flex items-center gap-3 px-4 py-4 sm:px-6 ${i > 0 ? "border-l border-line" : ""} ${active ? "bg-cream" : ""}`}
+              className={`flex items-center justify-center gap-3 px-2 py-4 sm:justify-start sm:px-5 ${i > 0 ? "border-l border-line" : ""} ${active ? "bg-cream" : ""}`}
             >
               <span
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
@@ -195,9 +257,8 @@ export default function BookingForm() {
                 {done ? "✓" : i + 1}
               </span>
               <span
-                className={`eyebrow ${active || done ? "text-ink" : "text-muted"}`}
+                className={`eyebrow ${active || done ? "text-ink" : "text-muted"} ${active ? "" : "hidden lg:inline"} max-sm:sr-only`}
               >
-                <span className="hidden sm:inline">Step {i + 1}: </span>
                 {item.label}
               </span>
             </li>
@@ -207,7 +268,129 @@ export default function BookingForm() {
 
       <div className="grid gap-12 lg:grid-cols-[1fr_24rem]">
         <form ref={formRef} onSubmit={onSubmit} className="space-y-12">
-          {/* Step 2: details. Kept in the page (hidden) during payment so the fields are still submitted. */}
+          <p className="eyebrow text-clay sm:hidden">
+            Step {stepIndex + 1} of 4: {steps[stepIndex].label}
+          </p>
+
+          {/* Step 2: campground and extras */}
+          {step === "trip" && (
+            <div className="space-y-12">
+              <section>
+                <h2 className="font-display text-4xl">Where are you staying?</h2>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
+                  We deliver the trailer and set it up at your campsite. Reserve the site with the park
+                  directly.{" "}
+                  <Link href="/destinations" className="text-clay underline">
+                    See all parks on the map
+                  </Link>
+                </p>
+                <label className="label mt-6" htmlFor="park">
+                  Campground
+                </label>
+                <select
+                  id="park"
+                  value={parkSlug}
+                  onChange={(e) => setPark(e.target.value)}
+                  className="field"
+                >
+                  <option value="">Another campground (we&apos;ll confirm it with you)</option>
+                  {parksByState.map((g) => (
+                    <optgroup key={g.state} label={g.state}>
+                      {g.parks.map((p) => (
+                        <option key={p.slug} value={p.slug}>
+                          {p.name}, {p.city}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+                {parkInfo && (
+                  <div className="mt-4 rounded-2xl bg-white p-5 text-sm">
+                    <p className="eyebrow text-muted">
+                      {parkInfo.city}, {parkInfo.state} ·{" "}
+                      {parkInfo.terrain.length ? parkInfo.terrain.map((t) => (t === "lake" ? "Lake" : "Mountains")).join(" and ") : "Foothills"}
+                    </p>
+                    <p className="mt-2 leading-relaxed text-bark">{parkInfo.description}</p>
+                    <a
+                      href={parkInfo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="eyebrow mt-3 inline-block text-clay hover:underline"
+                    >
+                      Park website ↗
+                    </a>
+                  </div>
+                )}
+              </section>
+
+              <section>
+                <h2 className="font-display text-4xl">Extras</h2>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
+                  Optional. Delivered with the trailer and charged per day of your trip.
+                </p>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  {catalog.addons.map((a) => {
+                    const offered = !!parkInfo?.addons.some((x) => x.code === a.code);
+                    const on = chosen.includes(a.code);
+                    const tripTotal = Number(a.daily_rate) * quote.quote.days;
+                    return (
+                      <button
+                        key={a.code}
+                        type="button"
+                        role="switch"
+                        aria-checked={on}
+                        disabled={!offered}
+                        onClick={() => toggle(a.code)}
+                        className={`flex flex-col rounded-2xl border-2 p-5 text-left transition-colors disabled:cursor-not-allowed ${
+                          on ? "border-pine bg-pine text-cream" : offered ? "border-line bg-white hover:border-pine" : "border-line bg-white/50 opacity-60"
+                        }`}
+                      >
+                        <span className="flex items-start justify-between gap-3">
+                          <span className="font-display text-3xl leading-none">{a.name}</span>
+                          <span
+                            aria-hidden="true"
+                            className={`relative mt-1 h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-cream/30" : "bg-sand"}`}
+                          >
+                            <span className={`absolute top-0.5 h-5 w-5 rounded-full shadow transition-all ${on ? "left-[1.375rem] bg-cream" : "left-0.5 bg-white"}`} />
+                          </span>
+                        </span>
+                        <span className={`mt-3 text-sm leading-relaxed ${on ? "text-cream/85" : "text-bark"}`}>{a.description}</span>
+                        <span className={`mt-4 text-sm font-semibold ${on ? "" : "text-ink"}`}>
+                          {offered
+                            ? `${rate(a.daily_rate)}/day · ${money(tripTotal)} for ${quote.quote.days} days`
+                            : `Only at ${needs[a.terrain]}`}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {!parkInfo && (
+                  <p className="mt-4 text-sm text-muted">Choose a campground from the list to see which extras it offers.</p>
+                )}
+                {quoteError && (
+                  <p className="mt-4 border border-clay bg-clay/10 px-4 py-3 text-sm text-clay-dark" role="alert">
+                    {quoteError}
+                  </p>
+                )}
+              </section>
+
+              <section>
+                {/* Phones: the summary is further down, so show the running total here. */}
+                <div className={`mb-5 flex items-baseline justify-between rounded-2xl bg-white px-5 py-4 transition-opacity lg:hidden ${repricing ? "opacity-50" : ""}`} aria-live="polite">
+                  <span className="text-sm text-muted">Trip total</span>
+                  <span>
+                    <span className="font-display text-3xl">{money(quote.quote.total)}</span>
+                    <span className="block text-right text-xs text-muted">{money(quote.quote.deposit_due)} due today</span>
+                  </span>
+                </div>
+                <button type="button" onClick={() => goTo("details")} className="btn btn-primary w-full sm:w-auto sm:min-w-72">
+                  Continue to your details →
+                </button>
+              </section>
+            </div>
+          )}
+
+          {/* Step 3: details. Kept in the page (hidden) on the other steps so the fields are still submitted. */}
           <div className={step === "details" ? "space-y-12" : "hidden"}>
             <section>
               <h2 className="font-display text-4xl">Your details</h2>
@@ -324,7 +507,7 @@ export default function BookingForm() {
               </div>
             </section>
 
-            <section>
+            <section className="flex flex-wrap items-center gap-6">
               <button
                 type="button"
                 onClick={goToPayment}
@@ -332,10 +515,13 @@ export default function BookingForm() {
               >
                 Continue to payment →
               </button>
+              <button type="button" onClick={() => goTo("trip")} className="eyebrow text-muted hover:text-ink">
+                ← Back to your trip
+              </button>
             </section>
           </div>
 
-          {/* Step 3: payment */}
+          {/* Step 4: payment */}
           {step === "payment" && (
             <div className="space-y-10">
               <section>
@@ -349,11 +535,13 @@ export default function BookingForm() {
                     Edit details
                   </button>
                 </div>
-                <dl className="mt-5 grid gap-px border border-line bg-line text-sm sm:grid-cols-3">
+                <dl className="mt-5 grid gap-px border border-line bg-line text-sm sm:grid-cols-3 [&>div:nth-child(4)]:sm:col-span-2">
                   {[
                     ["Name", review.name],
                     ["Email", review.email],
                     ["Phone", review.phone],
+                    ["Campground", parkInfo ? parkInfo.name : "Another campground"],
+                    ["Extras", q.addons.length ? q.addons.map((a) => a.name).join(", ") : "None"],
                   ].map(([label, value]) => (
                     <div key={label} className="bg-white px-4 py-3">
                       <dt className="label !mb-1">{label}</dt>
@@ -428,7 +616,7 @@ export default function BookingForm() {
 
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || repricing}
                   className="btn btn-primary mt-8 w-full sm:w-auto sm:min-w-80"
                 >
                   <Lock />
@@ -478,7 +666,11 @@ export default function BookingForm() {
               >
                 Change dates
               </Link>
-              <dl className="mt-6 space-y-2 text-sm">
+              <p className="mt-5 text-sm">
+                <span className="text-muted">Campground: </span>
+                {parkInfo ? `${parkInfo.name}, ${parkInfo.state}` : "Another campground"}
+              </p>
+              <dl className={`mt-6 space-y-2 text-sm transition-opacity ${repricing ? "opacity-50" : ""}`} aria-busy={repricing}>
                 <div className="flex justify-between">
                   <dt>
                     {rate(q.daily_rate)} × {q.days} nights
@@ -489,6 +681,14 @@ export default function BookingForm() {
                   <dt>Cleaning fee</dt>
                   <dd>{money(q.cleaning_fee)}</dd>
                 </div>
+                {q.addons.map((a) => (
+                  <div key={a.code} className="flex justify-between">
+                    <dt>
+                      {a.name} × {a.days} days
+                    </dt>
+                    <dd>{money(a.total)}</dd>
+                  </div>
+                ))}
                 <div className="flex justify-between border-t border-line pt-3 text-base font-semibold">
                   <dt>Total</dt>
                   <dd>{money(q.total)}</dd>
