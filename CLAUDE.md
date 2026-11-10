@@ -146,10 +146,16 @@ References: [Driveza](https://driveza.framer.website), [Hemlock House](https://r
 
 ## Status
 
-MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 38 backend tests pass; frontend lints, type-checks and builds. Nothing is committed to git yet and nothing is deployed.
+MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 38 backend tests pass; frontend lints, type-checks and builds.
+
+**Live preview:** https://averodion-lab.github.io/travel-website/ (repo `averodion-lab/travel-website`, public, because GitHub Pages on a free account needs a public repo). Every push to `main` runs `.github/workflows/deploy.yml`, which runs `npm run build:preview` with `BASE_PATH=/travel-website` and publishes `frontend/out/` to GitHub Pages. No backend or database is online.
+
+**Preview mode** (`NEXT_PUBLIC_BOOKING_MODE=preview`, `lib/preview.ts`): `api()` answers from a built-in copy of the trailer (keep it in sync with `seed_data.py`), the calendar shows every date open, prices are computed in the browser with the same rules as `pricing.py`, and the final Pay button shows an "online booking opens soon" screen. Nothing a visitor types leaves the browser. The owner dashboard says it isn't online yet. Static export (`NEXT_OUTPUT=export`) turns off `cacheComponents`/partial prerendering, which can't be used with `output: "export"`.
+
+**Images:** `scripts/optimize-images.mjs` (runs before dev and every build) writes 640/1080/1920 px WebP copies to `public/_img/` (git-ignored); `lib/image-loader.ts` points `<Image>` at them, so no image server is needed. `BASE_PATH` is applied there too.
 
 Not done yet:
-1. **Accounts and deployment:** Stripe keys + webhook, Gmail app password + `OWNER_EMAIL`, Neon, Cloud Run, Cloudflare (frontend needs the OpenNext Cloudflare adapter), R2 for license files (`services/storage.py` is local-disk only), GitHub Actions cron for `flask purge-licenses`.
+1. **Accounts and deployment:** the live preview runs on GitHub Pages, but GitHub's terms don't allow Pages to be used mainly for a commercial business, so the real launch should move to Cloudflare as planned. Also needed: Stripe keys + webhook, Gmail app password + `OWNER_EMAIL`, Neon, Cloud Run, Cloudflare (frontend needs the OpenNext Cloudflare adapter), R2 for license files (`services/storage.py` is local-disk only), GitHub Actions cron for `flask purge-licenses`.
 2. **Real content:** company name, the owner's own photos (`public/images/montana/` holds the Camping World listing photos as local placeholders: they are the dealer's copyright and must be replaced or licensed in writing before launch), confirm the placeholder fees in `seed_data.py` (3-night minimum, $175 cleaning, $2,000 security deposit) and the delivery/self-tow policy the copy assumes, rental terms page (the checkout checkbox mentions terms that don't exist yet), contact details.
 3. **Hardening before launch:** rate limiting on `/api/admin/login` and `/api/bookings`, two-factor for admin, refund flow (cancelling in admin does not refund in Stripe), balance collection at pickup is manual.
 4. **Later PRD features:** 3D showcase, destination map, add-ons, blog, About/Contact pages (Contact waits on real contact details), rental terms page.

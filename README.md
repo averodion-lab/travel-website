@@ -2,7 +2,7 @@
 
 A responsive web application for renting camper vans, travel trailers, and RVs across the Southeastern United States (AL, GA, FL, NC, SC, TN).
 
-> Status: MVP built and running locally. Not deployed yet. See [`docs/PRD.md`](docs/PRD.md) for the full long-term product requirements.
+> Status: MVP built and running locally. A preview of the site (booking flow shown, but nothing is saved or charged) is live at https://averodion-lab.github.io/travel-website/ and redeploys on every push to `main`. See [`docs/PRD.md`](docs/PRD.md) for the full long-term product requirements.
 
 ## MVP — what we're building first
 
