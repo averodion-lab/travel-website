@@ -409,22 +409,3 @@ body {
   text-transform: uppercase;
   color: var(--color-clay) !important;
 }
-
-/* Gentle bob for the 3D extras icons */
-@keyframes float-slow {
-  0%,
-  100% {
-    transform: translateY(0) rotate(-2deg);
-  }
-  50% {
-    transform: translateY(-10px) rotate(1deg);
-  }
-}
-.float-slow {
-  animation: float-slow 6s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .float-slow {
-    animation: none;
-  }
-}

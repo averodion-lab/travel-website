@@ -22,13 +22,20 @@ const KIND_LABEL = { both: "Mountains and lake", mountains: "Mountains", lake: "
 const TILES = "https://tile.openstreetmap.org";
 const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+// Round white badge around an extra's mini 3D model (same look as <AddonIcon>).
+const BADGE =
+  "display:inline-grid;place-items:center;width:22px;height:22px;border-radius:9999px;background:#fff;overflow:hidden;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06),0 3px 8px -3px rgba(0,0,0,.35)";
+
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 function popupHtml(p: Park) {
   const extras = p.addons
     .map((a) => {
       const icon = ADDON_ICONS[a.code];
-      const img = icon ? `<img src="${BASE}${icon.src.replace("/images/", "/_img/640/images/").replace(/\.png$/, ".webp")}" alt="" width="22" height="22">` : "";
+      const img = icon
+        ? // Styled inline: popups are plain HTML strings, so they can't use the badge component.
+          `<span style="${BADGE}"><img src="${BASE}${icon.src.replace("/images/", "/_img/640/images/").replace(/\.png$/, ".webp")}" alt="" style="width:92%;height:92%;object-fit:contain;display:block"></span>`
+        : "";
       return `<span class="pm-chip">${img}${esc(a.name)} · ${esc(rate(a.daily_rate))}/day</span>`;
     })
     .join("");
@@ -248,7 +255,7 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
                 <p className="mt-3 flex flex-wrap gap-2">
                   {p.addons.map((a) => (
                     <span key={a.code} className="inline-flex items-center gap-1.5 rounded-full bg-cream py-1 pl-1.5 pr-3 text-xs text-bark">
-                      <AddonIcon code={a.code} size={28} className="w-6 !drop-shadow-none" />
+                      <AddonIcon code={a.code} size={24} />
                       {a.name} available · {rate(a.daily_rate)}/day
                     </span>
                   ))}

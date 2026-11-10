@@ -350,8 +350,8 @@ export default function BookingForm() {
                           <span className="flex items-center gap-3">
                             <AddonIcon
                               code={a.code}
-                              size={72}
-                              className={`-my-2 w-16 transition-transform duration-300 ${on ? "-rotate-3 scale-110" : ""} ${offered ? "" : "grayscale"}`}
+                              size={52}
+                              className={`transition-transform duration-300 ${on ? "scale-110" : ""} ${offered ? "" : "grayscale"}`}
                             />
                             <span className="font-display text-3xl leading-none">{a.name}</span>
                           </span>

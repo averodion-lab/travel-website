@@ -55,13 +55,8 @@ async function Extras() {
       {cards.map((c, i) => (
         <Reveal key={c.title} delay={i * 120}>
           <div className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-[1.75rem] p-8 ${c.tone}`}>
-            {/* Phones: icon above the text. Larger screens: floating in the top-right corner. */}
-            <AddonIcon
-              code={c.code}
-              size={224}
-              className="float-slow -mb-2 -mt-4 w-40 self-end sm:absolute sm:-right-2 sm:-top-2 sm:m-0 sm:w-56"
-            />
-            <div className="relative sm:max-w-[58%]">
+            <AddonIcon code={c.code} size={96} className="mb-6 sm:absolute sm:right-8 sm:top-8 sm:mb-0" />
+            <div className="relative sm:max-w-[70%]">
               <p className="eyebrow opacity-70">{c.where}</p>
               <h3 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight">{c.title}</h3>
               <p className="mt-4 max-w-sm text-sm leading-relaxed opacity-85">{c.text}</p>
