@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { preconnect } from "react-dom";
 import Link from "next/link";
 import type { Map as LeafletMap, Marker } from "leaflet";
+import AddonIcon, { ADDON_ICONS } from "@/components/AddonIcon";
 import type { Park } from "@/lib/api";
 import { rate } from "@/lib/format";
 import { STATE_ORDER } from "@/lib/parks";
@@ -24,7 +25,13 @@ const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)"
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 function popupHtml(p: Park) {
-  const extras = p.addons.map((a) => `<span class="pm-chip">${esc(a.name)} · ${esc(rate(a.daily_rate))}/day</span>`).join("");
+  const extras = p.addons
+    .map((a) => {
+      const icon = ADDON_ICONS[a.code];
+      const img = icon ? `<img src="${BASE}${icon.src.replace("/images/", "/_img/640/images/").replace(/\.png$/, ".webp")}" alt="" width="22" height="22">` : "";
+      return `<span class="pm-chip">${img}${esc(a.name)} · ${esc(rate(a.daily_rate))}/day</span>`;
+    })
+    .join("");
   return `
     <div class="pm-popup">
       <p class="pm-place">${esc(p.city)}, ${esc(p.state)}</p>
@@ -240,7 +247,8 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
               {p.addons.length > 0 && (
                 <p className="mt-3 flex flex-wrap gap-2">
                   {p.addons.map((a) => (
-                    <span key={a.code} className="rounded-full bg-cream px-3 py-1 text-xs text-bark">
+                    <span key={a.code} className="inline-flex items-center gap-1.5 rounded-full bg-cream py-1 pl-1.5 pr-3 text-xs text-bark">
+                      <AddonIcon code={a.code} size={28} className="w-6 !drop-shadow-none" />
                       {a.name} available · {rate(a.daily_rate)}/day
                     </span>
                   ))}

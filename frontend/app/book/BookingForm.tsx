@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import AddonIcon from "@/components/AddonIcon";
 import CardLogos, { Lock } from "@/components/CardLogos";
 import { PREVIEW } from "@/lib/preview";
 import { api, ApiError, type Camper, type ParksResponse, type QuoteResponse } from "@/lib/api";
@@ -346,7 +347,14 @@ export default function BookingForm() {
                         }`}
                       >
                         <span className="flex items-start justify-between gap-3">
-                          <span className="font-display text-3xl leading-none">{a.name}</span>
+                          <span className="flex items-center gap-3">
+                            <AddonIcon
+                              code={a.code}
+                              size={72}
+                              className={`-my-2 w-16 transition-transform duration-300 ${on ? "-rotate-3 scale-110" : ""} ${offered ? "" : "grayscale"}`}
+                            />
+                            <span className="font-display text-3xl leading-none">{a.name}</span>
+                          </span>
                           <span
                             aria-hidden="true"
                             className={`relative mt-1 h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-cream/30" : "bg-sand"}`}

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import AddonIcon from "@/components/AddonIcon";
 import BookCta from "@/components/BookCta";
 import Header from "@/components/Header";
 import PageHero from "@/components/PageHero";
@@ -33,6 +34,7 @@ async function Extras() {
   const jetski = data?.addons.find((a) => a.code === "jetski");
   const cards = [
     {
+      code: "atv",
       title: "4-wheelers",
       where: "At mountain parks",
       text: "Take the trails up to the overlooks. We bring the 4-wheeler with the trailer and pick it up when you leave.",
@@ -40,6 +42,7 @@ async function Extras() {
       tone: "bg-pine text-cream",
     },
     {
+      code: "jetski",
       title: "Jet skis",
       where: "At lake parks",
       text: "Spend the afternoon out on the water. The jet ski arrives with the trailer, ready to launch.",
@@ -51,13 +54,19 @@ async function Extras() {
     <div className="grid gap-4 sm:grid-cols-2">
       {cards.map((c, i) => (
         <Reveal key={c.title} delay={i * 120}>
-          <div className={`flex h-full flex-col justify-between rounded-[1.75rem] p-8 ${c.tone}`}>
-            <div>
+          <div className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-[1.75rem] p-8 ${c.tone}`}>
+            {/* Phones: icon above the text. Larger screens: floating in the top-right corner. */}
+            <AddonIcon
+              code={c.code}
+              size={224}
+              className="float-slow -mb-2 -mt-4 w-40 self-end sm:absolute sm:-right-2 sm:-top-2 sm:m-0 sm:w-56"
+            />
+            <div className="relative sm:max-w-[58%]">
               <p className="eyebrow opacity-70">{c.where}</p>
               <h3 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight">{c.title}</h3>
               <p className="mt-4 max-w-sm text-sm leading-relaxed opacity-85">{c.text}</p>
             </div>
-            <p className="mt-8 font-display text-3xl">{c.price}</p>
+            <p className="relative mt-8 font-display text-3xl">{c.price}</p>
           </div>
         </Reveal>
       ))}
