@@ -3,24 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import BookCta from "@/components/BookCta";
 import CountUp from "@/components/CountUp";
+import Gallery from "@/components/Gallery";
 import Header from "@/components/Header";
 import Reveal from "@/components/Reveal";
 import MapAndBooking from "@/components/MapAndBooking";
-import RoomTour, { type Room } from "@/components/RoomTour";
 import Treeline from "@/components/Treeline";
 import { rate } from "@/lib/format";
 import { getParks } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
-
-const MARQUEE = [
-  "Full hookup ready",
-  "Great Smoky Mountains",
-  "Blue Ridge Parkway",
-  "Lakeside camping",
-  "Delivered and set up",
-  "Sleeps six",
-  "Cleaned and inspected",
-];
 
 const STEPS = [
   {
@@ -59,35 +49,6 @@ const EXPLORE = [
   },
 ];
 
-// Rooms for the tour, matched to the trailer's photos by file name.
-const ROOMS = [
-  {
-    file: "living-1",
-    name: "Living room",
-    text: "Theater seating, two sofas and an electric fireplace under a ceiling fan, with windows on three sides.",
-  },
-  {
-    file: "kitchen",
-    name: "Front kitchen",
-    text: "A raised kitchen with a residential refrigerator, gas range, oven and a walk-in pantry.",
-  },
-  {
-    file: "bedroom-1",
-    name: "King bedroom",
-    text: "A private bedroom with a king bed and its own closet.",
-  },
-  {
-    file: "bathroom-1",
-    name: "Bathroom",
-    text: "Double sinks, plenty of storage and a glass-door shower.",
-  },
-  {
-    file: "exterior",
-    name: "Outside",
-    text: "Four slide-outs, power awnings, outdoor speakers and pass-through storage.",
-  },
-];
-
 /** The trailer, with its live price and specs from the API. */
 async function Trailer() {
   const camper = await getTrailer();
@@ -100,10 +61,8 @@ async function Trailer() {
     );
   }
   const href = `/fleet/${camper.slug}`;
-  const rooms: Room[] = ROOMS.flatMap((room) => {
-    const image = camper.gallery.find((src) => src.includes(`/${room.file}.`));
-    return image ? [{ name: room.name, text: room.text, image }] : [];
-  });
+  // Every photo of the trailer except the floor plan, in gallery order.
+  const photos = camper.gallery.filter((src) => !src.includes("floorplan"));
 
   return (
     <>
@@ -135,7 +94,7 @@ async function Trailer() {
       </Reveal>
 
       <Reveal>
-        <RoomTour rooms={rooms} />
+        <Gallery photos={photos} name={camper.name} layout="carousel" />
       </Reveal>
 
       <Reveal>
@@ -224,7 +183,7 @@ export default function Home() {
       <Header overlay />
 
       {/* Hero */}
-      <section className="relative flex min-h-[46rem] flex-col items-center justify-center overflow-hidden px-5 pb-40 pt-36 text-center text-cream sm:min-h-screen">
+      <section className="relative flex min-h-[46rem] flex-col items-center justify-center overflow-hidden px-5 pb-56 pt-32 sm:pb-64 text-center text-cream sm:min-h-screen">
         <Image
           src="/images/blueridge-rays.jpg"
           alt=""
@@ -234,7 +193,7 @@ export default function Home() {
           className="hero-zoom object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/20 to-ink/80" />
-        <div className="relative flex w-full flex-col items-center">
+        <div className="relative z-10 flex w-full flex-col items-center">
           <p className="script rise text-6xl sm:text-7xl">The</p>
           <h1 className="font-display text-[3.4rem] uppercase leading-[0.88] tracking-tight sm:text-[9.5rem]">
             <span className="rise block" style={{ animationDelay: "0.12s" }}>
@@ -269,36 +228,18 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <Treeline color="var(--color-ink)" height={220} seed={3} />
-        <p className="eyebrow absolute bottom-8 left-5 z-10 hidden text-left leading-relaxed sm:left-8 sm:block">
+        <Treeline color="var(--color-cream)" height={220} seed={3} />
+        <p className="eyebrow absolute bottom-[calc(clamp(121px,15.28vw,220px)+0.75rem)] left-5 z-10 hidden text-left leading-relaxed sm:left-8 sm:block">
           Delivered
           <br />
           across the Southeast
         </p>
-        <p className="eyebrow absolute bottom-8 right-5 z-10 hidden text-right leading-relaxed sm:right-8 sm:block">
+        <p className="eyebrow absolute bottom-[calc(clamp(121px,15.28vw,220px)+0.75rem)] right-5 z-10 hidden text-right leading-relaxed sm:right-8 sm:block">
           Sleeps six
           <br />
           Forty feet
         </p>
       </section>
-
-      {/* Marquee */}
-      <div
-        className="overflow-hidden bg-ink py-4 text-cream"
-        aria-hidden="true"
-      >
-        <div className="marquee flex w-max">
-          {[0, 1].map((dup) => (
-            <div key={dup} className="flex shrink-0">
-              {MARQUEE.map((item) => (
-                <span key={item} className="eyebrow px-6 whitespace-nowrap">
-                  {item} <span className="ml-12 text-clay">—</span>
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Destinations: the campgrounds map */}
       <section
@@ -315,7 +256,8 @@ export default function Home() {
               <p className="script text-5xl sm:text-6xl">and open road</p>
               <p className="mt-5 max-w-xl leading-relaxed text-bark">
                 Eleven RV parks across five states where we deliver and set up
-                the trailer. Tap a pin to see the park, then book right below the map.
+                the trailer. Tap a pin to see the park, then book right below
+                the map.
               </p>
             </div>
             <Link href="/destinations" className="btn btn-outline">

@@ -54,7 +54,7 @@ backend/                Flask API (port 5001 locally)
   tests/                pytest, runs against real Postgres (database camper_test)
 frontend/               Next.js 16 App Router + Tailwind v4 (port 3210 locally)
   app/                  / , /fleet , /fleet/[slug] , /book-now , /gallery , /how-it-works , /destinations , /faq , /book , /booking/confirmation , /admin
-  components/           Header, Footer, PageHero, BookCta, CamperCard, Gallery, BookingWidget, CardLogos, Reveal, CountUp, RoomTour, ParksMap (Leaflet + OpenStreetMap tiles)
+  components/           Header, Footer, PageHero, BookCta, CamperCard, Gallery (grid | masonry | carousel), BookingWidget, CardLogos, Reveal, CountUp, ParksMap (Leaflet + OpenStreetMap tiles)
   app/admin/            AdminApp (login + shell), types.tsx, views/ (Overview, Calendar, Bookings, Customers, BookingDrawer)
   lib/trailer.ts        getTrailer() for server components (first active camper)
   lib/                  api.ts (API client + types), format.ts (money, dates)
@@ -101,7 +101,7 @@ Dates are half-open `[start_date, end_date)`: a return day can be the next custo
 - If a new rule in `globals.css` doesn't show up in dev, touch the file again or restart `npm run dev` (the Turbopack CSS output was seen going stale once).
 - `Header` is a fixed client component (transparent over a hero with `overlay`, solid after scrolling). Anything that calls `usePathname()` must sit inside `<Suspense>` or `/fleet/[slug]` fails to prerender; that is why the nav links have their own boundary.
 - `Treeline`: layered forest silhouettes (ridge, far pines, near pines) generated from a seed. Each layer is a seamless tile used as a CSS mask (`mask-size: auto 100%`, `repeat-x`), so trees scale with the band height and repeat sideways; never use `preserveAspectRatio=slice` here, it cropped the tree tops on wide screens. Placed at the bottom of photo heroes (`PageHero` takes a `seed`), rising from the top of the green section and over the footer photo strip; filled with the colour of the section they blend into. Far layers drift on scroll via CSS scroll-driven animations (off for reduced motion).
-- Motion: `Reveal` (scroll-in), `.hero-zoom`, `.rise`, `CountUp`, `RoomTour` (auto-advancing room tabs). All respect `prefers-reduced-motion`.
+- Motion: `Reveal` (scroll-in), `.hero-zoom`, `.rise`, `CountUp`. The home page trailer section shows the photos as a sideways-scrolling row (`Gallery layout="carousel"`: swipe, arrows, mouse drag, trackpad). All respect `prefers-reduced-motion`.
 - The parks map (`ParksMap`) is on the home page (`compact`: map only, no list; a pin's "Book the trailer here" fills the booking card below via `onPick`) and on `/destinations` (full cards with descriptions). `/destinations` is the parks map page: pins coloured by terrain, state filter buttons, a list where each park name links to the park's website, and "Book here" links to `/fleet?park=<slug>#book`. Data comes from `GET /api/parks`. The preview build uses the copy in `lib/preview.ts` (`PREVIEW_PARKS`), which must be kept in sync with `catalog.py`.
 - `ParksMap` wraps the map in `isolate`: Leaflet's layers use z-index up to 1000 and would otherwise cover the sticky header and pop-ups. Pop-ups that must escape cards (the date picker) render into `document.body` with `createPortal`.
 - Site name comes from `NEXT_PUBLIC_SITE_NAME` (frontend) and `SITE_NAME` (backend emails). Currently the placeholder `YourName`.

@@ -126,20 +126,6 @@ body {
   color: var(--color-bark);
 }
 
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-.marquee {
-  animation: marquee 40s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .marquee {
-    animation: none;
-  }
-}
-
 /* Calendar theme */
 .rdp-root {
   --rdp-accent-color: var(--color-pine);
@@ -233,19 +219,6 @@ body {
   animation: rise 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Room tour progress line */
-@keyframes tour-progress {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
-}
-.tour-progress {
-  animation: tour-progress linear both;
-}
-
 /* Underline that draws in under nav links */
 .nav-link {
   position: relative;
@@ -285,8 +258,7 @@ body {
     transition: none;
   }
   .hero-zoom,
-  .rise,
-  .tour-progress {
+  .rise {
     animation: none;
   }
   .btn {
@@ -469,4 +441,17 @@ body {
   .treeline .tree-layer {
     animation: none !important;
   }
+}
+
+/* Sideways photo row (Gallery layout="carousel"): thin scrollbar, and no
+   snapping or smooth scrolling while the mouse is dragging it. */
+.photo-track {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line) transparent;
+  cursor: grab;
+}
+.photo-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
 }
