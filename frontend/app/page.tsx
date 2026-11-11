@@ -315,7 +315,7 @@ export default function Home() {
               <p className="script text-5xl sm:text-6xl">and open road</p>
               <p className="mt-5 max-w-xl leading-relaxed text-bark">
                 Eleven RV parks across five states where we deliver and set up
-                the trailer. Tap a pin, then book right below the map.
+                the trailer. Tap a pin to see the park, then book right below the map.
               </p>
             </div>
             <Link href="/destinations" className="btn btn-outline">

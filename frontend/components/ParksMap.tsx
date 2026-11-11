@@ -52,22 +52,20 @@ function popupHtml(p: Park) {
       <a class="pm-name" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.name)} ↗</a>
       <p class="pm-text">${esc(p.description)}</p>
       ${extras ? `<div class="pm-chips">${extras}</div>` : ""}
-      <a class="pm-book" href="${BASE}/fleet?park=${encodeURIComponent(p.slug)}#book">Book the trailer here →</a>
+      <a class="pm-book" data-pick="${esc(p.slug)}" href="${BASE}/fleet?park=${encodeURIComponent(p.slug)}#book">Book the trailer here →</a>
     </div>`;
 }
 
-/** `compact` (home page): a shorter list without the park descriptions. */
-/** `onPick`: when given, the list's "Book" button hands the park to the page
- *  (the home page's booking bar) instead of going to the trailer page. */
+/** `compact` (home page): just the map, no park list beside it. */
+/** `onPick`: when given (home page), a pin's "Book the trailer here" link hands
+ *  the park to the page's booking card instead of going to the trailer page. */
 export default function ParksMap({
   parks,
   compact = false,
-  picked = "",
   onPick,
 }: {
   parks: Park[];
   compact?: boolean;
-  picked?: string;
   onPick?: (slug: string) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
@@ -89,6 +87,28 @@ export default function ParksMap({
     () => (state === "All" ? parks : parks.filter((p) => p.state === state)),
     [parks, state],
   );
+
+  // On the home page the popup's "Book" link fills in the booking card below
+  // instead of leaving the page.
+  const pickRef = useRef(onPick);
+  useEffect(() => {
+    pickRef.current = onPick;
+  }, [onPick]);
+  useEffect(() => {
+    const el = box.current;
+    if (!el) return;
+    const onClick = (e: MouseEvent) => {
+      const link = (e.target as HTMLElement).closest<HTMLAnchorElement>(
+        "a[data-pick]",
+      );
+      if (!link || !pickRef.current) return;
+      e.preventDefault();
+      map.current?.closePopup();
+      pickRef.current(link.dataset.pick ?? "");
+    };
+    el.addEventListener("click", onClick);
+    return () => el.removeEventListener("click", onClick);
+  }, []);
 
   // Build the map once, in the browser only.
   useEffect(() => {
@@ -262,7 +282,9 @@ export default function ParksMap({
         })}
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+      <div
+        className={`mt-6 ${compact ? "" : "grid gap-6 lg:grid-cols-[1.5fr_1fr]"}`}
+      >
         {/* `isolate` keeps Leaflet's high z-index layers inside the map, so they
             can't cover the sticky header or the date pop-up. */}
         <div className="relative isolate">
@@ -299,72 +321,7 @@ export default function ParksMap({
           </ul>
         </div>
 
-        {compact ? (
-          <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-white lg:h-[40rem] lg:overflow-y-auto">
-            {shown.map((p) => (
-              <li key={p.slug} className="flex items-center gap-3 px-4 py-3.5">
-                <span
-                  className={`pm-dot pm-${kind(p)} shrink-0`}
-                  title={KIND_LABEL[kind(p)]}
-                />
-                <div className="min-w-0 flex-1">
-                  <a
-                    href={p.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block font-display text-xl leading-tight sm:truncate hover:text-clay hover:underline"
-                  >
-                    {p.name}{" "}
-                    <span aria-hidden="true" className="text-sm">
-                      ↗
-                    </span>
-                    <span className="sr-only">
-                      {" "}
-                      (opens the park&apos;s website)
-                    </span>
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => focus(p)}
-                    className="text-xs text-muted hover:text-pine hover:underline"
-                  >
-                    {p.city}, {p.state} · show on map
-                  </button>
-                </div>
-                <span className="flex shrink-0 -space-x-1.5">
-                  {p.addons.map((a) => (
-                    <span key={a.code} title={`${a.name} available`}>
-                      <AddonIcon code={a.code} size={26} />
-                    </span>
-                  ))}
-                </span>
-                {onPick ? (
-                  <button
-                    type="button"
-                    onClick={() => onPick(p.slug)}
-                    aria-pressed={picked === p.slug}
-                    className={`eyebrow shrink-0 rounded-full px-3 py-1.5 transition-colors ${
-                      picked === p.slug
-                        ? "bg-clay text-white"
-                        : "text-clay hover:bg-clay/10"
-                    }`}
-                    aria-label={`Book the trailer at ${p.name}`}
-                  >
-                    {picked === p.slug ? "Chosen ✓" : "Book →"}
-                  </button>
-                ) : (
-                  <Link
-                    href={`/fleet?park=${p.slug}#book`}
-                    className="eyebrow shrink-0 text-clay hover:underline"
-                    aria-label={`Book the trailer at ${p.name}`}
-                  >
-                    Book →
-                  </Link>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
+        {!compact && (
           <ul className="space-y-3 lg:h-[40rem] lg:overflow-y-auto lg:pr-1">
             {shown.map((p) => (
               <li key={p.slug} className="rounded-2xl bg-white p-5">

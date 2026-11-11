@@ -6,8 +6,8 @@ import ParksMap from "@/components/ParksMap";
 import type { Camper, Park } from "@/lib/api";
 
 /** Home page: the parks map, and right under it the booking card (campground,
- *  dates, extras, live price). Choosing a park in the map's list fills it in
- *  below and scrolls there. */
+ *  dates, extras, live price). "Book the trailer here" in a pin's popup fills
+ *  that park in below and scrolls there. */
 export default function MapAndBooking({
   parks,
   addons,
@@ -34,7 +34,7 @@ export default function MapAndBooking({
 
   return (
     <>
-      <ParksMap parks={parks} compact picked={park} onPick={pick} />
+      <ParksMap parks={parks} compact onPick={pick} />
       <div ref={form} id="book-now" className="mt-16 scroll-mt-28">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -47,7 +47,7 @@ export default function MapAndBooking({
             </p>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted">
-            Pick a park above or from the list, choose your dates, add a
+            Tap a pin above or choose a park here, pick your dates, add a
             4-wheeler or jet ski, and see your exact total.
           </p>
         </div>
