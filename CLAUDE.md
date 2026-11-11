@@ -100,7 +100,7 @@ Dates are half-open `[start_date, end_date)`: a return day can be the next custo
 - If a new rule in `globals.css` doesn't show up in dev, touch the file again or restart `npm run dev` (the Turbopack CSS output was seen going stale once).
 - `Header` is a fixed client component (transparent over a hero with `overlay`, solid after scrolling). Anything that calls `usePathname()` must sit inside `<Suspense>` or `/fleet/[slug]` fails to prerender; that is why the nav links have their own boundary.
 - Motion: `Reveal` (scroll-in), `.hero-zoom`, `.rise`, `CountUp`, `RoomTour` (auto-advancing room tabs). All respect `prefers-reduced-motion`.
-- `/destinations` is the parks map: pins coloured by terrain, state filter buttons, a list where each park name links to the park's website, and "Book here" links to `/fleet?park=<slug>#book`. Data comes from `GET /api/parks`. The preview build uses the copy in `lib/preview.ts` (`PREVIEW_PARKS`), which must be kept in sync with `catalog.py`.
+- The parks map (`ParksMap`) is on the home page (`compact` list: one row per park) and on `/destinations` (full cards with descriptions). `/destinations` is the parks map page: pins coloured by terrain, state filter buttons, a list where each park name links to the park's website, and "Book here" links to `/fleet?park=<slug>#book`. Data comes from `GET /api/parks`. The preview build uses the copy in `lib/preview.ts` (`PREVIEW_PARKS`), which must be kept in sync with `catalog.py`.
 - Site name comes from `NEXT_PUBLIC_SITE_NAME` (frontend) and `SITE_NAME` (backend emails). Currently the placeholder `YourName`.
 - No fake reviews, stats or testimonials. Add real ones when the owner supplies them.
 

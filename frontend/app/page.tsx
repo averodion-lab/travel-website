@@ -5,8 +5,10 @@ import BookCta from "@/components/BookCta";
 import CountUp from "@/components/CountUp";
 import Header from "@/components/Header";
 import Reveal from "@/components/Reveal";
+import ParksMap from "@/components/ParksMap";
 import RoomTour, { type Room } from "@/components/RoomTour";
 import { rate } from "@/lib/format";
+import { getParks } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
 
 const MARQUEE = [
@@ -30,13 +32,6 @@ const EXPLORE = [
   { title: "The trailer", text: "Photos, the floor plan, full specs and the live calendar.", href: "/fleet" },
   { title: "How it works", text: "Booking, payment, delivery and what happens at handover.", href: "/how-it-works" },
   { title: "Good to know", text: "Cards we accept, campsite requirements, towing and more.", href: "/faq" },
-];
-
-const DESTINATIONS = [
-  { name: "Great Smoky Mountains", place: "Tennessee", image: "/images/smoky-valley.jpg", text: "Misty ridgelines, waterfall hikes and quiet valley roads." },
-  { name: "Blue Ridge Parkway", place: "North Carolina", image: "/images/blueridge-rays.jpg", text: "Overlook after overlook along the crest of the mountains." },
-  { name: "Autumn Ridgelines", place: "Southern Appalachians", image: "/images/blueridge-fall.jpg", text: "Gold and red hillsides well into November." },
-  { name: "Quiet Lakes", place: "Across the Southeast", image: "/images/lake-fall.jpg", text: "Waterfront sites, kayaks and cool evenings by the fire." },
 ];
 
 // Rooms for the tour, matched to the trailer's photos by file name.
@@ -104,6 +99,13 @@ async function Trailer() {
       </Reveal>
     </>
   );
+}
+
+/** The campgrounds map (same as on /destinations). */
+async function Parks() {
+  const data = await getParks();
+  if (!data) return <p className="text-muted">The campground map is loading slowly right now. Please refresh in a moment.</p>;
+  return <ParksMap parks={data.parks} compact />;
 }
 
 /** Big numbers under the hero. */
@@ -260,7 +262,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Destinations: panels that open up on hover */}
+      {/* Destinations: the campgrounds map */}
       <section id="destinations" className="mx-auto max-w-7xl scroll-mt-20 px-5 py-24 sm:px-8 sm:py-32">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-6">
@@ -268,33 +270,20 @@ export default function Home() {
               <p className="eyebrow text-clay">(04) Where to go</p>
               <h2 className="mt-4 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl">Mountains, lakes</h2>
               <p className="script text-5xl sm:text-6xl">and open road</p>
+              <p className="mt-5 max-w-xl leading-relaxed text-bark">
+                Eleven RV parks across five states where we deliver and set up the trailer. Tap a pin or pick a state.
+              </p>
             </div>
             <Link href="/destinations" className="btn btn-outline">
-              Explore destinations →
+              Extras and campsite tips →
             </Link>
           </div>
         </Reveal>
-        <Reveal>
-          <div className="mt-12 flex flex-col gap-3 lg:h-[36rem] lg:flex-row">
-            {DESTINATIONS.map((d) => (
-              <Link
-                key={d.name}
-                href="/destinations"
-                className="group relative min-h-[15rem] flex-1 overflow-hidden rounded-[1.75rem] transition-[flex-grow] duration-700 ease-out lg:hover:flex-[3.2] lg:focus-visible:flex-[3.2]"
-              >
-                <Image src={d.image} alt={d.name} fill sizes="(min-width:1024px) 50vw, 100vw" className="object-cover transition-transform duration-[1200ms] group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-6 text-cream sm:p-7">
-                  <p className="eyebrow text-cream/75">{d.place}</p>
-                  <p className="mt-2 font-display text-3xl leading-tight sm:text-4xl">{d.name}</p>
-                  <p className="mt-2 max-w-sm text-sm leading-relaxed text-cream/85 transition-opacity duration-500 lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-visible:opacity-100">
-                    {d.text}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </Reveal>
+        <div className="mt-12">
+          <Suspense fallback={<div className="h-[34rem] animate-pulse rounded-[1.75rem] bg-sand/60" />}>
+            <Parks />
+          </Suspense>
+        </div>
       </section>
 
       {/* Explore */}

@@ -17,16 +17,23 @@ function kind(p: Park): "both" | "mountains" | "lake" | "none" {
   const l = p.terrain.includes("lake");
   return m && l ? "both" : m ? "mountains" : l ? "lake" : "none";
 }
-const KIND_LABEL = { both: "Mountains and lake", mountains: "Mountains", lake: "Lake", none: "Foothills" };
+const KIND_LABEL = {
+  both: "Mountains and lake",
+  mountains: "Mountains",
+  lake: "Lake",
+  none: "Foothills",
+};
 
 const TILES = "https://tile.openstreetmap.org";
-const reducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const reducedMotion = () =>
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 // Round white badge around an extra's mini 3D model (same look as <AddonIcon>).
 const BADGE =
   "display:inline-grid;place-items:center;width:22px;height:22px;border-radius:9999px;background:#fff;overflow:hidden;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06),0 3px 8px -3px rgba(0,0,0,.35)";
 
-const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+const esc = (s: string) =>
+  s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
 function popupHtml(p: Park) {
   const extras = p.addons
@@ -49,7 +56,14 @@ function popupHtml(p: Park) {
     </div>`;
 }
 
-export default function ParksMap({ parks }: { parks: Park[] }) {
+/** `compact` (home page): a shorter list without the park descriptions. */
+export default function ParksMap({
+  parks,
+  compact = false,
+}: {
+  parks: Park[];
+  compact?: boolean;
+}) {
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<LeafletMap | null>(null);
   const markers = useRef(new Map<string, Marker>());
@@ -57,13 +71,18 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
   const [ready, setReady] = useState(false);
   // Short tip shown over the map ("use two fingers", "click to zoom").
   const [hint, setHint] = useState("");
-  const hintTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const hintTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
 
   // Start the connection to the map server before the first tiles are requested.
   preconnect(TILES);
 
   const states = STATE_ORDER.filter((s) => parks.some((p) => p.state === s));
-  const shown = useMemo(() => (state === "All" ? parks : parks.filter((p) => p.state === state)), [parks, state]);
+  const shown = useMemo(
+    () => (state === "All" ? parks : parks.filter((p) => p.state === state)),
+    [parks, state],
+  );
 
   // Build the map once, in the browser only.
   useEffect(() => {
@@ -96,7 +115,8 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
         box.current.addEventListener(
           "touchmove",
           (e) => {
-            if (e.touches.length === 1) flash("Use two fingers to move the map");
+            if (e.touches.length === 1)
+              flash("Use two fingers to move the map");
             else setHint("");
           },
           { passive: true },
@@ -109,7 +129,8 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
         box.current.addEventListener(
           "wheel",
           (e) => {
-            if (!m.scrollWheelZoom.enabled() && !e.ctrlKey) flash("Click the map to zoom with your scroll wheel");
+            if (!m.scrollWheelZoom.enabled() && !e.ctrlKey)
+              flash("Click the map to zoom with your scroll wheel");
           },
           { passive: true },
         );
@@ -118,7 +139,8 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
         maxZoom: 18,
         keepBuffer: 6, // keep more tiles around the view so panning doesn't show gaps
         updateWhenZooming: false, // load new tiles when a zoom ends, not on every animation frame
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
       }).addTo(m);
       for (const p of parks) {
         const icon = L.divIcon({
@@ -128,7 +150,12 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
           iconAnchor: [15, 38],
           popupAnchor: [0, -34],
         });
-        const marker = L.marker([p.lat, p.lng], { icon, title: p.name, alt: p.name, keyboard: true })
+        const marker = L.marker([p.lat, p.lng], {
+          icon,
+          title: p.name,
+          alt: p.name,
+          keyboard: true,
+        })
           .bindPopup(popupHtml(p), {
             maxWidth: narrow ? 230 : 280,
             className: "pm-leaflet-popup",
@@ -139,7 +166,9 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
           .addTo(m);
         pins.set(p.slug, marker);
       }
-      m.fitBounds(L.latLngBounds(parks.map((p) => [p.lat, p.lng])), { padding: [40, 40] });
+      m.fitBounds(L.latLngBounds(parks.map((p) => [p.lat, p.lng])), {
+        padding: [40, 40],
+      });
       map.current = m;
       setReady(true);
     });
@@ -160,8 +189,15 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
       if (!m) return;
       m.closePopup();
       const animate = !reducedMotion();
-      if (shown.length === 1) m.flyTo([shown[0].lat, shown[0].lng], 11, { animate, duration: 0.9 });
-      else m.flyToBounds(L.latLngBounds(shown.map((p) => [p.lat, p.lng])), { padding: [50, 50], maxZoom: 10, animate, duration: 0.9 });
+      if (shown.length === 1)
+        m.flyTo([shown[0].lat, shown[0].lng], 11, { animate, duration: 0.9 });
+      else
+        m.flyToBounds(L.latLngBounds(shown.map((p) => [p.lat, p.lng])), {
+          padding: [50, 50],
+          maxZoom: 10,
+          animate,
+          duration: 0.9,
+        });
     });
   }, [shown, ready]);
 
@@ -187,14 +223,24 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
     };
     window.addEventListener("scrollend", go);
     setTimeout(go, 700); // browsers without the scrollend event
-    el.scrollIntoView({ behavior: animate ? "smooth" : "auto", block: "center" });
+    el.scrollIntoView({
+      behavior: animate ? "smooth" : "auto",
+      block: "center",
+    });
   }
 
   return (
     <div>
-      <div className="flex flex-wrap gap-2" role="group" aria-label="Show parks in">
+      <div
+        className="flex flex-wrap gap-2"
+        role="group"
+        aria-label="Show parks in"
+      >
         {["All", ...states].map((s) => {
-          const count = s === "All" ? parks.length : parks.filter((p) => p.state === s).length;
+          const count =
+            s === "All"
+              ? parks.length
+              : parks.filter((p) => p.state === s).length;
           return (
             <button
               key={s}
@@ -203,7 +249,8 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
               aria-pressed={state === s}
               className={`rounded-full px-4 py-2 text-sm transition-colors ${state === s ? "bg-ink text-cream" : "bg-white text-bark hover:bg-sand"}`}
             >
-              {s === "All" ? "All states" : s} <span className="tabular-nums opacity-60">{count}</span>
+              {s === "All" ? "All states" : s}{" "}
+              <span className="tabular-nums opacity-60">{count}</span>
             </button>
           );
         })}
@@ -213,14 +260,21 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
         <div className="relative">
           {/* The fade lives on a wrapper: Leaflet adds its own classes to the map
               element, and React must never re-render that element's className. */}
-          <div className={`transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}>
+          <div
+            className={`transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}
+          >
             <div
               ref={box}
               className="parks-map h-[26rem] overflow-hidden rounded-[1.75rem] border border-line sm:h-[34rem] lg:h-[40rem]"
               aria-label="Map of campgrounds"
             />
           </div>
-          {!ready && <div className="absolute inset-0 animate-pulse rounded-[1.75rem] bg-sand/70" aria-hidden="true" />}
+          {!ready && (
+            <div
+              className="absolute inset-0 animate-pulse rounded-[1.75rem] bg-sand/70"
+              aria-hidden="true"
+            />
+          )}
           <p
             aria-live="polite"
             className={`pointer-events-none absolute inset-x-0 top-1/2 z-[500] mx-auto w-max max-w-[85%] -translate-y-1/2 rounded-full bg-ink/80 px-5 py-2.5 text-center text-sm text-cream transition-opacity duration-300 ${hint ? "opacity-100" : "opacity-0"}`}
@@ -237,41 +291,120 @@ export default function ParksMap({ parks }: { parks: Park[] }) {
           </ul>
         </div>
 
-        <ul className="space-y-3 lg:h-[40rem] lg:overflow-y-auto lg:pr-1">
-          {shown.map((p) => (
-            <li key={p.slug} className="rounded-2xl bg-white p-5">
-              <div className="flex items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <p className="eyebrow text-muted">{p.city}, {p.state}</p>
-                  <a href={p.url} target="_blank" rel="noopener noreferrer" className="mt-1 block font-display text-2xl leading-tight hover:text-clay hover:underline">
-                    {p.name} <span aria-hidden="true" className="text-base">↗</span>
-                    <span className="sr-only"> (opens the park&apos;s website)</span>
+        {compact ? (
+          <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-white lg:h-[40rem] lg:overflow-y-auto">
+            {shown.map((p) => (
+              <li key={p.slug} className="flex items-center gap-3 px-4 py-3.5">
+                <span
+                  className={`pm-dot pm-${kind(p)} shrink-0`}
+                  title={KIND_LABEL[kind(p)]}
+                />
+                <div className="min-w-0 flex-1">
+                  <a
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block font-display text-xl leading-tight sm:truncate hover:text-clay hover:underline"
+                  >
+                    {p.name}{" "}
+                    <span aria-hidden="true" className="text-sm">
+                      ↗
+                    </span>
+                    <span className="sr-only">
+                      {" "}
+                      (opens the park&apos;s website)
+                    </span>
                   </a>
+                  <button
+                    type="button"
+                    onClick={() => focus(p)}
+                    className="text-xs text-muted hover:text-pine hover:underline"
+                  >
+                    {p.city}, {p.state} · show on map
+                  </button>
                 </div>
-                <span className={`pm-dot pm-${kind(p)} mt-2 shrink-0`} title={KIND_LABEL[kind(p)]} />
-              </div>
-              <p className="mt-2 text-sm leading-relaxed text-bark">{p.description}</p>
-              {p.addons.length > 0 && (
-                <p className="mt-3 flex flex-wrap gap-2">
+                <span className="flex shrink-0 -space-x-1.5">
                   {p.addons.map((a) => (
-                    <span key={a.code} className="inline-flex items-center gap-1.5 rounded-full bg-cream py-1 pl-1.5 pr-3 text-xs text-bark">
-                      <AddonIcon code={a.code} size={24} />
-                      {a.name} available · {rate(a.daily_rate)}/day
+                    <span key={a.code} title={`${a.name} available`}>
+                      <AddonIcon code={a.code} size={26} />
                     </span>
                   ))}
-                </p>
-              )}
-              <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-                <button type="button" onClick={() => focus(p)} className="eyebrow text-pine hover:underline">
-                  Show on map
-                </button>
-                <Link href={`/fleet?park=${p.slug}#book`} className="eyebrow text-clay hover:underline">
-                  Book here →
+                </span>
+                <Link
+                  href={`/fleet?park=${p.slug}#book`}
+                  className="eyebrow shrink-0 text-clay hover:underline"
+                  aria-label={`Book the trailer at ${p.name}`}
+                >
+                  Book →
                 </Link>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul className="space-y-3 lg:h-[40rem] lg:overflow-y-auto lg:pr-1">
+            {shown.map((p) => (
+              <li key={p.slug} className="rounded-2xl bg-white p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="eyebrow text-muted">
+                      {p.city}, {p.state}
+                    </p>
+                    <a
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-1 block font-display text-2xl leading-tight hover:text-clay hover:underline"
+                    >
+                      {p.name}{" "}
+                      <span aria-hidden="true" className="text-base">
+                        ↗
+                      </span>
+                      <span className="sr-only">
+                        {" "}
+                        (opens the park&apos;s website)
+                      </span>
+                    </a>
+                  </div>
+                  <span
+                    className={`pm-dot pm-${kind(p)} mt-2 shrink-0`}
+                    title={KIND_LABEL[kind(p)]}
+                  />
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-bark">
+                  {p.description}
+                </p>
+                {p.addons.length > 0 && (
+                  <p className="mt-3 flex flex-wrap gap-2">
+                    {p.addons.map((a) => (
+                      <span
+                        key={a.code}
+                        className="inline-flex items-center gap-1.5 rounded-full bg-cream py-1 pl-1.5 pr-3 text-xs text-bark"
+                      >
+                        <AddonIcon code={a.code} size={24} />
+                        {a.name} available · {rate(a.daily_rate)}/day
+                      </span>
+                    ))}
+                  </p>
+                )}
+                <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
+                  <button
+                    type="button"
+                    onClick={() => focus(p)}
+                    className="eyebrow text-pine hover:underline"
+                  >
+                    Show on map
+                  </button>
+                  <Link
+                    href={`/fleet?park=${p.slug}#book`}
+                    className="eyebrow text-clay hover:underline"
+                  >
+                    Book here →
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
