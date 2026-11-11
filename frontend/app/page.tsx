@@ -69,7 +69,7 @@ async function Trailer() {
       <Reveal>
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="eyebrow text-clay">(02) {camper.class_type}</p>
+            <p className="eyebrow text-clay">(01) {camper.class_type}</p>
             <h2 className="mt-4 font-display text-6xl uppercase leading-[0.9] tracking-tight sm:text-8xl">
               {camper.name}
             </h2>
@@ -241,41 +241,6 @@ export default function Home() {
         </p>
       </section>
 
-      {/* Destinations: the campgrounds map */}
-      <section
-        id="destinations"
-        className="mx-auto max-w-7xl scroll-mt-20 px-5 py-24 sm:px-8 sm:py-32"
-      >
-        <Reveal>
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="max-w-2xl">
-              <p className="eyebrow text-clay">(01) Where to go</p>
-              <h2 className="mt-4 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl">
-                Mountains, lakes
-              </h2>
-              <p className="script text-5xl sm:text-6xl">and open road</p>
-              <p className="mt-5 max-w-xl leading-relaxed text-bark">
-                Eleven RV parks across five states where we deliver and set up
-                the trailer. Tap a pin to see the park, then book right below
-                the map.
-              </p>
-            </div>
-            <Link href="/destinations" className="btn btn-outline">
-              Extras and campsite tips →
-            </Link>
-          </div>
-        </Reveal>
-        <div className="mt-12">
-          <Suspense
-            fallback={
-              <div className="h-[34rem] animate-pulse rounded-[1.75rem] bg-sand/60" />
-            }
-          >
-            <Parks />
-          </Suspense>
-        </div>
-      </section>
-
       {/* Numbers */}
       <section className="border-b border-line">
         <Suspense fallback={<div className="h-56" />}>
@@ -295,16 +260,16 @@ export default function Home() {
       </section>
 
       {/* Intro */}
-      <section className="relative bg-pine-dark text-cream">
+      <section className="relative overflow-x-clip bg-pine-dark text-cream">
         <Treeline
           color="var(--color-pine-dark)"
           height={170}
           seed={17}
           className="!bottom-auto top-0 -translate-y-[99%]"
         />
-        <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 sm:px-8 sm:py-32 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 pb-40 pt-24 sm:px-8 sm:pb-52 sm:pt-32 lg:grid-cols-2">
           <Reveal>
-            <p className="eyebrow text-cream/60">(03) Why rent with us</p>
+            <p className="eyebrow text-cream/60">(02) Why rent with us</p>
             <h2 className="mt-5 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl">
               More than a rental.
             </h2>
@@ -357,6 +322,43 @@ export default function Home() {
               </Reveal>
             </div>
           </div>
+        </div>
+        {/* Cream pines rising into the green, blending into the map section below */}
+        <Treeline color="var(--color-cream)" height={150} seed={53} ridge={false} />
+      </section>
+
+      {/* Destinations: the campgrounds map */}
+      <section
+        id="destinations"
+        className="mx-auto max-w-7xl scroll-mt-20 px-5 py-24 sm:px-8 sm:py-32"
+      >
+        <Reveal>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <p className="eyebrow text-clay">(03) Where to go</p>
+              <h2 className="mt-4 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl">
+                Mountains, lakes
+              </h2>
+              <p className="script text-5xl sm:text-6xl">and open road</p>
+              <p className="mt-5 max-w-xl leading-relaxed text-bark">
+                Eleven RV parks across five states where we deliver and set up
+                the trailer. Tap a pin to see the park, then book right below
+                the map.
+              </p>
+            </div>
+            <Link href="/destinations" className="btn btn-outline">
+              Extras and campsite tips →
+            </Link>
+          </div>
+        </Reveal>
+        <div className="mt-12">
+          <Suspense
+            fallback={
+              <div className="h-[34rem] animate-pulse rounded-[1.75rem] bg-sand/60" />
+            }
+          >
+            <Parks />
+          </Suspense>
         </div>
       </section>
 
