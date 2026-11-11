@@ -409,3 +409,28 @@ body {
   text-transform: uppercase;
   color: var(--color-clay) !important;
 }
+
+/* Date pop-up (components/DateRangeField.tsx) */
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.98);
+  }
+}
+.pop-in {
+  animation: pop-in 0.2s ease-out;
+}
+@keyframes sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+.sheet-in {
+  animation: sheet-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .pop-in,
+  .sheet-in {
+    animation: none;
+  }
+}

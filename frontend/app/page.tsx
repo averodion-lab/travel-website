@@ -5,7 +5,7 @@ import BookCta from "@/components/BookCta";
 import CountUp from "@/components/CountUp";
 import Header from "@/components/Header";
 import Reveal from "@/components/Reveal";
-import ParksMap from "@/components/ParksMap";
+import MapAndBooking from "@/components/MapAndBooking";
 import RoomTour, { type Room } from "@/components/RoomTour";
 import { rate } from "@/lib/format";
 import { getParks } from "@/lib/parks";
@@ -60,7 +60,7 @@ async function Trailer() {
       <Reveal>
         <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="eyebrow text-clay">(01) {camper.class_type}</p>
+            <p className="eyebrow text-clay">(02) {camper.class_type}</p>
             <h2 className="mt-4 font-display text-6xl uppercase leading-[0.9] tracking-tight sm:text-8xl">{camper.name}</h2>
             {camper.tagline && <p className="mt-4 max-w-xl font-display text-2xl italic text-bark">{camper.tagline}</p>}
           </div>
@@ -103,9 +103,9 @@ async function Trailer() {
 
 /** The campgrounds map (same as on /destinations). */
 async function Parks() {
-  const data = await getParks();
-  if (!data) return <p className="text-muted">The campground map is loading slowly right now. Please refresh in a moment.</p>;
-  return <ParksMap parks={data.parks} compact />;
+  const [data, trailer] = await Promise.all([getParks(), getTrailer()]);
+  if (!data || !trailer) return <p className="text-muted">The campground map is loading slowly right now. Please refresh in a moment.</p>;
+  return <MapAndBooking parks={data.parks} camperSlug={trailer.slug} dailyRate={trailer.daily_rate} minNights={trailer.min_nights} />;
 }
 
 /** Big numbers under the hero. */
@@ -182,6 +182,30 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Destinations: the campgrounds map */}
+      <section id="destinations" className="mx-auto max-w-7xl scroll-mt-20 px-5 py-24 sm:px-8 sm:py-32">
+        <Reveal>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <p className="eyebrow text-clay">(01) Where to go</p>
+              <h2 className="mt-4 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl">Mountains, lakes</h2>
+              <p className="script text-5xl sm:text-6xl">and open road</p>
+              <p className="mt-5 max-w-xl leading-relaxed text-bark">
+                Eleven RV parks across five states where we deliver and set up the trailer. Pick your park and dates, and book.
+              </p>
+            </div>
+            <Link href="/destinations" className="btn btn-outline">
+              Extras and campsite tips →
+            </Link>
+          </div>
+        </Reveal>
+        <div className="mt-12">
+          <Suspense fallback={<div className="h-[34rem] animate-pulse rounded-[1.75rem] bg-sand/60" />}>
+            <Parks />
+          </Suspense>
+        </div>
+      </section>
+
       {/* Numbers */}
       <section className="border-b border-line">
         <Suspense fallback={<div className="h-56" />}>
@@ -200,7 +224,7 @@ export default function Home() {
       <section className="bg-pine-dark text-cream">
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 sm:px-8 sm:py-32 lg:grid-cols-2">
           <Reveal>
-            <p className="eyebrow text-cream/60">(02) Why rent with us</p>
+            <p className="eyebrow text-cream/60">(03) Why rent with us</p>
             <h2 className="mt-5 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl">More than a rental.</h2>
             <p className="script mt-1 text-5xl sm:text-6xl">A better way to get away</p>
             <p className="mt-8 max-w-lg leading-relaxed text-cream/75">
@@ -239,7 +263,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-ink/70" />
         <div className="relative mx-auto max-w-7xl">
           <Reveal className="text-center">
-            <p className="eyebrow">(03) How it works</p>
+            <p className="eyebrow">(04) How it works</p>
             <h2 className="mt-4 font-display text-5xl uppercase tracking-tight sm:text-7xl">From booking</h2>
             <p className="script text-5xl sm:text-6xl">to campfire</p>
           </Reveal>
@@ -259,30 +283,6 @@ export default function Home() {
           <div className="mt-12 text-center">
             <Link href="/how-it-works" className="btn btn-light">See every step</Link>
           </div>
-        </div>
-      </section>
-
-      {/* Destinations: the campgrounds map */}
-      <section id="destinations" className="mx-auto max-w-7xl scroll-mt-20 px-5 py-24 sm:px-8 sm:py-32">
-        <Reveal>
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="max-w-2xl">
-              <p className="eyebrow text-clay">(04) Where to go</p>
-              <h2 className="mt-4 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl">Mountains, lakes</h2>
-              <p className="script text-5xl sm:text-6xl">and open road</p>
-              <p className="mt-5 max-w-xl leading-relaxed text-bark">
-                Eleven RV parks across five states where we deliver and set up the trailer. Tap a pin or pick a state.
-              </p>
-            </div>
-            <Link href="/destinations" className="btn btn-outline">
-              Extras and campsite tips →
-            </Link>
-          </div>
-        </Reveal>
-        <div className="mt-12">
-          <Suspense fallback={<div className="h-[34rem] animate-pulse rounded-[1.75rem] bg-sand/60" />}>
-            <Parks />
-          </Suspense>
         </div>
       </section>
 

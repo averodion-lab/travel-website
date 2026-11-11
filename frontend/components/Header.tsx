@@ -65,7 +65,7 @@ export default function Header({ overlay = false }: { overlay?: boolean }) {
           </nav>
 
           <div className="flex items-center gap-3">
-            <Link href="/fleet#book" className={`btn ${clear ? "btn-light" : "btn-dark"} !px-5 !py-3`}>
+            <Link href="/book-now" className={`btn ${clear ? "btn-light" : "btn-dark"} !px-5 !py-3`}>
               Book Now
             </Link>
             <details className="group relative lg:hidden">

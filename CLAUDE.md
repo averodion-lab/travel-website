@@ -53,7 +53,7 @@ backend/                Flask API (port 5001 locally)
   migrations/           Flask-Migrate (Alembic)
   tests/                pytest, runs against real Postgres (database camper_test)
 frontend/               Next.js 16 App Router + Tailwind v4 (port 3210 locally)
-  app/                  / , /fleet , /fleet/[slug] , /gallery , /how-it-works , /destinations , /faq , /book , /booking/confirmation , /admin
+  app/                  / , /fleet , /fleet/[slug] , /book-now , /gallery , /how-it-works , /destinations , /faq , /book , /booking/confirmation , /admin
   components/           Header, Footer, PageHero, BookCta, CamperCard, Gallery, BookingWidget, CardLogos, Reveal, CountUp, RoomTour, ParksMap (Leaflet + OpenStreetMap tiles)
   app/admin/            AdminApp (login + shell), types.tsx, views/ (Overview, Calendar, Bookings, Customers, BookingDrawer)
   lib/trailer.ts        getTrailer() for server components (first active camper)
@@ -81,7 +81,8 @@ Ports 3000 and 3100 are used by the owner's other projects on this machine; this
 ## How the booking flow works
 
 1. `/fleet/[slug]`: `BookingWidget` loads booked ranges and shows a two-month calendar with month/year dropdowns. The visitor clicks a pickup day, then a return day (a return may land on another booking's pickup day). `POST /api/quote` returns the server-computed price.
-2. `/book`: a stepped page (Dates → Your trip → Your details → Payment). "Your trip" picks the campground (`?park=` from the map preselects it) and switches extras on or off: a 4-wheeler at mountain parks, a jet ski at lake parks, charged per day. `POST /api/quote` and `POST /api/bookings` take `park` and `addons`; `catalog.resolve()` rejects an extra the park doesn't offer, and the server sets every price. The payment step reviews the details, shows the accepted cards and the deposit, then the form posts multipart to `POST /api/bookings`. Backend validates, encrypts PII, saves the encrypted license file, creates a **pending** booking (holds dates 35 min), returns `checkout_url`.
+2. `/book-now` (header "Book Now" button; the home page bar sends people here with park and dates): one card with campground, dates (`DateRangeField`: a pop-up two-month calendar, a bottom sheet on phones) and extras as checkboxes, plus the live quote. "Book now" goes to `/book?…&addons=a,b&step=details`. Calendar rules (minimum stay, booked nights, can't run into the next booking) live in `lib/stay.ts`, shared with the trailer page calendar.
+2b. `/book`: a stepped page (Dates → Your trip → Your details → Payment). "Your trip" picks the campground (`?park=` from the map preselects it) and switches extras on or off: a 4-wheeler at mountain parks, a jet ski at lake parks, charged per day. `POST /api/quote` and `POST /api/bookings` take `park` and `addons`; `catalog.resolve()` rejects an extra the park doesn't offer, and the server sets every price. The payment step reviews the details, shows the accepted cards and the deposit, then the form posts multipart to `POST /api/bookings`. Backend validates, encrypts PII, saves the encrypted license file, creates a **pending** booking (holds dates 35 min), returns `checkout_url`.
 3. Stripe Checkout (30 min session). `POST /api/webhooks/stripe` verifies the signature and calls `confirm_booking`, which marks it **confirmed** and sends the customer + owner emails. Idempotent.
 4. `/booking/confirmation?ref=...` polls `GET /api/bookings/<ref>` (no contact details in that response).
 5. Owner dashboard at `/admin` (full-screen, covers the site footer): Overview (revenue, occupancy, who has the trailer, open dates), Calendar (year view by status), Bookings, Customers. Data comes from `GET /api/admin/overview` and `/api/admin/customers`. Revenue definitions are at the top of `services/reports.py`. Owner marks a booking **completed** there; `flask purge-licenses` deletes license data 30 days later.
@@ -101,6 +102,7 @@ Dates are half-open `[start_date, end_date)`: a return day can be the next custo
 - `Header` is a fixed client component (transparent over a hero with `overlay`, solid after scrolling). Anything that calls `usePathname()` must sit inside `<Suspense>` or `/fleet/[slug]` fails to prerender; that is why the nav links have their own boundary.
 - Motion: `Reveal` (scroll-in), `.hero-zoom`, `.rise`, `CountUp`, `RoomTour` (auto-advancing room tabs). All respect `prefers-reduced-motion`.
 - The parks map (`ParksMap`) is on the home page (`compact` list: one row per park) and on `/destinations` (full cards with descriptions). `/destinations` is the parks map page: pins coloured by terrain, state filter buttons, a list where each park name links to the park's website, and "Book here" links to `/fleet?park=<slug>#book`. Data comes from `GET /api/parks`. The preview build uses the copy in `lib/preview.ts` (`PREVIEW_PARKS`), which must be kept in sync with `catalog.py`.
+- `ParksMap` wraps the map in `isolate`: Leaflet's layers use z-index up to 1000 and would otherwise cover the sticky header and pop-ups. Pop-ups that must escape cards (the date picker) render into `document.body` with `createPortal`.
 - Site name comes from `NEXT_PUBLIC_SITE_NAME` (frontend) and `SITE_NAME` (backend emails). Currently the placeholder `YourName`.
 - No fake reviews, stats or testimonials. Add real ones when the owner supplies them.
 

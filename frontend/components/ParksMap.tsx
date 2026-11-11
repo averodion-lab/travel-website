@@ -57,12 +57,18 @@ function popupHtml(p: Park) {
 }
 
 /** `compact` (home page): a shorter list without the park descriptions. */
+/** `onPick`: when given, the list's "Book" button hands the park to the page
+ *  (the home page's booking bar) instead of going to the trailer page. */
 export default function ParksMap({
   parks,
   compact = false,
+  picked = "",
+  onPick,
 }: {
   parks: Park[];
   compact?: boolean;
+  picked?: string;
+  onPick?: (slug: string) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<LeafletMap | null>(null);
@@ -257,7 +263,9 @@ export default function ParksMap({
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
-        <div className="relative">
+        {/* `isolate` keeps Leaflet's high z-index layers inside the map, so they
+            can't cover the sticky header or the date pop-up. */}
+        <div className="relative isolate">
           {/* The fade lives on a wrapper: Leaflet adds its own classes to the map
               element, and React must never re-render that element's className. */}
           <div
@@ -330,13 +338,29 @@ export default function ParksMap({
                     </span>
                   ))}
                 </span>
-                <Link
-                  href={`/fleet?park=${p.slug}#book`}
-                  className="eyebrow shrink-0 text-clay hover:underline"
-                  aria-label={`Book the trailer at ${p.name}`}
-                >
-                  Book →
-                </Link>
+                {onPick ? (
+                  <button
+                    type="button"
+                    onClick={() => onPick(p.slug)}
+                    aria-pressed={picked === p.slug}
+                    className={`eyebrow shrink-0 rounded-full px-3 py-1.5 transition-colors ${
+                      picked === p.slug
+                        ? "bg-clay text-white"
+                        : "text-clay hover:bg-clay/10"
+                    }`}
+                    aria-label={`Book the trailer at ${p.name}`}
+                  >
+                    {picked === p.slug ? "Chosen ✓" : "Book →"}
+                  </button>
+                ) : (
+                  <Link
+                    href={`/fleet?park=${p.slug}#book`}
+                    className="eyebrow shrink-0 text-clay hover:underline"
+                    aria-label={`Book the trailer at ${p.name}`}
+                  >
+                    Book →
+                  </Link>
+                )}
               </li>
             ))}
           </ul>

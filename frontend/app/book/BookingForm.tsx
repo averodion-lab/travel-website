@@ -25,7 +25,7 @@ export default function BookingForm() {
   const [quoteError, setQuoteError] = useState("");
   // Campground (slug, "" = somewhere else) and the extras switched on.
   const [park, setPark] = useState(params.get("park") ?? "");
-  const [addons, setAddons] = useState<string[]>([]);
+  const [addons, setAddons] = useState<string[]>(() => (params.get("addons") ?? "").split(",").filter(Boolean));
   const [loadError, setLoadError] = useState("");
   const [error, setError] = useState("");
   const [datesTaken, setDatesTaken] = useState(false);
@@ -33,7 +33,8 @@ export default function BookingForm() {
   // Preview site: the last step explains that nothing was booked.
   const [previewDone, setPreviewDone] = useState(false);
   // "details" collects the traveller's information; "payment" reviews it and pays.
-  const [step, setStep] = useState<"trip" | "details" | "payment">("trip");
+  // Coming from the Book Now page, the trip is already planned.
+  const [step, setStep] = useState<"trip" | "details" | "payment">(() => (params.get("step") === "details" ? "details" : "trip"));
   const [review, setReview] = useState({ name: "", email: "", phone: "" });
   const formRef = useRef<HTMLFormElement>(null);
 

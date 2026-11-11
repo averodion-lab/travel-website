@@ -2,13 +2,12 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { addDays, addMonths, differenceInCalendarDays, isSameDay, startOfDay } from "date-fns";
-import { DayPicker, type DateRange, type Matcher } from "react-day-picker";
+import { addMonths, differenceInCalendarDays, startOfDay } from "date-fns";
+import { DayPicker, type DateRange } from "react-day-picker";
 import CardLogos from "@/components/CardLogos";
 import { api, type Camper, type QuoteResponse } from "@/lib/api";
 import { fromISO, isISODate, money, rate, toISO } from "@/lib/format";
-
-type Booked = { start: string; end: string };
+import { bookedNights as takenNights, disabledDays, nextRange, type Booked } from "@/lib/stay";
 
 const dateLabel = (d: Date) =>
   d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" });
@@ -50,38 +49,9 @@ export default function BookingWidget({ camper }: { camper: Camper }) {
   const pickup = range?.from;
   const choosingReturn = !!pickup && !range?.to;
 
-  // A booking occupies its pickup day up to (not including) its return day,
-  // so someone else's return day is open for pickup.
-  const bookedNights = useMemo<Matcher[]>(
-    () => booked.map((b) => ({ from: fromISO(b.start), to: addDays(fromISO(b.end), -1) })),
-    [booked],
-  );
-
-  // While the visitor is choosing a return day, the trip can run up to the
-  // next booking's pickup day (returning that morning is fine) but not past it,
-  // and must be at least the minimum stay.
-  const disabled = useMemo<Matcher[]>(() => {
-    if (!choosingReturn || !pickup) return [{ before: today }, ...bookedNights];
-    const next = booked.map((b) => fromISO(b.start)).find((start) => start > pickup);
-    const rules: Matcher[] = [
-      { before: today },
-      ...booked
-        .filter((b) => fromISO(b.start) < pickup)
-        .map((b) => ({ from: fromISO(b.start), to: addDays(fromISO(b.end), -1) })),
-    ];
-    if (camper.min_nights > 1) {
-      rules.push({ from: addDays(pickup, 1), to: addDays(pickup, camper.min_nights - 1) });
-    }
-    if (next) rules.push({ after: next });
-    return rules;
-  }, [choosingReturn, pickup, today, bookedNights, booked, camper.min_nights]);
-
-  function pickDay(day: Date) {
-    if (!choosingReturn || !pickup) setRange({ from: day, to: undefined });
-    else if (isSameDay(day, pickup)) setRange(undefined);
-    else if (day < pickup) setRange({ from: day, to: undefined });
-    else setRange({ from: pickup, to: day });
-  }
+  const bookedNights = useMemo(() => takenNights(booked), [booked]);
+  const disabled = useMemo(() => disabledDays(range, booked, today, camper.min_nights), [range, booked, today, camper.min_nights]);
+  const pickDay = (day: Date) => setRange(nextRange(range, day));
 
   const start = range?.from ? toISO(range.from) : "";
   const end = range?.to ? toISO(range.to) : "";
