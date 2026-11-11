@@ -86,7 +86,7 @@ export default function Confirmation() {
         </p>
       </div>
 
-      <div className="mt-12 border border-line bg-white/70">
+      <div className="mt-12 overflow-hidden rounded-[2rem] bg-white shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">
         {booking.camper.image_url && (
           <div className="relative aspect-[5/2]">
             <Image src={booking.camper.image_url} alt={booking.camper.name} fill sizes="48rem" className="object-cover" />
@@ -152,5 +152,5 @@ export default function Confirmation() {
 }
 
 function Panel({ children }: { children: React.ReactNode }) {
-  return <div className="mx-auto max-w-2xl border border-line bg-white/60 px-6 py-16 text-center">{children}</div>;
+  return <div className="mx-auto max-w-2xl rounded-[2rem] bg-white px-6 py-16 text-center shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">{children}</div>;
 }

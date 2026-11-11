@@ -28,7 +28,7 @@ export default function Footer() {
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-cream/70">
             A luxury fifth-wheel rental for the mountains and lakes of the Southeast.
           </p>
-          <Link href="/fleet#book" className="btn btn-light mt-7">Check availability</Link>
+          <Link href="/book-now" className="btn btn-light mt-7">Book now</Link>
         </div>
         <div>
           <p className="eyebrow text-cream/50">Explore</p>
@@ -43,7 +43,7 @@ export default function Footer() {
         <div>
           <p className="eyebrow text-cream/50">Serving</p>
           <p className="mt-5 text-sm leading-relaxed text-cream/80">
-            Alabama, Georgia, Florida, North Carolina, South Carolina and Tennessee
+            Georgia, South Carolina, North Carolina, Tennessee and Alabama
           </p>
           <p className="eyebrow mt-8 text-cream/50">We accept</p>
           <CardLogos className="mt-4" />

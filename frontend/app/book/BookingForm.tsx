@@ -7,7 +7,13 @@ import { useSearchParams } from "next/navigation";
 import AddonIcon from "@/components/AddonIcon";
 import CardLogos, { Lock } from "@/components/CardLogos";
 import { PREVIEW } from "@/lib/preview";
-import { api, ApiError, type Camper, type ParksResponse, type QuoteResponse } from "@/lib/api";
+import {
+  api,
+  ApiError,
+  type Camper,
+  type ParksResponse,
+  type QuoteResponse,
+} from "@/lib/api";
 import { STATE_ORDER } from "@/lib/parks";
 import { isISODate, longDate, money, rate } from "@/lib/format";
 
@@ -21,11 +27,16 @@ export default function BookingForm() {
   const [camper, setCamper] = useState<Camper | null>(null);
   const [catalog, setCatalog] = useState<ParksResponse | null>(null);
   // Latest quote, tagged with the choices it was priced for.
-  const [priced, setPriced] = useState<{ key: string; quote: QuoteResponse } | null>(null);
+  const [priced, setPriced] = useState<{
+    key: string;
+    quote: QuoteResponse;
+  } | null>(null);
   const [quoteError, setQuoteError] = useState("");
   // Campground (slug, "" = somewhere else) and the extras switched on.
   const [park, setPark] = useState(params.get("park") ?? "");
-  const [addons, setAddons] = useState<string[]>(() => (params.get("addons") ?? "").split(",").filter(Boolean));
+  const [addons, setAddons] = useState<string[]>(() =>
+    (params.get("addons") ?? "").split(",").filter(Boolean),
+  );
   const [loadError, setLoadError] = useState("");
   const [error, setError] = useState("");
   const [datesTaken, setDatesTaken] = useState(false);
@@ -34,7 +45,9 @@ export default function BookingForm() {
   const [previewDone, setPreviewDone] = useState(false);
   // "details" collects the traveller's information; "payment" reviews it and pays.
   // Coming from the Book Now page, the trip is already planned.
-  const [step, setStep] = useState<"trip" | "details" | "payment">(() => (params.get("step") === "details" ? "details" : "trip"));
+  const [step, setStep] = useState<"trip" | "details" | "payment">(() =>
+    params.get("step") === "details" ? "details" : "trip",
+  );
   const [review, setReview] = useState({ name: "", email: "", phone: "" });
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -55,7 +68,8 @@ export default function BookingForm() {
   const parkInfo = catalog?.parks.find((p) => p.slug === park) ?? null;
   const parkSlug = parkInfo ? parkInfo.slug : "";
   const chosen = useMemo(
-    () => addons.filter((code) => parkInfo?.addons.some((a) => a.code === code)),
+    () =>
+      addons.filter((code) => parkInfo?.addons.some((a) => a.code === code)),
     [addons, parkInfo],
   );
   const choiceKey = `${parkSlug}|${chosen.join(",")}`;
@@ -67,7 +81,13 @@ export default function BookingForm() {
     api<QuoteResponse>("/api/quote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ camper: slug, start, end, park: parkSlug, addons: chosen }),
+      body: JSON.stringify({
+        camper: slug,
+        start,
+        end,
+        park: parkSlug,
+        addons: chosen,
+      }),
     })
       .then((q) => {
         if (cancelled) return;
@@ -190,10 +210,13 @@ export default function BookingForm() {
     return (
       <div className="mx-auto max-w-2xl rounded-[2rem] border border-line bg-white/80 px-6 py-14 text-center sm:px-12">
         <p className="eyebrow text-clay">Online booking opens soon</p>
-        <h2 className="mt-4 font-display text-5xl leading-none sm:text-6xl">Almost there.</h2>
+        <h2 className="mt-4 font-display text-5xl leading-none sm:text-6xl">
+          Almost there.
+        </h2>
         <p className="mx-auto mt-6 max-w-md leading-relaxed text-bark">
-          This is a preview of our booking system, which isn&apos;t switched on yet. Your card was not charged, no
-          booking was made, and the details you entered were not sent anywhere.
+          This is a preview of our booking system, which isn&apos;t switched on
+          yet. Your card was not charged, no booking was made, and the details
+          you entered were not sent anywhere.
         </p>
         <dl className="mx-auto mt-8 grid max-w-md grid-cols-2 gap-px border border-line bg-line text-left text-sm">
           <div className="bg-cream px-4 py-3">
@@ -210,8 +233,15 @@ export default function BookingForm() {
           </div>
         </dl>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <Link href={`/fleet/${slug}?start=${start}&end=${end}#book`} className="btn btn-primary">Back to the calendar</Link>
-          <Link href="/" className="btn btn-outline">Home</Link>
+          <Link
+            href={`/fleet/${slug}?start=${start}&end=${end}#book`}
+            className="btn btn-primary"
+          >
+            Back to the calendar
+          </Link>
+          <Link href="/" className="btn btn-outline">
+            Home
+          </Link>
         </div>
       </div>
     );
@@ -229,7 +259,9 @@ export default function BookingForm() {
     parks: catalog.parks.filter((p) => p.state === state),
   })).filter((g) => g.parks.length > 0);
   const toggle = (code: string) =>
-    setAddons((list) => (list.includes(code) ? list.filter((c) => c !== code) : [...list, code]));
+    setAddons((list) =>
+      list.includes(code) ? list.filter((c) => c !== code) : [...list, code],
+    );
   const needs = { mountains: "mountain parks", lake: "lake parks" } as const;
   const goTo = (next: "trip" | "details") => {
     setStep(next);
@@ -238,7 +270,7 @@ export default function BookingForm() {
 
   return (
     <>
-      <ol className="mb-12 grid grid-cols-4 border border-line bg-white/60 text-left">
+      <ol className="mb-10 grid grid-cols-4 overflow-hidden rounded-2xl border border-line bg-white/60 text-left">
         {steps.map((item, i) => {
           const done = i < stepIndex;
           const active = i === stepIndex;
@@ -268,8 +300,12 @@ export default function BookingForm() {
         })}
       </ol>
 
-      <div className="grid gap-12 lg:grid-cols-[1fr_24rem]">
-        <form ref={formRef} onSubmit={onSubmit} className="space-y-12">
+      <div className="grid gap-8 lg:grid-cols-[1fr_24rem]">
+        <form
+          ref={formRef}
+          onSubmit={onSubmit}
+          className="space-y-12 rounded-[2rem] bg-white p-6 shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] sm:p-9"
+        >
           <p className="eyebrow text-clay sm:hidden">
             Step {stepIndex + 1} of 4: {steps[stepIndex].label}
           </p>
@@ -278,10 +314,12 @@ export default function BookingForm() {
           {step === "trip" && (
             <div className="space-y-12">
               <section>
-                <h2 className="font-display text-4xl">Where are you staying?</h2>
+                <h2 className="font-display text-4xl">
+                  Where are you staying?
+                </h2>
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-                  We deliver the trailer and set it up at your campsite. Reserve the site with the park
-                  directly.{" "}
+                  We deliver the trailer and set it up at your campsite. Reserve
+                  the site with the park directly.{" "}
                   <Link href="/destinations" className="text-clay underline">
                     See all parks on the map
                   </Link>
@@ -295,7 +333,9 @@ export default function BookingForm() {
                   onChange={(e) => setPark(e.target.value)}
                   className="field"
                 >
-                  <option value="">Another campground (we&apos;ll confirm it with you)</option>
+                  <option value="">
+                    Another campground (we&apos;ll confirm it with you)
+                  </option>
                   {parksByState.map((g) => (
                     <optgroup key={g.state} label={g.state}>
                       {g.parks.map((p) => (
@@ -307,12 +347,18 @@ export default function BookingForm() {
                   ))}
                 </select>
                 {parkInfo && (
-                  <div className="mt-4 rounded-2xl bg-white p-5 text-sm">
+                  <div className="mt-4 rounded-2xl bg-cream p-5 text-sm">
                     <p className="eyebrow text-muted">
                       {parkInfo.city}, {parkInfo.state} ·{" "}
-                      {parkInfo.terrain.length ? parkInfo.terrain.map((t) => (t === "lake" ? "Lake" : "Mountains")).join(" and ") : "Foothills"}
+                      {parkInfo.terrain.length
+                        ? parkInfo.terrain
+                            .map((t) => (t === "lake" ? "Lake" : "Mountains"))
+                            .join(" and ")
+                        : "Foothills"}
                     </p>
-                    <p className="mt-2 leading-relaxed text-bark">{parkInfo.description}</p>
+                    <p className="mt-2 leading-relaxed text-bark">
+                      {parkInfo.description}
+                    </p>
                     <a
                       href={parkInfo.url}
                       target="_blank"
@@ -328,11 +374,14 @@ export default function BookingForm() {
               <section>
                 <h2 className="font-display text-4xl">Extras</h2>
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-                  Optional. Delivered with the trailer and charged per day of your trip.
+                  Optional. Delivered with the trailer and charged per day of
+                  your trip.
                 </p>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   {catalog.addons.map((a) => {
-                    const offered = !!parkInfo?.addons.some((x) => x.code === a.code);
+                    const offered = !!parkInfo?.addons.some(
+                      (x) => x.code === a.code,
+                    );
                     const on = chosen.includes(a.code);
                     const tripTotal = Number(a.daily_rate) * quote.quote.days;
                     return (
@@ -344,7 +393,11 @@ export default function BookingForm() {
                         disabled={!offered}
                         onClick={() => toggle(a.code)}
                         className={`flex flex-col rounded-2xl border-2 p-5 text-left transition-colors disabled:cursor-not-allowed ${
-                          on ? "border-pine bg-pine text-cream" : offered ? "border-line bg-white hover:border-pine" : "border-line bg-white/50 opacity-60"
+                          on
+                            ? "border-pine bg-pine text-cream"
+                            : offered
+                              ? "border-line bg-white hover:border-pine"
+                              : "border-line bg-white/50 opacity-60"
                         }`}
                       >
                         <span className="flex items-start justify-between gap-3">
@@ -354,17 +407,27 @@ export default function BookingForm() {
                               size={52}
                               className={`transition-transform duration-300 ${on ? "scale-110" : ""} ${offered ? "" : "grayscale"}`}
                             />
-                            <span className="font-display text-3xl leading-none">{a.name}</span>
+                            <span className="font-display text-3xl leading-none">
+                              {a.name}
+                            </span>
                           </span>
                           <span
                             aria-hidden="true"
                             className={`relative mt-1 h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-cream/30" : "bg-sand"}`}
                           >
-                            <span className={`absolute top-0.5 h-5 w-5 rounded-full shadow transition-all ${on ? "left-[1.375rem] bg-cream" : "left-0.5 bg-white"}`} />
+                            <span
+                              className={`absolute top-0.5 h-5 w-5 rounded-full shadow transition-all ${on ? "left-[1.375rem] bg-cream" : "left-0.5 bg-white"}`}
+                            />
                           </span>
                         </span>
-                        <span className={`mt-3 text-sm leading-relaxed ${on ? "text-cream/85" : "text-bark"}`}>{a.description}</span>
-                        <span className={`mt-4 text-sm font-semibold ${on ? "" : "text-ink"}`}>
+                        <span
+                          className={`mt-3 text-sm leading-relaxed ${on ? "text-cream/85" : "text-bark"}`}
+                        >
+                          {a.description}
+                        </span>
+                        <span
+                          className={`mt-4 text-sm font-semibold ${on ? "" : "text-ink"}`}
+                        >
                           {offered
                             ? `${rate(a.daily_rate)}/day · ${money(tripTotal)} for ${quote.quote.days} days`
                             : `Only at ${needs[a.terrain]}`}
@@ -374,10 +437,16 @@ export default function BookingForm() {
                   })}
                 </div>
                 {!parkInfo && (
-                  <p className="mt-4 text-sm text-muted">Choose a campground from the list to see which extras it offers.</p>
+                  <p className="mt-4 text-sm text-muted">
+                    Choose a campground from the list to see which extras it
+                    offers.
+                  </p>
                 )}
                 {quoteError && (
-                  <p className="mt-4 border border-clay bg-clay/10 px-4 py-3 text-sm text-clay-dark" role="alert">
+                  <p
+                    className="mt-4 border border-clay bg-clay/10 px-4 py-3 text-sm text-clay-dark"
+                    role="alert"
+                  >
                     {quoteError}
                   </p>
                 )}
@@ -385,14 +454,25 @@ export default function BookingForm() {
 
               <section>
                 {/* Phones: the summary is further down, so show the running total here. */}
-                <div className={`mb-5 flex items-baseline justify-between rounded-2xl bg-white px-5 py-4 transition-opacity lg:hidden ${repricing ? "opacity-50" : ""}`} aria-live="polite">
+                <div
+                  className={`mb-5 flex items-baseline justify-between rounded-2xl bg-white px-5 py-4 transition-opacity lg:hidden ${repricing ? "opacity-50" : ""}`}
+                  aria-live="polite"
+                >
                   <span className="text-sm text-muted">Trip total</span>
                   <span>
-                    <span className="font-display text-3xl">{money(quote.quote.total)}</span>
-                    <span className="block text-right text-xs text-muted">{money(quote.quote.deposit_due)} due today</span>
+                    <span className="font-display text-3xl">
+                      {money(quote.quote.total)}
+                    </span>
+                    <span className="block text-right text-xs text-muted">
+                      {money(quote.quote.deposit_due)} due today
+                    </span>
                   </span>
                 </div>
-                <button type="button" onClick={() => goTo("details")} className="btn btn-primary w-full sm:w-auto sm:min-w-72">
+                <button
+                  type="button"
+                  onClick={() => goTo("details")}
+                  className="btn btn-primary w-full sm:w-auto sm:min-w-72"
+                >
                   Continue to your details →
                 </button>
               </section>
@@ -507,7 +587,7 @@ export default function BookingForm() {
                     type="file"
                     required
                     accept=".jpg,.jpeg,.png,.webp,.heic,.pdf,image/*,application/pdf"
-                    className="field !py-[0.55rem] text-sm file:mr-3 file:border-0 file:bg-sand file:px-3 file:py-1.5 file:text-xs file:font-semibold file:uppercase file:tracking-widest"
+                    className="field !py-[0.55rem] text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-sand file:px-3 file:py-1.5 file:text-xs file:font-semibold file:uppercase file:tracking-widest"
                   />
                   <p className="mt-2 text-xs text-muted">
                     JPG, PNG, HEIC or PDF, up to 10 MB.
@@ -524,7 +604,11 @@ export default function BookingForm() {
               >
                 Continue to payment →
               </button>
-              <button type="button" onClick={() => goTo("trip")} className="eyebrow text-muted hover:text-ink">
+              <button
+                type="button"
+                onClick={() => goTo("trip")}
+                className="eyebrow text-muted hover:text-ink"
+              >
                 ← Back to your trip
               </button>
             </section>
@@ -544,13 +628,21 @@ export default function BookingForm() {
                     Edit details
                   </button>
                 </div>
-                <dl className="mt-5 grid gap-px border border-line bg-line text-sm sm:grid-cols-3 [&>div:nth-child(4)]:sm:col-span-2">
+                <dl className="mt-5 grid gap-px overflow-hidden rounded-2xl border border-line bg-line text-sm sm:grid-cols-3 [&>div:nth-child(4)]:sm:col-span-2">
                   {[
                     ["Name", review.name],
                     ["Email", review.email],
                     ["Phone", review.phone],
-                    ["Campground", parkInfo ? parkInfo.name : "Another campground"],
-                    ["Extras", q.addons.length ? q.addons.map((a) => a.name).join(", ") : "None"],
+                    [
+                      "Campground",
+                      parkInfo ? parkInfo.name : "Another campground",
+                    ],
+                    [
+                      "Extras",
+                      q.addons.length
+                        ? q.addons.map((a) => a.name).join(", ")
+                        : "None",
+                    ],
                   ].map(([label, value]) => (
                     <div key={label} className="bg-white px-4 py-3">
                       <dt className="label !mb-1">{label}</dt>
@@ -562,7 +654,7 @@ export default function BookingForm() {
 
               <section>
                 <h2 className="font-display text-4xl">Payment</h2>
-                <div className="mt-5 border-2 border-pine bg-white">
+                <div className="mt-5 overflow-hidden rounded-2xl border-2 border-pine bg-white">
                   <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-5">
                     <div className="flex items-center gap-3">
                       <span
@@ -643,8 +735,8 @@ export default function BookingForm() {
           )}
         </form>
 
-        <aside className="lg:sticky lg:top-8 lg:self-start">
-          <div className="border border-line bg-white/70">
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">
             {camper.image_url && (
               <div className="relative aspect-[3/2]">
                 <Image
@@ -659,7 +751,7 @@ export default function BookingForm() {
             <div className="p-6">
               <p className="eyebrow text-clay">{camper.class_type}</p>
               <p className="mt-2 font-display text-3xl">{camper.name}</p>
-              <dl className="mt-5 grid grid-cols-2 gap-px bg-line text-sm">
+              <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden rounded-xl bg-line text-sm">
                 <div className="bg-cream px-4 py-3">
                   <dt className="label !mb-1">Pickup</dt>
                   <dd>{longDate(start!)}</dd>
@@ -670,16 +762,21 @@ export default function BookingForm() {
                 </div>
               </dl>
               <Link
-                href={`/fleet/${slug}?start=${start}&end=${end}`}
+                href={`/book-now?${new URLSearchParams({ start: start!, end: end!, ...(parkSlug ? { park: parkSlug } : {}), ...(chosen.length ? { addons: chosen.join(",") } : {}) })}`}
                 className="eyebrow mt-3 inline-block text-clay hover:underline"
               >
-                Change dates
+                Change trip
               </Link>
               <p className="mt-5 text-sm">
                 <span className="text-muted">Campground: </span>
-                {parkInfo ? `${parkInfo.name}, ${parkInfo.state}` : "Another campground"}
+                {parkInfo
+                  ? `${parkInfo.name}, ${parkInfo.state}`
+                  : "Another campground"}
               </p>
-              <dl className={`mt-6 space-y-2 text-sm transition-opacity ${repricing ? "opacity-50" : ""}`} aria-busy={repricing}>
+              <dl
+                className={`mt-6 space-y-2 text-sm transition-opacity ${repricing ? "opacity-50" : ""}`}
+                aria-busy={repricing}
+              >
                 <div className="flex justify-between">
                   <dt>
                     {rate(q.daily_rate)} × {q.days} nights
@@ -740,7 +837,7 @@ function Notice({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="border border-line bg-white/60 px-6 py-16 text-center">
+    <div className="rounded-[2rem] bg-white px-6 py-16 text-center shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">
       <p className="font-display text-4xl">{title}</p>
       {text && <p className="mx-auto mt-4 max-w-md text-muted">{text}</p>}
       {children}

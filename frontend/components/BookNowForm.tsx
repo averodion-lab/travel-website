@@ -21,14 +21,21 @@ export default function BookNowForm({
   camper,
   parks,
   addons,
+  park: parkProp,
+  onParkChange,
 }: {
   camper: Camper;
   parks: Park[];
   addons: Park["addons"];
+  /** Optional: let the page control the campground (the home page map fills it in). */
+  park?: string;
+  onParkChange?: (slug: string) => void;
 }) {
   const router = useRouter();
   const params = useSearchParams();
-  const [park, setPark] = useState(params.get("park") ?? "");
+  const [ownPark, setOwnPark] = useState(params.get("park") ?? "");
+  const park = parkProp ?? ownPark;
+  const setPark = onParkChange ?? setOwnPark;
   const [start, setStart] = useState(() =>
     isISODate(params.get("start")) ? params.get("start")! : "",
   );
@@ -196,7 +203,9 @@ export default function BookNowForm({
                       <span className="flex flex-wrap items-baseline justify-between gap-x-3">
                         <span className="font-medium">{a.name}</span>
                         {/* Phones: price next to the name, so the text has room. */}
-                        <span className="text-sm font-semibold sm:hidden">+ {rate(a.daily_rate)}/day</span>
+                        <span className="text-sm font-semibold sm:hidden">
+                          + {rate(a.daily_rate)}/day
+                        </span>
                       </span>
                       <span className="mt-0.5 block text-xs text-muted">
                         {offered

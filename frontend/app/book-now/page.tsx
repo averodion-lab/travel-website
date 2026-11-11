@@ -1,9 +1,9 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
+import BookNowForm from "@/components/BookNowForm";
 import Header from "@/components/Header";
 import { getParks } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
-import BookNowForm from "./BookNowForm";
 
 export const metadata: Metadata = {
   title: "Book Now",

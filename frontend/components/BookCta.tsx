@@ -10,8 +10,8 @@ export default function BookCta({ image = "/images/smoky-sunset.jpg" }: { image?
       <div className="relative">
         <h2 className="font-display text-6xl uppercase leading-[0.92] sm:text-7xl">Ready to book</h2>
         <p className="script -mt-1 text-6xl sm:text-7xl">your getaway?</p>
-        <Link href="/fleet#book" className="btn btn-light mt-10">
-          Check availability
+        <Link href="/book-now" className="btn btn-light mt-10">
+          Book now
         </Link>
       </div>
     </section>
