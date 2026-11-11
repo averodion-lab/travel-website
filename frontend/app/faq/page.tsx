@@ -9,7 +9,8 @@ import { getTrailer } from "@/lib/trailer";
 
 export const metadata: Metadata = {
   title: "FAQ",
-  description: "Answers about booking, payment, delivery, campsites and what's included.",
+  description:
+    "Answers about booking, payment, delivery, campsites and what's included.",
 };
 
 type Group = { title: string; items: { q: string; a: React.ReactNode }[] };
@@ -38,8 +39,9 @@ async function Questions() {
           q: "Which cards do you accept?",
           a: (
             <>
-              Visa, Mastercard and American Express. Payment runs through Stripe&apos;s secure checkout, so we never see
-              or store your card number.
+              Visa, Mastercard and American Express. Payment runs through
+              Stripe&apos;s secure checkout, so we never see or store your card
+              number.
               <CardLogos className="mt-4" />
             </>
           ),
@@ -97,21 +99,33 @@ async function Questions() {
   return (
     <div className="space-y-16">
       {groups.map((group, g) => (
-        <section key={group.title} className="grid gap-8 lg:grid-cols-[18rem_1fr]">
+        <section
+          key={group.title}
+          className="grid gap-8 lg:grid-cols-[18rem_1fr]"
+        >
           <div>
-            <p className="eyebrow text-clay">({String(g + 1).padStart(2, "0")})</p>
+            <p className="eyebrow text-clay">
+              ({String(g + 1).padStart(2, "0")})
+            </p>
             <h2 className="mt-3 font-display text-4xl">{group.title}</h2>
           </div>
           <div className="border-t border-line">
             {group.items.map((item) => (
               <details key={item.q} className="faq group border-b border-line">
                 <summary className="flex items-center justify-between gap-6 py-6">
-                  <span className="font-display text-2xl sm:text-3xl">{item.q}</span>
-                  <span className="faq-plus flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink text-xl transition-transform" aria-hidden="true">
+                  <span className="font-display text-2xl sm:text-3xl">
+                    {item.q}
+                  </span>
+                  <span
+                    className="faq-plus flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink text-xl transition-transform"
+                    aria-hidden="true"
+                  >
                     +
                   </span>
                 </summary>
-                <div className="max-w-2xl pb-7 leading-relaxed text-bark">{item.a}</div>
+                <div className="max-w-2xl pb-7 leading-relaxed text-bark">
+                  {item.a}
+                </div>
               </details>
             ))}
           </div>
@@ -125,9 +139,17 @@ export default function FaqPage() {
   return (
     <>
       <Header overlay />
-      <PageHero image="/images/smoky-meadow.jpg" eyebrow="Good to know" title="Questions" accent="answered" />
+      <PageHero
+        seed={47}
+        image="/images/smoky-meadow.jpg"
+        eyebrow="Good to know"
+        title="Questions"
+        accent="answered"
+      />
       <main className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-        <Suspense fallback={<div className="h-[40rem] animate-pulse bg-sand/60" />}>
+        <Suspense
+          fallback={<div className="h-[40rem] animate-pulse bg-sand/60" />}
+        >
           <Questions />
         </Suspense>
       </main>

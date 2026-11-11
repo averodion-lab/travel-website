@@ -435,3 +435,38 @@ body {
     animation: none;
   }
 }
+
+/* Treelines (components/Treeline.tsx): far layers drift slower than near ones
+   as the page scrolls, for a bit of depth. Browsers without scroll-driven
+   animations just show them still. */
+@keyframes tree-ridge {
+  from {
+    transform: translateY(22%);
+  }
+  to {
+    transform: translateY(-6%);
+  }
+}
+@keyframes tree-far {
+  from {
+    transform: translateY(12%);
+  }
+  to {
+    transform: translateY(-3%);
+  }
+}
+@supports (animation-timeline: view()) {
+  .treeline .tree-layer-ridge {
+    animation: tree-ridge linear both;
+    animation-timeline: view();
+  }
+  .treeline .tree-layer-far {
+    animation: tree-far linear both;
+    animation-timeline: view();
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .treeline .tree-layer {
+    animation: none !important;
+  }
+}

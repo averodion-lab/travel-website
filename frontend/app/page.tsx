@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Reveal from "@/components/Reveal";
 import MapAndBooking from "@/components/MapAndBooking";
 import RoomTour, { type Room } from "@/components/RoomTour";
+import Treeline from "@/components/Treeline";
 import { rate } from "@/lib/format";
 import { getParks } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
@@ -223,7 +224,7 @@ export default function Home() {
       <Header overlay />
 
       {/* Hero */}
-      <section className="relative flex min-h-[46rem] flex-col items-center justify-center overflow-hidden px-5 pb-28 pt-36 text-center text-cream sm:min-h-screen">
+      <section className="relative flex min-h-[46rem] flex-col items-center justify-center overflow-hidden px-5 pb-40 pt-36 text-center text-cream sm:min-h-screen">
         <Image
           src="/images/blueridge-rays.jpg"
           alt=""
@@ -268,12 +269,13 @@ export default function Home() {
             </Link>
           </div>
         </div>
-        <p className="eyebrow absolute bottom-8 left-5 hidden text-left leading-relaxed sm:left-8 sm:block">
+        <Treeline color="var(--color-ink)" height={220} seed={3} />
+        <p className="eyebrow absolute bottom-8 left-5 z-10 hidden text-left leading-relaxed sm:left-8 sm:block">
           Delivered
           <br />
           across the Southeast
         </p>
-        <p className="eyebrow absolute bottom-8 right-5 hidden text-right leading-relaxed sm:right-8 sm:block">
+        <p className="eyebrow absolute bottom-8 right-5 z-10 hidden text-right leading-relaxed sm:right-8 sm:block">
           Sleeps six
           <br />
           Forty feet
@@ -339,8 +341,8 @@ export default function Home() {
         </Suspense>
       </section>
 
-      {/* The trailer */}
-      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8 sm:py-32">
+      {/* The trailer (extra room at the bottom for the pines rising from the next section) */}
+      <section className="mx-auto max-w-7xl px-5 pb-40 pt-24 sm:px-8 sm:pb-56 sm:pt-32">
         <Suspense
           fallback={
             <div className="h-[44rem] animate-pulse rounded-[2rem] bg-sand/60" />
@@ -351,7 +353,13 @@ export default function Home() {
       </section>
 
       {/* Intro */}
-      <section className="bg-pine-dark text-cream">
+      <section className="relative bg-pine-dark text-cream">
+        <Treeline
+          color="var(--color-pine-dark)"
+          height={170}
+          seed={17}
+          className="!bottom-auto top-0 -translate-y-[99%]"
+        />
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 py-24 sm:px-8 sm:py-32 lg:grid-cols-2">
           <Reveal>
             <p className="eyebrow text-cream/60">(03) Why rent with us</p>
@@ -413,7 +421,7 @@ export default function Home() {
       {/* How it works */}
       <section
         id="how-it-works"
-        className="relative scroll-mt-20 px-5 py-28 text-cream sm:px-8"
+        className="relative scroll-mt-20 overflow-hidden px-5 pb-44 pt-28 text-cream sm:px-8"
       >
         <Image
           src="/images/lake-campsite.jpg"
@@ -454,6 +462,12 @@ export default function Home() {
             </Link>
           </div>
         </div>
+        <Treeline
+          color="var(--color-cream)"
+          height={150}
+          seed={41}
+          ridge={false}
+        />
       </section>
 
       {/* Explore */}

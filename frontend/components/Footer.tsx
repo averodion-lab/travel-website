@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import CardLogos from "@/components/CardLogos";
+import Treeline from "@/components/Treeline";
 import { SITE_NAME } from "@/lib/api";
 
 const STRIP = [
@@ -18,26 +19,66 @@ export default function Footer() {
       <div className="grid grid-cols-3 sm:grid-cols-6">
         {STRIP.map(([src, alt]) => (
           <div key={src} className="relative aspect-square">
-            <Image src={src} alt={alt} fill sizes="(min-width:640px) 17vw, 34vw" className="object-cover" />
+            <Image
+              src={src}
+              alt={alt}
+              fill
+              sizes="(min-width:640px) 17vw, 34vw"
+              className="object-cover"
+            />
           </div>
         ))}
       </div>
+      <div className="relative">
+        {/* A dark treeline rising over the photo strip */}
+        <Treeline
+          color="var(--color-ink)"
+          height={140}
+          seed={23}
+          className="!bottom-auto top-0 -translate-y-[99%]"
+        />
+      </div>
       <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <p className="font-display text-3xl tracking-[0.12em] uppercase">{SITE_NAME}</p>
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-cream/70">
-            A luxury fifth-wheel rental for the mountains and lakes of the Southeast.
+          <p className="font-display text-3xl tracking-[0.12em] uppercase">
+            {SITE_NAME}
           </p>
-          <Link href="/book-now" className="btn btn-light mt-7">Book now</Link>
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-cream/70">
+            A luxury fifth-wheel rental for the mountains and lakes of the
+            Southeast.
+          </p>
+          <Link href="/book-now" className="btn btn-light mt-7">
+            Book now
+          </Link>
         </div>
         <div>
           <p className="eyebrow text-cream/50">Explore</p>
           <ul className="mt-5 space-y-3 text-sm">
-            <li><Link href="/fleet" className="hover:text-clay">The Trailer</Link></li>
-            <li><Link href="/gallery" className="hover:text-clay">Gallery</Link></li>
-            <li><Link href="/how-it-works" className="hover:text-clay">How It Works</Link></li>
-            <li><Link href="/destinations" className="hover:text-clay">Destinations</Link></li>
-            <li><Link href="/faq" className="hover:text-clay">FAQ</Link></li>
+            <li>
+              <Link href="/fleet" className="hover:text-clay">
+                The Trailer
+              </Link>
+            </li>
+            <li>
+              <Link href="/gallery" className="hover:text-clay">
+                Gallery
+              </Link>
+            </li>
+            <li>
+              <Link href="/how-it-works" className="hover:text-clay">
+                How It Works
+              </Link>
+            </li>
+            <li>
+              <Link href="/destinations" className="hover:text-clay">
+                Destinations
+              </Link>
+            </li>
+            <li>
+              <Link href="/faq" className="hover:text-clay">
+                FAQ
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
@@ -52,7 +93,9 @@ export default function Footer() {
       <div className="border-t border-cream/15">
         <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-6 text-xs text-cream/50 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <p>© {SITE_NAME}. All rights reserved.</p>
-          <Link href="/admin" className="hover:text-cream">Owner sign in</Link>
+          <Link href="/admin" className="hover:text-cream">
+            Owner sign in
+          </Link>
         </div>
       </div>
     </footer>
