@@ -82,7 +82,7 @@ export default function BookingDrawer({
                 <Row
                   label={
                     booking.transport.code === "delivery"
-                      ? `Getting there: delivery and setup${booking.transport.miles ? `, ${booking.transport.miles} mi each way` : ""}`
+                      ? `Getting there: delivery and setup${booking.transport.miles ? `, ${booking.transport.miles} mi from base` : ""}`
                       : booking.transport.code === "truck"
                         ? `Getting there: renting our truck${booking.towing_experience ? " (towing experience confirmed)" : ""}`
                         : "Getting there: customer tows it"

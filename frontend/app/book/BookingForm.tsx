@@ -423,7 +423,7 @@ export default function BookingForm() {
               <section>
                 <h2 className="font-display text-4xl">Extras</h2>
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-                  Optional. Delivered with the trailer and charged per day of
+                  Optional. They ride along on the trailer and are charged per day of
                   your trip.
                 </p>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">

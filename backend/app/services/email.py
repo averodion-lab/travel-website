@@ -48,7 +48,7 @@ def _trip(b: Booking) -> str:
     t = b.transport_info()
     getting_there = t["name"]
     if t["code"] == "delivery" and t.get("miles"):
-        getting_there += f" ({t['miles']} miles each way)"
+        getting_there += f" ({t['miles']} miles from base)"
     if t["code"] != "self":
         getting_there += f", {_money(Decimal(t['total']))}"
     if t["code"] == "truck":

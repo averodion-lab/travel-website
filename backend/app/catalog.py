@@ -10,7 +10,8 @@ Nottely from The Dyrt listing (its own website was unreachable).
 
 Getting there: guests tow with their own truck, rent ours (TRUCK, per day,
 towing experience required) or have us deliver and set up the trailer
-(DELIVERY_PER_MILE, for the drive there at drop-off and back at pick-up).
+(DELIVERY_PER_MILE, one way: the drive from BASE to the campground at drop-off).
+Extras (4-wheeler, jet ski) ride on the trailer, however it gets there.
 Delivery miles are road miles from BASE, measured with OSRM (Nov 2026).
 The truck's daily rate is a PLACEHOLDER until the owner confirms it.
 """
@@ -44,10 +45,10 @@ class Addon:
 BASE = "Canton / Woodstock, GA"
 BASE_LAT, BASE_LNG = 34.169, -84.505
 
-# Delivery and setup: per mile, counted for the drive there (drop-off) and
-# the drive back (pick-up).
+# Delivery and setup: per mile, one way (the drive to the campground at
+# drop-off). Picking it up afterwards is not charged.
 DELIVERY_PER_MILE = Decimal("3.50")
-DELIVERY_TRIPS = 2
+DELIVERY_TRIPS = 1
 
 
 @dataclass(frozen=True)
@@ -108,9 +109,9 @@ ADDONS: dict[str, Addon] = {
     a.code: a
     for a in (
         Addon("atv", "4-wheeler", Decimal("150.00"), "mountains",
-              "A 4-wheeler delivered with the trailer for exploring mountain trails."),
+              "A 4-wheeler that rides along on the trailer, for exploring mountain trails."),
         Addon("jetski", "Jet ski", Decimal("250.00"), "lake",
-              "A jet ski delivered with the trailer, ready for the lake."),
+              "A jet ski that rides along on the trailer, ready for the lake."),
     )
 }
 

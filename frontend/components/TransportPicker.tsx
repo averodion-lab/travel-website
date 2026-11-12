@@ -58,7 +58,7 @@ export default function TransportPicker({
       code: "delivery",
       title: "Delivery and setup",
       detail: park
-        ? `We bring it to ${park.name}, level it and hook it up, then collect it after your trip. ${park.delivery_miles} miles each way from ${info.base}.`
+        ? `We bring it to ${park.name}, level it and hook it up, and collect it after your trip. ${park.delivery_miles} miles from ${info.base}, charged one way.`
         : "We bring it to your campsite and set it up. Choose a campground from the list to see the price.",
       price: park
         ? `${rate(perMile)}/mile · ${money(deliveryTotal)}`
@@ -143,7 +143,7 @@ export function transportLabel(t: {
   days?: number;
 }) {
   if (t.code === "delivery")
-    return t.miles ? `${t.name} (${t.miles} mi each way)` : t.name;
+    return t.miles ? `${t.name} (${t.miles} mi)` : t.name;
   if (t.code === "truck")
     return t.days ? `Truck rental × ${t.days} days` : "Truck rental";
   return t.name;

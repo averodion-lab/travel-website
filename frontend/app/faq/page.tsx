@@ -86,7 +86,7 @@ async function Questions() {
         },
         {
           q: "How much is delivery?",
-          a: "$3.50 a mile, for the drive to your campground when we drop the trailer off and again when we pick it up. Choose a campground when you book and you'll see the exact price before you pay.",
+          a: "$3.50 a mile, one way: the drive from our base in Canton/Woodstock, GA to your campground. Picking it up afterwards is free. Choose a campground when you book and you'll see the exact price before you pay.",
         },
         {
           q: "Can I tow it myself?",
@@ -94,7 +94,7 @@ async function Questions() {
         },
         {
           q: "Can I rent a 4-wheeler or a jet ski?",
-          a: "Yes, as an optional extra when you book. 4-wheelers are available at our mountain parks and jet skis at our lake parks. We deliver them with the trailer, and they're charged per day of your trip. The Destinations page shows which park offers what.",
+          a: "Yes, as an optional extra when you book. 4-wheelers are available at our mountain parks and jet skis at our lake parks. They ride along on the trailer, whether we deliver it or you tow it, and they're charged per day of your trip. The Destinations page shows which park offers what.",
         },
         {
           q: "Why do you need a driver's license?",

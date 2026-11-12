@@ -77,14 +77,14 @@ export const PREVIEW_PARKS: ParksResponse = {
     {
       "code": "atv",
       "daily_rate": "150.00",
-      "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+      "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
       "name": "4-wheeler",
       "terrain": "mountains"
     },
     {
       "code": "jetski",
       "daily_rate": "250.00",
-      "description": "A jet ski delivered with the trailer, ready for the lake.",
+      "description": "A jet ski that rides along on the trailer, ready for the lake.",
       "name": "Jet ski",
       "terrain": "lake"
     }
@@ -95,7 +95,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
           "name": "4-wheeler",
           "terrain": "mountains"
         }
@@ -118,7 +118,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
           "name": "4-wheeler",
           "terrain": "mountains"
         }
@@ -141,14 +141,14 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
           "name": "4-wheeler",
           "terrain": "mountains"
         },
         {
           "code": "jetski",
           "daily_rate": "250.00",
-          "description": "A jet ski delivered with the trailer, ready for the lake.",
+          "description": "A jet ski that rides along on the trailer, ready for the lake.",
           "name": "Jet ski",
           "terrain": "lake"
         }
@@ -172,7 +172,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "jetski",
           "daily_rate": "250.00",
-          "description": "A jet ski delivered with the trailer, ready for the lake.",
+          "description": "A jet ski that rides along on the trailer, ready for the lake.",
           "name": "Jet ski",
           "terrain": "lake"
         }
@@ -195,7 +195,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
           "name": "4-wheeler",
           "terrain": "mountains"
         }
@@ -218,7 +218,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
           "name": "4-wheeler",
           "terrain": "mountains"
         }
@@ -241,7 +241,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
           "name": "4-wheeler",
           "terrain": "mountains"
         }
@@ -264,7 +264,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler delivered with the trailer for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
           "name": "4-wheeler",
           "terrain": "mountains"
         }
@@ -287,7 +287,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "jetski",
           "daily_rate": "250.00",
-          "description": "A jet ski delivered with the trailer, ready for the lake.",
+          "description": "A jet ski that rides along on the trailer, ready for the lake.",
           "name": "Jet ski",
           "terrain": "lake"
         }
@@ -310,7 +310,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "jetski",
           "daily_rate": "250.00",
-          "description": "A jet ski delivered with the trailer, ready for the lake.",
+          "description": "A jet ski that rides along on the trailer, ready for the lake.",
           "name": "Jet ski",
           "terrain": "lake"
         }
@@ -346,7 +346,7 @@ export const PREVIEW_PARKS: ParksResponse = {
     "base": "Canton / Woodstock, GA",
     "delivery": {
       "per_mile": "3.50",
-      "trips": 2
+      "trips": 1
     },
     "truck": {
       "code": "truck",
