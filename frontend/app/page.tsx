@@ -49,6 +49,14 @@ const EXPLORE = [
   },
 ];
 
+/** Turns a list of features into one sentence: "a, b, c and d." Keeps
+ *  abbreviations like "TV" as they are, lowercases the rest. */
+function featureSentence(items: string[]) {
+  const words = items.map((a, i) => (i === 0 || /^[A-Z]{2}/.test(a) ? a : a.charAt(0).toLowerCase() + a.slice(1)));
+  if (words.length < 2) return `${words.join("")}.`;
+  return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}.`;
+}
+
 /** The trailer, with its live price and specs from the API. */
 async function Trailer() {
   const camper = await getTrailer();
@@ -103,16 +111,10 @@ async function Trailer() {
             {camper.description}
           </p>
           <div>
-            <ul className="flex flex-wrap gap-2">
-              {camper.amenities.slice(0, 12).map((a) => (
-                <li
-                  key={a}
-                  className="rounded-full border border-ink/20 px-4 py-2 text-sm"
-                >
-                  {a}
-                </li>
-              ))}
-            </ul>
+            <p className="leading-relaxed text-bark">
+              <span className="eyebrow mr-2 text-clay">On board</span>
+              {featureSentence(camper.amenities.slice(0, 12))}
+            </p>
             <Link href={href} className="btn btn-outline mt-8">
               Photos, floor plan and specs →
             </Link>
