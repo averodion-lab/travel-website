@@ -247,7 +247,7 @@ export default function Home() {
         accent="inside."
       />
 
-      <section className="mx-auto max-w-7xl px-5 pb-28 pt-12 sm:px-8 sm:pb-36">
+      <section className="mx-auto max-w-7xl px-5 pb-16 pt-12 sm:px-8 sm:pb-20">
         <Suspense fallback={<div className="h-[30rem] animate-pulse bg-sand/60" />}>
           <Residence />
         </Suspense>
