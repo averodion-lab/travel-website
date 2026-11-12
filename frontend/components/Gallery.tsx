@@ -10,10 +10,13 @@ function Carousel({
   photos,
   name,
   onOpen,
+  large = false,
 }: {
   photos: string[];
   name: string;
   onOpen: (i: number) => void;
+  /** Bigger slides, for the Gallery page. */
+  large?: boolean;
 }) {
   const track = useRef<HTMLDivElement>(null);
   const drag = useRef({ active: false, startX: 0, startLeft: 0, moved: false });
@@ -118,14 +121,22 @@ function Carousel({
             onClick={() => {
               if (!drag.current.moved) onOpen(i);
             }}
-            className="group relative aspect-[4/3] w-[86%] shrink-0 snap-start overflow-hidden rounded-[1.75rem] bg-sand sm:w-[62%] lg:w-[47%]"
+            className={`group relative shrink-0 snap-start overflow-hidden rounded-[1.75rem] bg-sand ${
+              large
+                ? "aspect-[4/3] w-[90%] sm:aspect-[3/2] sm:w-[80%] lg:w-[70%]"
+                : "aspect-[4/3] w-[86%] sm:w-[62%] lg:w-[47%]"
+            }`}
           >
             <Image
               src={src}
               alt={`${name}, photo ${i + 1}`}
               fill
               draggable={false}
-              sizes="(min-width:1024px) 47vw, (min-width:640px) 62vw, 86vw"
+              sizes={
+                large
+                  ? "(min-width:1024px) 70vw, (min-width:640px) 80vw, 90vw"
+                  : "(min-width:1024px) 47vw, (min-width:640px) 62vw, 86vw"
+              }
               className="pointer-events-none select-none object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             />
           </button>
@@ -170,7 +181,8 @@ export default function Gallery({
 }: {
   photos: string[];
   name: string;
-  layout?: "grid" | "masonry" | "carousel";
+  /** "slideshow": the carousel with big slides (Gallery page). */
+  layout?: "grid" | "masonry" | "carousel" | "slideshow";
 }) {
   const [open, setOpen] = useState<number | null>(null);
   const count = photos.length;
@@ -202,6 +214,8 @@ export default function Gallery({
     <>
       {layout === "carousel" ? (
         <Carousel photos={photos} name={name} onOpen={setOpen} />
+      ) : layout === "slideshow" ? (
+        <Carousel photos={photos} name={name} onOpen={setOpen} large />
       ) : layout === "masonry" ? (
         <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
           {photos.map((src, i) => (

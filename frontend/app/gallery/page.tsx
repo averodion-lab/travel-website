@@ -21,7 +21,7 @@ async function Photos() {
       </p>
     );
   const photos = trailer.gallery.filter((src) => !src.includes("floorplan"));
-  return <Gallery photos={photos} name={trailer.name} layout="masonry" />;
+  return <Gallery photos={photos} name={trailer.name} layout="slideshow" />;
 }
 
 export default function GalleryPage() {
@@ -36,6 +36,10 @@ export default function GalleryPage() {
         accent="take a look around"
       />
       <main className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
+        <p className="mb-8 text-center text-sm text-muted">
+          Slide left and right to see every photo. Tap one to see it full
+          screen.
+        </p>
         <Suspense
           fallback={
             <div className="h-[40rem] animate-pulse rounded-2xl bg-sand/60" />
