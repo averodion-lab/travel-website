@@ -126,14 +126,22 @@ function Waiting() {
               Everything is <em>already waiting.</em>
             </h2>
           </InView>
-          <ul className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2">
+          {/* Phones: icon beside the title, tighter spacing. Larger screens: icon above, 2x2 grid. */}
+          <ul className="mt-8 grid gap-x-10 gap-y-5 sm:mt-12 sm:grid-cols-2 sm:gap-y-10">
             {WAITING.map((w, i) => (
-              <InView as="li" key={w.title} delay={150 + i * 140} className="lux-rise border-t border-line pt-6">
-                <span className="text-clay">
+              <InView
+                as="li"
+                key={w.title}
+                delay={150 + i * 140}
+                className="lux-rise flex gap-4 border-t border-line pt-5 sm:block sm:pt-6"
+              >
+                <span className="mt-0.5 shrink-0 text-clay sm:mt-0 sm:block">
                   <Icon>{w.icon}</Icon>
                 </span>
-                <h3 className="mt-4 font-display text-2xl">{w.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{w.text}</p>
+                <div>
+                  <h3 className="font-display text-xl leading-snug sm:mt-4 sm:text-2xl">{w.title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-muted sm:mt-2">{w.text}</p>
+                </div>
               </InView>
             ))}
           </ul>
