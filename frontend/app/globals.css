@@ -286,7 +286,9 @@ body {
   font-size: 9px;
   background: rgba(247, 243, 236, 0.55);
   color: var(--color-muted);
-  border-top-left-radius: 4px;
+  border-radius: 4px;
+  /* Sit inside the map's rounded corner instead of being clipped by it. */
+  margin: 0 18px 8px 0 !important;
 }
 .parks-map .leaflet-control-attribution a {
   color: var(--color-muted);
