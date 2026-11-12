@@ -98,8 +98,8 @@ def sent_emails(monkeypatch):
     """Capture outgoing email instead of sending it."""
     sent: list[dict] = []
 
-    def fake_send(to, subject, body):
-        sent.append({"to": to, "subject": subject, "body": body})
+    def fake_send(to, subject, body, reply_to=None):
+        sent.append({"to": to, "subject": subject, "body": body, "reply_to": reply_to})
         return True
 
     monkeypatch.setattr("app.services.email.send_email", fake_send)

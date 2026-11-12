@@ -121,7 +121,7 @@ export default function DestinationsPage() {
         eyebrow="Where to go"
         title="Mountains, lakes"
         accent="and open road"
-        text="Eleven RV parks across five states. Tow the trailer there, or we deliver and set it up. Tap a pin to see the park."
+        text="Eighteen RV parks across five states, or anywhere else you choose. Tow the trailer there, or we deliver and set it up. Tap a pin to see the park."
       />
 
       <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8">

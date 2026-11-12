@@ -23,6 +23,18 @@ def _new_reference() -> str:
     return "BK-" + "".join(secrets.choice(_ALPHABET) for _ in range(10))
 
 
+def _encrypt_place(park) -> str | None:
+    """A typed destination may be a private address, so it is stored encrypted."""
+    import json
+
+    from ..catalog import Place
+    from ..crypto import encrypt_str
+
+    if not isinstance(park, Place):
+        return None
+    return encrypt_str(json.dumps({"name": park.name, "lat": park.lat, "lng": park.lng}))
+
+
 def create_booking(
     *,
     camper: Camper,
@@ -69,6 +81,8 @@ def create_booking(
             deposit_due=quote.deposit_due,
             security_deposit=quote.security_deposit,
             park=park.slug if park else None,
+            delivery_miles=park.delivery_miles if (park and transport == "delivery") else None,
+            encrypted_place=_encrypt_place(park),
             addons=[
                 {**a, "daily_rate": str(a["daily_rate"]), "total": str(a["total"])} for a in quote.addons
             ],

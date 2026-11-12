@@ -66,7 +66,7 @@ const WAITING: { title: string; text: string; icon: ReactNode }[] = [
 ];
 
 const STEPS = [
-  ["Choose your place", "A mountain park or a lakeside campground, from eleven across the Southeast."],
+  ["Choose your place", "One of eighteen mountain and lakeside parks, or anywhere else you choose."],
   ["We prepare everything", "We deliver the residence and set up your campsite before you arrive."],
   ["Arrive and unwind", "Walk in to a home that is ready. We stay a phone call away."],
 ];
@@ -149,7 +149,7 @@ async function Numbers() {
   const stats: [number, string, string][] = [
     [camper?.length_ft ? Math.round(camper.length_ft) : 40, " ft", "of private residence"],
     [camper?.sleeps ?? 6, "", "guests, two bedrooms"],
-    [11, "", "mountain and lake places"],
+    [18, "", "mountain and lake places"],
     [4, "", "slide-outs of open space"],
   ];
   return (
@@ -290,7 +290,7 @@ export default function Home() {
                 Choose your place, <em>we&apos;ll prepare it.</em>
               </h2>
               <p className="mt-5 max-w-xl leading-relaxed text-muted">
-                Eleven mountain and lakeside parks across the Southeast. Tap a pin to see the park, then reserve right
+                Eighteen mountain and lakeside parks across the Southeast, or type your own place when you book. Tap a pin to see the park, then reserve right
                 below the map.
               </p>
             </div>

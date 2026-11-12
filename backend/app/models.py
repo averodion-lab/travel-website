@@ -114,6 +114,11 @@ class Booking(db.Model):
     transport = db.Column(db.String(20), nullable=False, default="self", server_default="self")
     transport_total = db.Column(db.Numeric(10, 2), nullable=False, default=0, server_default=text("0"))
     towing_experience = db.Column(db.Boolean, nullable=False, default=False, server_default=text("false"))
+    # Road miles from our base, saved when the trailer is delivered.
+    delivery_miles = db.Column(db.Integer, nullable=True)
+    # A place the guest typed in (park == "custom"): {name, lat, lng}, encrypted
+    # because it may be a private address.
+    encrypted_place = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(20), nullable=False, default=BookingStatus.PENDING)
     stripe_session_id = db.Column(db.String(200), unique=True)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=utcnow)
@@ -178,14 +183,26 @@ class Booking(db.Model):
         elif code == "delivery":
             park = PARKS.get(self.park or "")
             info["name"] = "Delivery and setup"
-            info["miles"] = park.delivery_miles if park else None
+            info["miles"] = self.delivery_miles or (park.delivery_miles if park else None)
         else:
             info["name"] = "Your own truck"
         return info
 
-    def park_info(self) -> dict | None:
-        from .catalog import PARKS
+    def place_details(self) -> dict | None:
+        """The typed destination, decrypted. Admin and emails only."""
+        import json
 
+        from .crypto import decrypt_str
+
+        raw = decrypt_str(self.encrypted_place) if self.encrypted_place else None
+        return json.loads(raw) if raw else None
+
+    def park_info(self) -> dict | None:
+        """Public view of the campground; a typed place is not revealed."""
+        from .catalog import CUSTOM_SLUG, PARKS
+
+        if self.park == CUSTOM_SLUG:
+            return {"slug": CUSTOM_SLUG, "name": "A place of your choice"}
         park = PARKS.get(self.park or "")
         if park is None:
             return {"slug": self.park, "name": self.park} if self.park else None

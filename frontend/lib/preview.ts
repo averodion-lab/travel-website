@@ -329,6 +329,183 @@ export const PREVIEW_PARKS: ParksResponse = {
       "url": "https://mountainlakesrvpark.com/"
     },
     {
+      "addons": [
+        {
+          "code": "jetski",
+          "daily_rate": "250.00",
+          "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "name": "Jet ski",
+          "terrain": "lake"
+        }
+      ],
+      "city": "Acworth",
+      "delivery_miles": 28,
+      "description": "On a wooded peninsula in Lake Allatoona, about half an hour from our base, with RV sites that have water and electric hookups.",
+      "lat": 34.14676,
+      "lng": -84.70765,
+      "name": "Red Top Mountain State Park",
+      "slug": "red-top-mountain",
+      "state": "Georgia",
+      "terrain": [
+        "lake"
+      ],
+      "url": "https://gastateparks.org/RedTopMountain"
+    },
+    {
+      "addons": [
+        {
+          "code": "jetski",
+          "daily_rate": "250.00",
+          "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "name": "Jet ski",
+          "terrain": "lake"
+        }
+      ],
+      "city": "Gainesville",
+      "delivery_miles": 62,
+      "description": "The only state park on Lake Lanier, with a sandy swimming beach, a boat ramp and roomy RV sites with water and electric hookups.",
+      "lat": 34.39011,
+      "lng": -83.74615,
+      "name": "Don Carter State Park",
+      "slug": "don-carter",
+      "state": "Georgia",
+      "terrain": [
+        "lake"
+      ],
+      "url": "https://gastateparks.org/DonCarter"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        }
+      ],
+      "city": "Helen",
+      "delivery_miles": 75,
+      "description": "In the North Georgia mountains just outside the Alpine town of Helen, with a small lake, trails to Anna Ruby Falls and water and electric RV sites.",
+      "lat": 34.7135,
+      "lng": -83.72616,
+      "name": "Unicoi State Park & Lodge",
+      "slug": "unicoi",
+      "state": "Georgia",
+      "terrain": [
+        "mountains"
+      ],
+      "url": "https://gastateparks.org/Unicoi"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        }
+      ],
+      "city": "Rising Fawn",
+      "delivery_miles": 97,
+      "description": "On the edge of a deep sandstone gorge on Lookout Mountain, with waterfalls, canyon-rim trails and water and electric RV sites.",
+      "lat": 34.8385,
+      "lng": -85.47664,
+      "name": "Cloudland Canyon State Park",
+      "slug": "cloudland-canyon",
+      "state": "Georgia",
+      "terrain": [
+        "mountains"
+      ],
+      "url": "https://gastateparks.org/CloudlandCanyon"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        },
+        {
+          "code": "jetski",
+          "daily_rate": "250.00",
+          "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "name": "Jet ski",
+          "terrain": "lake"
+        }
+      ],
+      "city": "Salem",
+      "delivery_miles": 133,
+      "description": "The only public access to Lake Jocassee, with clear mountain water and waterfalls. Lakeside RV sites with water and electric; some take rigs up to 40 feet.",
+      "lat": 34.95869,
+      "lng": -82.95442,
+      "name": "Devils Fork State Park",
+      "slug": "devils-fork",
+      "state": "South Carolina",
+      "terrain": [
+        "lake",
+        "mountains"
+      ],
+      "url": "https://southcarolinaparks.com/devils-fork"
+    },
+    {
+      "addons": [
+        {
+          "code": "jetski",
+          "daily_rate": "250.00",
+          "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "name": "Jet ski",
+          "terrain": "lake"
+        }
+      ],
+      "city": "Harrison",
+      "delivery_miles": 100,
+      "description": "On the shore of Chickamauga Lake near Chattanooga, with a marina and lakeside RV sites with water and electric hookups.",
+      "lat": 35.14751,
+      "lng": -85.10395,
+      "name": "Harrison Bay State Park",
+      "slug": "harrison-bay",
+      "state": "Tennessee",
+      "terrain": [
+        "lake"
+      ],
+      "url": "https://tnstateparks.com/parks/harrison-bay"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "name": "4-wheeler",
+          "terrain": "mountains"
+        },
+        {
+          "code": "jetski",
+          "daily_rate": "250.00",
+          "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "name": "Jet ski",
+          "terrain": "lake"
+        }
+      ],
+      "city": "Guntersville",
+      "delivery_miles": 127,
+      "description": "High on the bluffs above Lake Guntersville, with full-hookup sites (water, electric and sewer), forest trails and a lakeside beach.",
+      "lat": 34.39491,
+      "lng": -86.20797,
+      "name": "Lake Guntersville State Park",
+      "slug": "lake-guntersville",
+      "state": "Alabama",
+      "terrain": [
+        "lake",
+        "mountains"
+      ],
+      "url": "https://www.alapark.com/parks/lake-guntersville-state-park"
+    },
+    {
       "addons": [],
       "city": "Hartselle",
       "delivery_miles": 174,
@@ -376,15 +553,66 @@ const fixed = (n: number) => cents(n).toFixed(2);
 
 const NEEDS = { mountains: "mountain parks", lake: "lake parks" } as const;
 
+/* A destination the guest typed in: same rules as catalog.custom_place() on the
+   server. The preview has no server, so the browser measures the road miles
+   from the same routing service. */
+const BASE = { lat: 34.169, lng: -84.505 };
+const MAX_DELIVERY_MILES = 400;
+const REGION = { lat: [24, 40], lng: [-92, -75] };
+const milesCache = new Map<string, number>();
+
+type TypedPlace = { name: string; lat: number; lng: number; delivery_miles: number };
+
+async function typedPlace(raw: { name?: string; lat?: number; lng?: number } | undefined): Promise<TypedPlace> {
+  const name = (raw?.name ?? "").trim();
+  const lat = Number(raw?.lat);
+  const lng = Number(raw?.lng);
+  if (!name) throw new PreviewError("Please type where you're staying and pick it from the suggestions.");
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    throw new PreviewError("Please pick the place from the suggestions so we can find it on the map.");
+  }
+  if (lat < REGION.lat[0] || lat > REGION.lat[1] || lng < REGION.lng[0] || lng > REGION.lng[1]) {
+    throw new PreviewError("That place is outside the area we deliver to. Please contact us about it.");
+  }
+  const key = `${lat.toFixed(4)},${lng.toFixed(4)}`;
+  let miles = milesCache.get(key);
+  if (miles === undefined) {
+    try {
+      const res = await fetch(
+        `https://router.project-osrm.org/route/v1/driving/${BASE.lng},${BASE.lat};${lng},${lat}?overview=false`,
+      );
+      const data = await res.json();
+      miles = Math.round(data.routes[0].distance / 1609.344);
+      milesCache.set(key, miles);
+    } catch {
+      throw new PreviewError(
+        "We couldn't measure the distance to that place right now. Please try again, choose a campground from the list, or contact us.",
+        503,
+      );
+    }
+  }
+  if (miles > MAX_DELIVERY_MILES) {
+    throw new PreviewError(
+      `That place is ${miles} miles from our base, further than we deliver. Please contact us and we'll see what we can do.`,
+    );
+  }
+  return { name, lat, lng, delivery_miles: miles };
+}
+
 /** Same checks as catalog.resolve() on the server. */
-function extras(parkSlug: string | undefined, codes: string[] | undefined, nights: number): AddonLine[] {
-  const park = parkSlug ? PREVIEW_PARKS.parks.find((p) => p.slug === parkSlug) : undefined;
+function extras(parkSlug: string | undefined, codes: string[] | undefined, nights: number, place?: TypedPlace): AddonLine[] {
+  // A typed place may ask for either extra (the owner confirms).
+  const park = place
+    ? { terrain: ["mountains", "lake"] as string[] }
+    : parkSlug
+      ? PREVIEW_PARKS.parks.find((p) => p.slug === parkSlug)
+      : undefined;
   if (parkSlug && !park) throw new PreviewError("Please choose a campground from the list.");
   return [...new Set(codes ?? [])].map((code) => {
     const addon = PREVIEW_PARKS.addons.find((a) => a.code === code);
     if (!addon) throw new PreviewError("That extra isn't available.");
     if (!park) throw new PreviewError("Choose your campground to add extras.");
-    if (!park.terrain.includes(addon.terrain)) {
+    if (!(park.terrain as string[]).includes(addon.terrain)) {
       throw new PreviewError(`${addon.name}s are only available at ${NEEDS[addon.terrain]}.`);
     }
     const rate = Number(addon.daily_rate);
@@ -393,9 +621,15 @@ function extras(parkSlug: string | undefined, codes: string[] | undefined, night
 }
 
 /** Same rules as catalog.resolve_transport() and pricing.transport_line(). */
-function getThere(code: string | undefined, parkSlug: string | undefined, experience: boolean, nights: number): TransportLine {
+function getThere(
+  code: string | undefined,
+  parkSlug: string | undefined,
+  experience: boolean,
+  nights: number,
+  place?: TypedPlace,
+): TransportLine {
   const c = code || "self";
-  const park = PREVIEW_PARKS.parks.find((p) => p.slug === parkSlug);
+  const park = place ?? PREVIEW_PARKS.parks.find((p) => p.slug === parkSlug);
   const t = PREVIEW_PARKS.transport;
   if (c === "truck") {
     if (!experience) {
@@ -406,7 +640,7 @@ function getThere(code: string | undefined, parkSlug: string | undefined, experi
   }
   if (c === "delivery") {
     if (!park) {
-      throw new PreviewError("Delivery is priced by distance, so please choose a campground from the list (or call us about another one).");
+      throw new PreviewError("Delivery is priced by distance, so please choose a campground or type where you're staying.");
     }
     const per = Number(t.delivery.per_mile);
     return {
@@ -422,14 +656,15 @@ function getThere(code: string | undefined, parkSlug: string | undefined, experi
   return { code: "self", name: "Your own truck", total: "0.00" };
 }
 
-function quote(body: {
+async function quote(body: {
   start?: string;
   end?: string;
   park?: string;
+  place?: { name?: string; lat?: number; lng?: number };
   addons?: string[];
   transport?: string;
   towing_experience?: boolean;
-}): QuoteResponse {
+}): Promise<QuoteResponse> {
   const t = PREVIEW_TRAILER;
   const start = body.start ?? "";
   const end = body.end ?? "";
@@ -441,8 +676,9 @@ function quote(body: {
   if (nights < t.min_nights) throw new PreviewError(`This camper has a ${t.min_nights}-night minimum rental.`);
   if (nights > MAX_NIGHTS) throw new PreviewError(`Rentals are limited to ${MAX_NIGHTS} nights. Contact us for longer trips.`);
 
-  const lines = extras(body.park, body.addons, nights);
-  const transport = getThere(body.transport, body.park, body.towing_experience === true, nights);
+  const place = body.park === "custom" ? await typedPlace(body.place) : undefined;
+  const lines = extras(body.park, body.addons, nights, place);
+  const transport = getThere(body.transport, body.park, body.towing_experience === true, nights, place);
   const addonsTotal = cents(lines.reduce((sum, l) => sum + Number(l.total), 0));
   const subtotal = cents(Number(t.daily_rate) * nights);
   const total = cents(subtotal + Number(t.cleaning_fee) + addonsTotal + Number(transport.total));
@@ -450,6 +686,7 @@ function quote(body: {
   return {
     available: true,
     deposit_percent: DEPOSIT_PERCENT,
+    place: place ? { name: place.name, delivery_miles: place.delivery_miles } : null,
     quote: {
       days: nights,
       daily_rate: fixed(Number(t.daily_rate)),
@@ -475,7 +712,18 @@ export async function previewApi<T>(path: string, init?: RequestInit): Promise<T
   else if (route === "/api/campers") result = { campers: [PREVIEW_TRAILER] };
   else if (route === `/api/campers/${slug}`) result = { camper: PREVIEW_TRAILER };
   else if (route === `/api/campers/${slug}/availability`) result = { booked: [] };
-  else if (route === "/api/quote") result = quote(JSON.parse(String(init?.body ?? "{}")));
+  else if (route === "/api/quote") result = await quote(JSON.parse(String(init?.body ?? "{}")));
+  else if (route === "/api/distance") {
+    const q = new URLSearchParams(path.split("?")[1] ?? "");
+    const place = await typedPlace({ name: "place", lat: Number(q.get("lat")), lng: Number(q.get("lng")) });
+    const per = Number(PREVIEW_PARKS.transport.delivery.per_mile);
+    result = { delivery_miles: place.delivery_miles, delivery_total: fixed(per * place.delivery_miles * PREVIEW_PARKS.transport.delivery.trips) };
+  } else if (route === "/api/contact") {
+    throw new PreviewError(
+      "The contact form goes online together with booking. Nothing was sent; please email or call us for now.",
+      503,
+    );
+  }
   else if (route.startsWith("/api/campers/")) throw new PreviewError("Camper not found.", 404);
   else if (route.startsWith("/api/admin")) {
     throw new PreviewError("The owner dashboard goes online together with the booking system.", 503);

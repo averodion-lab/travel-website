@@ -164,6 +164,37 @@ PARKS: dict[str, Park] = {
              "On the eastern shore of 68,000-acre Lake Guntersville, with waterfront access, mountain-lake views "
              "and full hookups.",
              34.46252, -86.18366, frozenset({L}), 122),
+        Park("red-top-mountain", "Red Top Mountain State Park", "Georgia", "Acworth",
+             "https://gastateparks.org/RedTopMountain",
+             "On a wooded peninsula in Lake Allatoona, about half an hour from our base, with RV sites that "
+             "have water and electric hookups.",
+             34.14676, -84.70765, frozenset({L}), 28),
+        Park("don-carter", "Don Carter State Park", "Georgia", "Gainesville", "https://gastateparks.org/DonCarter",
+             "The only state park on Lake Lanier, with a sandy swimming beach, a boat ramp and roomy RV sites "
+             "with water and electric hookups.",
+             34.39011, -83.74615, frozenset({L}), 62),
+        Park("unicoi", "Unicoi State Park & Lodge", "Georgia", "Helen", "https://gastateparks.org/Unicoi",
+             "In the North Georgia mountains just outside the Alpine town of Helen, with a small lake, trails to "
+             "Anna Ruby Falls and water and electric RV sites.",
+             34.71350, -83.72616, frozenset({M}), 75),
+        Park("cloudland-canyon", "Cloudland Canyon State Park", "Georgia", "Rising Fawn",
+             "https://gastateparks.org/CloudlandCanyon",
+             "On the edge of a deep sandstone gorge on Lookout Mountain, with waterfalls, canyon-rim trails and "
+             "water and electric RV sites.",
+             34.83850, -85.47664, frozenset({M}), 97),
+        Park("devils-fork", "Devils Fork State Park", "South Carolina", "Salem", "https://southcarolinaparks.com/devils-fork",
+             "The only public access to Lake Jocassee, with clear mountain water and waterfalls. Lakeside RV sites "
+             "with water and electric; some take rigs up to 40 feet.",
+             34.95869, -82.95442, frozenset({M, L}), 133),
+        Park("harrison-bay", "Harrison Bay State Park", "Tennessee", "Harrison", "https://tnstateparks.com/parks/harrison-bay",
+             "On the shore of Chickamauga Lake near Chattanooga, with a marina and lakeside RV sites with water "
+             "and electric hookups.",
+             35.14751, -85.10395, frozenset({L}), 100),
+        Park("lake-guntersville", "Lake Guntersville State Park", "Alabama", "Guntersville",
+             "https://www.alapark.com/parks/lake-guntersville-state-park",
+             "High on the bluffs above Lake Guntersville, with full-hookup sites (water, electric and sewer), "
+             "forest trails and a lakeside beach.",
+             34.39491, -86.20797, frozenset({M, L}), 127),
         Park("quail-creek", "Quail Creek Resort", "Alabama", "Hartselle", "https://www.qcresort.com/",
              "A quiet, rural park in the Appalachian foothills with a fishing pond, a golf course and "
              "pull-through RV sites.",
@@ -173,11 +204,65 @@ PARKS: dict[str, Park] = {
 
 _NEEDS = {"mountains": "mountain parks", "lake": "lake parks"}
 
+# A destination the guest types in instead of choosing one of our parks.
+CUSTOM_SLUG = "custom"
+MAX_DELIVERY_MILES = 400
+# Rough box around the Southeast; anything outside is refused before measuring.
+REGION = {"lat": (24.0, 40.0), "lng": (-92.0, -75.0)}
 
-def resolve(park_slug: str | None, addon_codes: list[str] | None) -> tuple[Park | None, list[Addon]]:
-    """Validate a park choice and the extras requested for it."""
+
+@dataclass(frozen=True)
+class Place:
+    """A campground or address the guest typed in. Road miles are measured by
+    the server (services.distance), never taken from the client. Both extras
+    can be requested; the owner confirms them with the guest."""
+
+    name: str
+    lat: float
+    lng: float
+    delivery_miles: int
+    slug: str = CUSTOM_SLUG
+    city: str = ""
+    state: str = ""
+    terrain: frozenset[str] = frozenset({"mountains", "lake"})
+
+    @property
+    def addons(self) -> list[Addon]:
+        return list(ADDONS.values())
+
+
+def custom_place(name, lat, lng) -> Place:
+    """Validate a typed destination and measure its road miles from BASE."""
+    from .services import distance  # here, to avoid an import cycle
+
+    name = " ".join(str(name or "").split())[:200]
+    if not name:
+        raise ApiError("Please type where you're staying and pick it from the suggestions.")
+    try:
+        lat, lng = float(lat), float(lng)
+    except (TypeError, ValueError):
+        raise ApiError("Please pick the place from the suggestions so we can find it on the map.") from None
+    if not (REGION["lat"][0] <= lat <= REGION["lat"][1] and REGION["lng"][0] <= lng <= REGION["lng"][1]):
+        raise ApiError("That place is outside the area we deliver to. Please contact us about it.")
+    miles = distance.road_miles(lat, lng)
+    if miles > MAX_DELIVERY_MILES:
+        raise ApiError(
+            f"That place is {miles} miles from our base, further than we deliver. Please contact us and we'll "
+            "see what we can do."
+        )
+    return Place(name=name, lat=lat, lng=lng, delivery_miles=miles)
+
+
+def resolve(
+    park_slug: str | None, addon_codes: list[str] | None, place: Place | None = None
+) -> tuple[Park | Place | None, list[Addon]]:
+    """Validate a park choice (or a typed place) and the extras requested for it."""
     park = None
-    if park_slug:
+    if park_slug == CUSTOM_SLUG:
+        if place is None:
+            raise ApiError("Please type where you're staying and pick it from the suggestions.")
+        park = place
+    elif park_slug:
         park = PARKS.get(park_slug)
         if park is None:
             raise ApiError("Please choose a campground from the list.")
@@ -195,7 +280,7 @@ def resolve(park_slug: str | None, addon_codes: list[str] | None) -> tuple[Park 
     return park, addons
 
 
-def resolve_transport(code: str | None, park: Park | None, towing_experience: bool) -> str:
+def resolve_transport(code: str | None, park: Park | Place | None, towing_experience: bool) -> str:
     """Validate how the trailer gets to the campsite."""
     code = code or "self"
     if code not in TRANSPORT_CODES:
@@ -206,6 +291,6 @@ def resolve_transport(code: str | None, park: Park | None, towing_experience: bo
         )
     if code == "delivery" and park is None:
         raise ApiError(
-            "Delivery is priced by distance, so please choose a campground from the list (or call us about another one)."
+            "Delivery is priced by distance, so please choose a campground or type where you're staying."
         )
     return code

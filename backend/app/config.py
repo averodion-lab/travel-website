@@ -51,6 +51,8 @@ class Config:
     SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "")
     EMAIL_FROM = os.environ.get("EMAIL_FROM", "") or SMTP_USERNAME
     OWNER_EMAIL = os.environ.get("OWNER_EMAIL", "") or SMTP_USERNAME
+    # Routing server for road miles to typed places (services/distance.py).
+    OSRM_URL = os.environ.get("OSRM_URL", "")
 
     # Driver's license uploads (encrypted on disk locally; R2 in production later)
     UPLOAD_DIR = os.environ.get(

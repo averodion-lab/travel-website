@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import re
+import time
+from collections import defaultdict, deque
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
@@ -12,7 +14,7 @@ from .. import catalog
 from ..errors import ApiError
 from ..extensions import db
 from ..models import Booking, Camper
-from ..services import availability, bookings as booking_service, payments
+from ..services import availability, bookings as booking_service, email as email_service, payments
 from ..services.pricing import quote_for_camper
 
 bp = Blueprint("public", __name__, url_prefix="/api")
@@ -60,6 +62,15 @@ def list_parks():
             },
         }
     )
+
+
+@bp.get("/distance")
+def distance_to_place():
+    """Road miles from our base to a typed place, and what delivery would
+    cost, so the booking form can show it before dates are chosen."""
+    place = catalog.custom_place("place", request.args.get("lat"), request.args.get("lng"))
+    total = (catalog.DELIVERY_PER_MILE * place.delivery_miles * catalog.DELIVERY_TRIPS).quantize(Decimal("0.01"))
+    return jsonify({"delivery_miles": place.delivery_miles, "delivery_total": str(total)})
 
 
 @bp.get("/health")
@@ -121,7 +132,12 @@ def quote():
     camper = _get_camper(str(data.get("camper", "")))
     start = _parse_date(data.get("start"), "pickup")
     end = _parse_date(data.get("end"), "return")
-    park, addons = catalog.resolve(str(data.get("park") or ""), _addon_codes(data.get("addons")))
+    park_slug = str(data.get("park") or "")
+    place = None
+    if park_slug == catalog.CUSTOM_SLUG:
+        raw = data.get("place") if isinstance(data.get("place"), dict) else {}
+        place = catalog.custom_place(raw.get("name"), raw.get("lat"), raw.get("lng"))
+    park, addons = catalog.resolve(park_slug, _addon_codes(data.get("addons")), place)
     transport = catalog.resolve_transport(
         str(data.get("transport") or ""), park, data.get("towing_experience") is True
     )
@@ -132,6 +148,8 @@ def quote():
             "quote": q.to_dict(),
             "available": availability.is_available(camper.id, start, end),
             "deposit_percent": current_app.config["DEPOSIT_PERCENT"],
+            # For a typed place: the server-measured road miles from our base.
+            "place": {"name": place.name, "delivery_miles": place.delivery_miles} if place else None,
         }
     )
 
@@ -169,9 +187,11 @@ def create_booking():
     if form.get("agree_terms") not in ("1", "true", "on", "yes"):
         raise ApiError("Please accept the rental terms to continue.")
 
-    park, addons = catalog.resolve(
-        _clean(form, "park", "Campground", 60, required=False), form.getlist("addons")
-    )
+    park_slug = _clean(form, "park", "Campground", 60, required=False)
+    place = None
+    if park_slug == catalog.CUSTOM_SLUG:
+        place = catalog.custom_place(form.get("place_name"), form.get("place_lat"), form.get("place_lng"))
+    park, addons = catalog.resolve(park_slug, form.getlist("addons"), place)
     towing_experience = form.get("towing_experience") in ("1", "true", "on", "yes")
     transport = catalog.resolve_transport(
         _clean(form, "transport", "Transport", 20, required=False), park, towing_experience
@@ -202,3 +222,49 @@ def get_booking(reference: str):
     if booking is None:
         raise ApiError("Booking not found.", 404)
     return jsonify({"booking": booking.public_dict()})
+
+
+# Contact form: at most 5 messages per visitor address per hour (in memory;
+# each server instance counts on its own, which is enough to stop floods).
+CONTACT_LIMIT = 5
+CONTACT_WINDOW = 3600
+_contact_hits: dict[str, deque] = defaultdict(deque)
+
+
+def _text(data: dict, key: str, label: str, max_len: int, required: bool = True) -> str:
+    value = data.get(key)
+    value = value.strip() if isinstance(value, str) else ""
+    if required and not value:
+        raise ApiError(f"Please enter your {label}.")
+    if len(value) > max_len:
+        raise ApiError(f"Your {label} is too long (at most {max_len} characters).")
+    return value
+
+
+@bp.post("/contact")
+def contact():
+    """Send a message to the owner by email. Nothing is stored or logged."""
+    data = request.get_json(silent=True) or {}
+    # Hidden field that people never see; bots fill it in. Pretend it worked.
+    if str(data.get("website") or "").strip():
+        return jsonify({"ok": True})
+
+    name = _text(data, "name", "name", 120)
+    email = _text(data, "email", "email", 200)
+    if not EMAIL_RE.match(email):
+        raise ApiError("Please enter a valid email address.")
+    phone = _text(data, "phone", "phone number", 40, required=False)
+    dates = _text(data, "dates", "dates", 120, required=False)
+    message = _text(data, "message", "message", 4000)
+
+    who = request.headers.get("X-Forwarded-For", request.remote_addr or "").split(",")[0].strip()
+    now = time.monotonic()
+    hits = _contact_hits[who]
+    while hits and now - hits[0] > CONTACT_WINDOW:
+        hits.popleft()
+    if len(hits) >= CONTACT_LIMIT:
+        raise ApiError("You've sent several messages already. Please wait a little, or email us directly.", 429)
+    hits.append(now)
+
+    email_service.send_contact_message(name, email, phone, dates, message)
+    return jsonify({"ok": True})

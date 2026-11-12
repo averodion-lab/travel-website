@@ -11,9 +11,10 @@ const NAV = [
   { href: "/how-it-works", label: "Experience" },
   { href: "/destinations", label: "Places" },
   { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
 ];
 
-// Desktop: three links left of the name, two to its right.
+// Desktop: three links left of the name, three to its right.
 const LEFT = NAV.slice(0, 3);
 const RIGHT = NAV.slice(3);
 

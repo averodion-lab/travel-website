@@ -89,7 +89,16 @@ export type Quote = {
   transport: TransportLine;
 };
 
-export type QuoteResponse = { quote: Quote; available: boolean; deposit_percent: number };
+/** A destination the guest typed in (park "custom"). */
+export type TypedPlace = { name: string; lat: number; lng: number };
+
+export type QuoteResponse = {
+  quote: Quote;
+  available: boolean;
+  deposit_percent: number;
+  /** For a typed place: the server-measured road miles from our base. */
+  place?: { name: string; delivery_miles: number } | null;
+};
 
 export type PublicBooking = {
   reference: string;

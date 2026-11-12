@@ -72,8 +72,29 @@ export default function BookingDrawer({
             <dl className="mt-2 divide-y divide-line/70">
               <Row
                 label="Campground"
-                value={booking.park ? `${booking.park.name}${booking.park.state ? `, ${booking.park.state}` : ""}` : "Not chosen (confirm with customer)"}
+                value={
+                  booking.place
+                    ? `${booking.place.name} (typed in by the guest)`
+                    : booking.park
+                      ? `${booking.park.name}${booking.park.state ? `, ${booking.park.state}` : ""}`
+                      : "Not chosen (confirm with customer)"
+                }
               />
+              {booking.place && (
+                <Row
+                  label="Map"
+                  value={
+                    <a
+                      href={`https://www.google.com/maps?q=${booking.place.lat},${booking.place.lng}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-clay underline"
+                    >
+                      Open on the map ↗
+                    </a>
+                  }
+                />
+              )}
               {booking.addons.length === 0 && <Row label="Extras" value="None" />}
               {booking.addons.map((a) => (
                 <Row key={a.code} label={`${a.name}, ${a.days} days`} value={money(a.total)} />

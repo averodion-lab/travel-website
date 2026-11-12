@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/how-it-works", label: "Experience" },
   { href: "/destinations", label: "Places" },
   { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact" },
   { href: "/book-now", label: "Reserve" },
 ];
 

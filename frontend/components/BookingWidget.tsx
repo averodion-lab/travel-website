@@ -6,6 +6,7 @@ import { addMonths, differenceInCalendarDays, startOfDay } from "date-fns";
 import { DayPicker, type DateRange } from "react-day-picker";
 import AddonIcon from "@/components/AddonIcon";
 import CardLogos from "@/components/CardLogos";
+import PlacePicker from "@/components/PlacePicker";
 import TransportPicker, {
   parseTransport,
   transportLabel,
@@ -16,7 +17,9 @@ import {
   type Park,
   type QuoteResponse,
   type TransportInfo,
+  type TypedPlace,
 } from "@/lib/api";
+import { CUSTOM, placeFromParams, setPlaceParams, usePlaceMiles } from "@/lib/place";
 import { STATE_ORDER } from "@/lib/parks";
 import { fromISO, isISODate, money, rate, toISO } from "@/lib/format";
 import {
@@ -67,6 +70,8 @@ export default function BookingWidget({
   const [booked, setBooked] = useState<Booked[]>([]);
   // Campground (from the map, if they came from there) and the extras switched on.
   const [park, setPark] = useState(params.get("park") ?? "");
+  // "Somewhere else": a place they type in; the server measures the miles.
+  const [place, setPlace] = useState<TypedPlace | null>(() => placeFromParams(params));
   const [picked, setPicked] = useState<string[]>(() =>
     (params.get("addons") ?? "").split(",").filter(Boolean),
   );
@@ -124,18 +129,25 @@ export default function BookingWidget({
       ? differenceInCalendarDays(range.to, range.from)
       : 0;
   const parkInfo = parks.find((p) => p.slug === park) ?? null;
-  const parkSlug = parkInfo?.slug ?? "";
-  const chosen = useMemo(
-    () =>
-      picked.filter((code) => parkInfo?.addons.some((a) => a.code === code)),
-    [picked, parkInfo],
+  const isCustom = park === CUSTOM;
+  const typed = isCustom ? place : null;
+  const measured = usePlaceMiles(typed);
+  const placeReady = !!typed && measured.miles !== undefined;
+  const parkSlug = isCustom ? (placeReady ? CUSTOM : "") : (parkInfo?.slug ?? "");
+  // A typed place may ask for either extra (we confirm it with them).
+  const offeredCodes = useMemo(
+    () => (placeReady ? addons.map((a) => a.code) : (parkInfo?.addons.map((a) => a.code) ?? [])),
+    [placeReady, addons, parkInfo],
   );
-  // Delivery is priced by distance, so it needs a campground from the list.
-  const transportCode =
-    transport === "delivery" && !parkInfo ? "self" : transport;
+  const chosen = useMemo(() => picked.filter((c) => offeredCodes.includes(c)), [picked, offeredCodes]);
+  // Delivery is priced by distance: a campground from the list or a measured place.
+  const deliveryTo =
+    parkInfo ?? (placeReady && typed ? { name: typed.name, delivery_miles: measured.miles! } : null);
+  const transportCode = transport === "delivery" && !deliveryTo ? "self" : transport;
+  const placeKey = typed && parkSlug === CUSTOM ? `${typed.lat},${typed.lng}` : "";
   const key =
     start && end && nights >= 1
-      ? `${start}_${end}_${parkSlug}_${chosen.join(",")}_${transportCode}_${experience}`
+      ? `${start}_${end}_${parkSlug}_${placeKey}_${chosen.join(",")}_${transportCode}_${experience}`
       : "";
 
   useEffect(() => {
@@ -149,6 +161,7 @@ export default function BookingWidget({
         start,
         end,
         park: parkSlug,
+        place: parkSlug === CUSTOM ? typed : undefined,
         addons: chosen,
         transport: transportCode,
         towing_experience: experience,
@@ -165,6 +178,7 @@ export default function BookingWidget({
     start,
     end,
     parkSlug,
+    typed,
     chosen,
     transportCode,
     experience,
@@ -194,6 +208,7 @@ export default function BookingWidget({
       step: "details",
     });
     if (parkSlug) qs.set("park", parkSlug);
+    if (parkSlug === CUSTOM) setPlaceParams(qs, typed);
     if (chosen.length) qs.set("addons", chosen.join(","));
     if (transportCode !== "self") qs.set("transport", transportCode);
     if (transportCode === "truck" && experience) qs.set("exp", "1");
@@ -292,11 +307,12 @@ export default function BookingWidget({
           <label className="mt-4 block">
             <span className="label">Campground</span>
             <select
-              value={parkSlug}
+              value={isCustom ? CUSTOM : parkSlug}
               onChange={(e) => setPark(e.target.value)}
               className="field !py-2.5 text-sm"
             >
-              <option value="">Another campground</option>
+              <option value="">Not sure yet</option>
+              <option value={CUSTOM}>Somewhere else: type the place</option>
               {groups.map((g) => (
                 <optgroup key={g.state} label={g.state}>
                   {g.parks.map((p) => (
@@ -309,13 +325,23 @@ export default function BookingWidget({
             </select>
           </label>
         )}
+        {isCustom && transportInfo && (
+          <PlacePicker
+            value={place}
+            onChange={setPlace}
+            measured={measured}
+            perMile={transportInfo.delivery.per_mile}
+            base={transportInfo.base}
+            compact
+          />
+        )}
 
         {transportInfo && (
           <fieldset className="mt-4">
             <legend className="label">Getting there</legend>
             <TransportPicker
               info={transportInfo}
-              park={parkInfo}
+              park={deliveryTo}
               nights={nights}
               value={transportCode}
               onChange={setTransport}
@@ -331,9 +357,7 @@ export default function BookingWidget({
             <legend className="label">Extras</legend>
             <div className="space-y-2">
               {addons.map((a) => {
-                const offered = !!parkInfo?.addons.some(
-                  (x) => x.code === a.code,
-                );
+                const offered = offeredCodes.includes(a.code);
                 const on = chosen.includes(a.code);
                 return (
                   <label

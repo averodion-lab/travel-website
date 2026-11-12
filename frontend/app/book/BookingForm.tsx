@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import AddonIcon from "@/components/AddonIcon";
 import CardLogos, { Lock } from "@/components/CardLogos";
+import PlacePicker from "@/components/PlacePicker";
 import TransportPicker, {
   parseTransport,
   transportLabel,
@@ -17,8 +18,10 @@ import {
   type Camper,
   type ParksResponse,
   type QuoteResponse,
+  type TypedPlace,
 } from "@/lib/api";
 import { STATE_ORDER } from "@/lib/parks";
+import { CUSTOM, placeFromParams, setPlaceParams, usePlaceMiles } from "@/lib/place";
 import { isISODate, longDate, money, rate } from "@/lib/format";
 
 export default function BookingForm() {
@@ -38,6 +41,8 @@ export default function BookingForm() {
   const [quoteError, setQuoteError] = useState("");
   // Campground (slug, "" = somewhere else) and the extras switched on.
   const [park, setPark] = useState(params.get("park") ?? "");
+  // "Somewhere else": a place they type in; the server measures the miles.
+  const [place, setPlace] = useState<TypedPlace | null>(() => placeFromParams(params));
   const [addons, setAddons] = useState<string[]>(() =>
     (params.get("addons") ?? "").split(",").filter(Boolean),
   );
@@ -73,21 +78,30 @@ export default function BookingForm() {
       .catch((e: Error) => setLoadError(e.message));
   }, [valid, slug]);
 
-  // Only a park from the list counts, and only extras that park offers.
+  // A park from the list (and the extras it offers), or a typed place.
   const parkInfo = catalog?.parks.find((p) => p.slug === park) ?? null;
-  const parkSlug = parkInfo ? parkInfo.slug : "";
-  const chosen = useMemo(
+  const isCustom = park === CUSTOM;
+  const typed = isCustom ? place : null;
+  const measured = usePlaceMiles(typed);
+  const placeReady = !!typed && measured.miles !== undefined;
+  const parkSlug = isCustom ? (placeReady ? CUSTOM : "") : parkInfo ? parkInfo.slug : "";
+  const offeredCodes = useMemo(
     () =>
-      addons.filter((code) => parkInfo?.addons.some((a) => a.code === code)),
-    [addons, parkInfo],
+      placeReady
+        ? (catalog?.addons.map((a) => a.code) ?? [])
+        : (parkInfo?.addons.map((a) => a.code) ?? []),
+    [placeReady, catalog, parkInfo],
   );
-  // Delivery is priced by distance, so it needs a campground from the list;
-  // our truck needs the towing-experience box ticked before it is priced.
-  const transportCode =
-    transport === "delivery" && !parkInfo ? "self" : transport;
+  const chosen = useMemo(() => addons.filter((code) => offeredCodes.includes(code)), [addons, offeredCodes]);
+  // Delivery is priced by distance: a campground from the list or a measured
+  // place. Our truck needs the towing-experience box ticked before it is priced.
+  const deliveryTo =
+    parkInfo ?? (placeReady && typed ? { name: typed.name, delivery_miles: measured.miles! } : null);
+  const transportCode = transport === "delivery" && !deliveryTo ? "self" : transport;
   const quotedTransport =
     transportCode === "truck" && !experience ? "self" : transportCode;
-  const choiceKey = `${parkSlug}|${chosen.join(",")}|${quotedTransport}`;
+  const placeKey = typed && parkSlug === CUSTOM ? `${typed.lat},${typed.lng}` : "";
+  const choiceKey = `${parkSlug}|${placeKey}|${chosen.join(",")}|${quotedTransport}`;
 
   // The server prices the trip, extras included, whenever the choices change.
   useEffect(() => {
@@ -101,6 +115,7 @@ export default function BookingForm() {
         start,
         end,
         park: parkSlug,
+        place: parkSlug === CUSTOM ? typed : undefined,
         addons: chosen,
         transport: quotedTransport,
         towing_experience: experience,
@@ -125,6 +140,7 @@ export default function BookingForm() {
     start,
     end,
     parkSlug,
+    typed,
     chosen,
     choiceKey,
     quotedTransport,
@@ -208,6 +224,11 @@ export default function BookingForm() {
     data.set("start", start!);
     data.set("end", end!);
     data.set("park", parkSlug);
+    if (parkSlug === CUSTOM && typed) {
+      data.set("place_name", typed.name);
+      data.set("place_lat", String(typed.lat));
+      data.set("place_lng", String(typed.lng));
+    }
     data.delete("addons");
     chosen.forEach((code) => data.append("addons", code));
     data.set("transport", transportCode);
@@ -359,13 +380,12 @@ export default function BookingForm() {
                 </label>
                 <select
                   id="park"
-                  value={parkSlug}
+                  value={isCustom ? CUSTOM : parkSlug}
                   onChange={(e) => setPark(e.target.value)}
                   className="field"
                 >
-                  <option value="">
-                    Another campground (we&apos;ll confirm it with you)
-                  </option>
+                  <option value="">Not sure yet (we&apos;ll confirm it with you)</option>
+                  <option value={CUSTOM}>Somewhere else: type the place</option>
                   {parksByState.map((g) => (
                     <optgroup key={g.state} label={g.state}>
                       {g.parks.map((p) => (
@@ -376,6 +396,15 @@ export default function BookingForm() {
                     </optgroup>
                   ))}
                 </select>
+                {isCustom && (
+                  <PlacePicker
+                    value={place}
+                    onChange={setPlace}
+                    measured={measured}
+                    perMile={catalog.transport.delivery.per_mile}
+                    base={catalog.transport.base}
+                  />
+                )}
                 {parkInfo && (
                   <div className="mt-4 rounded-2xl bg-cream p-5 text-sm">
                     <p className="eyebrow text-muted">
@@ -410,7 +439,7 @@ export default function BookingForm() {
                 <div className="mt-6 max-w-2xl">
                   <TransportPicker
                     info={catalog.transport}
-                    park={parkInfo}
+                    park={deliveryTo}
                     nights={q.days}
                     value={transportCode}
                     onChange={setTransport}
@@ -428,9 +457,7 @@ export default function BookingForm() {
                 </p>
                 <div className="mt-6 grid gap-4 sm:grid-cols-2">
                   {catalog.addons.map((a) => {
-                    const offered = !!parkInfo?.addons.some(
-                      (x) => x.code === a.code,
-                    );
+                    const offered = offeredCodes.includes(a.code);
                     const on = chosen.includes(a.code);
                     const tripTotal = Number(a.daily_rate) * quote.quote.days;
                     return (
@@ -485,10 +512,10 @@ export default function BookingForm() {
                     );
                   })}
                 </div>
-                {!parkInfo && (
+                {!parkInfo && !placeReady && (
                   <p className="mt-4 text-sm text-muted">
-                    Choose a campground from the list to see which extras it
-                    offers.
+                    Choose a campground, or type where you&apos;re staying, to
+                    see which extras you can add.
                   </p>
                 )}
                 {quoteError && (
@@ -693,7 +720,7 @@ export default function BookingForm() {
                     ["Phone", review.phone],
                     [
                       "Campground",
-                      parkInfo ? parkInfo.name : "Another campground",
+                      parkInfo ? parkInfo.name : typed ? typed.name : "Not chosen yet",
                     ],
                     [
                       "Extras",
@@ -826,7 +853,7 @@ export default function BookingForm() {
                 </div>
               </dl>
               <Link
-                href={`/book-now?${new URLSearchParams({ start: start!, end: end!, ...(parkSlug ? { park: parkSlug } : {}), ...(chosen.length ? { addons: chosen.join(",") } : {}), ...(transportCode !== "self" ? { transport: transportCode } : {}), ...(transportCode === "truck" && experience ? { exp: "1" } : {}) })}`}
+                href={`/book-now?${new URLSearchParams({ start: start!, end: end!, ...(parkSlug ? { park: parkSlug } : {}), ...(parkSlug === CUSTOM && typed ? Object.fromEntries((() => { const q = new URLSearchParams(); setPlaceParams(q, typed); return [...q]; })()) : {}), ...(chosen.length ? { addons: chosen.join(",") } : {}), ...(transportCode !== "self" ? { transport: transportCode } : {}), ...(transportCode === "truck" && experience ? { exp: "1" } : {}) })}`}
                 className="eyebrow mt-3 inline-block text-clay hover:underline"
               >
                 Change trip
@@ -835,7 +862,9 @@ export default function BookingForm() {
                 <span className="text-muted">Campground: </span>
                 {parkInfo
                   ? `${parkInfo.name}, ${parkInfo.state}`
-                  : "Another campground"}
+                  : typed
+                    ? typed.name
+                    : "Not chosen yet"}
               </p>
               <dl
                 className={`mt-6 space-y-2 text-sm transition-opacity ${repricing ? "opacity-50" : ""}`}

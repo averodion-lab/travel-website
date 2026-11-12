@@ -1,6 +1,6 @@
 "use client";
 
-import type { Park, TransportCode, TransportInfo } from "@/lib/api";
+import type { TransportCode, TransportInfo } from "@/lib/api";
 import { money, rate } from "@/lib/format";
 
 /** "How will the trailer get there?": tow it with your own truck, rent ours
@@ -17,7 +17,8 @@ export default function TransportPicker({
   compact = false,
 }: {
   info: TransportInfo;
-  park: Park | null;
+  /** Where delivery goes: a campground from the list or a typed place. */
+  park: { name: string; delivery_miles: number } | null;
   nights: number;
   value: TransportCode;
   onChange: (code: TransportCode) => void;
@@ -59,7 +60,7 @@ export default function TransportPicker({
       title: "Delivery and setup",
       detail: park
         ? `We bring it to ${park.name}, level it and hook it up, and collect it after your trip. ${park.delivery_miles} miles from ${info.base}, charged one way.`
-        : "We bring it to your campsite and set it up. Choose a campground from the list to see the price.",
+        : "We bring it to your campsite and set it up. Choose a campground, or type where you are staying, to see the price.",
       price: park
         ? `${rate(perMile)}/mile · ${money(deliveryTotal)}`
         : `${rate(perMile)}/mile`,

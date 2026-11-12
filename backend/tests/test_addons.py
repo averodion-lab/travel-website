@@ -19,7 +19,7 @@ def quote(client, **extra):
 
 
 def test_every_park_has_a_location_link_and_terrain():
-    assert len(PARKS) == 11
+    assert len(PARKS) == 18
     for park in PARKS.values():
         assert park.url.startswith("https://")
         assert 30 < park.lat < 37 and -88 < park.lng < -81  # the Southeast
@@ -30,7 +30,7 @@ def test_every_park_has_a_location_link_and_terrain():
 def test_parks_endpoint_lists_parks_and_what_each_offers(client):
     data = client.get("/api/parks").get_json()
     parks = {p["slug"]: p for p in data["parks"]}
-    assert len(parks) == 11
+    assert len(parks) == 18
     assert [a["code"] for a in parks[MOUNTAIN]["addons"]] == ["atv"]
     assert [a["code"] for a in parks[LAKE]["addons"]] == ["jetski"]
     assert {a["code"] for a in parks[BOTH]["addons"]} == {"atv", "jetski"}

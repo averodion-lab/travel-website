@@ -15,6 +15,8 @@ export type Summary = Brief & {
   deposit_due: string;
   created_at: string;
   park: { slug: string; name: string; city?: string; state?: string } | null;
+  /** A place the guest typed in (park slug "custom"), decrypted for the owner. */
+  place?: { name: string; lat: number; lng: number } | null;
   addons: { code: string; name: string; days: number; total: string }[];
   addons_total: string;
   transport?: { code: "self" | "truck" | "delivery"; name: string; total: string; miles?: number | null };

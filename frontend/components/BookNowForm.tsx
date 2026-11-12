@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import AddonIcon from "@/components/AddonIcon";
 import CardLogos from "@/components/CardLogos";
 import DateRangeField from "@/components/DateRangeField";
+import PlacePicker from "@/components/PlacePicker";
 import TransportPicker, {
   parseTransport,
   transportLabel,
@@ -16,9 +17,11 @@ import {
   type Park,
   type QuoteResponse,
   type TransportInfo,
+  type TypedPlace,
 } from "@/lib/api";
 import { isISODate, money, rate } from "@/lib/format";
 import { STATE_ORDER } from "@/lib/parks";
+import { CUSTOM, placeFromParams, setPlaceParams, usePlaceMiles } from "@/lib/place";
 
 const NEEDS = {
   mountains: "Mountain parks only",
@@ -62,6 +65,8 @@ export default function BookNowForm({
     parseTransport(params.get("transport")),
   );
   const [experience, setExperience] = useState(params.get("exp") === "1");
+  // "Somewhere else": a place they type in; the server measures the miles.
+  const [place, setPlace] = useState<TypedPlace | null>(() => placeFromParams(params));
   const [priced, setPriced] = useState<{
     key: string;
     quote?: QuoteResponse;
@@ -69,17 +74,25 @@ export default function BookNowForm({
   } | null>(null);
 
   const parkInfo = parks.find((p) => p.slug === park) ?? null;
-  const parkSlug = parkInfo?.slug ?? "";
-  const chosen = useMemo(
-    () => picked.filter((c) => parkInfo?.addons.some((a) => a.code === c)),
-    [picked, parkInfo],
+  const isCustom = park === CUSTOM;
+  const typed = isCustom ? place : null;
+  const measured = usePlaceMiles(typed);
+  const placeReady = !!typed && measured.miles !== undefined;
+  const parkSlug = isCustom ? (placeReady ? CUSTOM : "") : (parkInfo?.slug ?? "");
+  // A typed place may ask for either extra (we confirm it with them).
+  const offeredCodes = useMemo(
+    () => (placeReady ? addons.map((a) => a.code) : (parkInfo?.addons.map((a) => a.code) ?? [])),
+    [placeReady, addons, parkInfo],
   );
-  // Delivery is priced by distance, so it needs a campground from the list.
-  const transportCode =
-    transport === "delivery" && !parkInfo ? "self" : transport;
+  const chosen = useMemo(() => picked.filter((c) => offeredCodes.includes(c)), [picked, offeredCodes]);
+  // Delivery is priced by distance: a campground from the list or a measured place.
+  const deliveryTo =
+    parkInfo ?? (placeReady && typed ? { name: typed.name, delivery_miles: measured.miles! } : null);
+  const transportCode = transport === "delivery" && !deliveryTo ? "self" : transport;
+  const placeKey = typed && parkSlug === CUSTOM ? `${typed.lat},${typed.lng}` : "";
   const datesReady = !!start && !!end;
   const key = datesReady
-    ? `${start}|${end}|${parkSlug}|${chosen.join(",")}|${transportCode}|${experience}`
+    ? `${start}|${end}|${parkSlug}|${placeKey}|${chosen.join(",")}|${transportCode}|${experience}`
     : "";
 
   useEffect(() => {
@@ -93,6 +106,7 @@ export default function BookNowForm({
         start,
         end,
         park: parkSlug,
+        place: parkSlug === CUSTOM ? typed : undefined,
         addons: chosen,
         transport: transportCode,
         towing_experience: experience,
@@ -109,6 +123,7 @@ export default function BookNowForm({
     start,
     end,
     parkSlug,
+    typed,
     chosen,
     transportCode,
     experience,
@@ -160,6 +175,7 @@ export default function BookNowForm({
       step: "details",
     });
     if (parkSlug) qs.set("park", parkSlug);
+    if (parkSlug === CUSTOM) setPlaceParams(qs, typed);
     if (chosen.length) qs.set("addons", chosen.join(","));
     if (transportCode !== "self") qs.set("transport", transportCode);
     if (transportCode === "truck" && experience) qs.set("exp", "1");
@@ -177,13 +193,12 @@ export default function BookNowForm({
           </label>
           <select
             id="bn-park"
-            value={parkSlug}
+            value={isCustom ? CUSTOM : parkSlug}
             onChange={(e) => setPark(e.target.value)}
-            className="field mt-4 !rounded-xl"
+            className="field mt-4"
           >
-            <option value="">
-              Another campground (we&apos;ll confirm it with you)
-            </option>
+            <option value="">Not sure yet (we&apos;ll confirm it with you)</option>
+            <option value={CUSTOM}>Somewhere else: type the place</option>
             {groups.map((g) => (
               <optgroup key={g.state} label={g.state}>
                 {g.parks.map((p) => (
@@ -194,6 +209,15 @@ export default function BookNowForm({
               </optgroup>
             ))}
           </select>
+          {isCustom && (
+            <PlacePicker
+              value={place}
+              onChange={setPlace}
+              measured={measured}
+              perMile={transportInfo.delivery.per_mile}
+              base={transportInfo.base}
+            />
+          )}
         </section>
 
         {/* Dates */}
@@ -229,7 +253,7 @@ export default function BookNowForm({
           <div className="mt-5">
             <TransportPicker
               info={transportInfo}
-              park={parkInfo}
+              park={deliveryTo}
               nights={q?.days ?? 0}
               value={transportCode}
               onChange={setTransport}
@@ -245,7 +269,7 @@ export default function BookNowForm({
           <p className="mt-2 font-display text-3xl">Add to your trip</p>
           <ul className="mt-5 space-y-3">
             {addons.map((a) => {
-              const offered = !!parkInfo?.addons.some((x) => x.code === a.code);
+              const offered = offeredCodes.includes(a.code);
               const on = chosen.includes(a.code);
               return (
                 <li key={a.code}>
@@ -280,7 +304,9 @@ export default function BookNowForm({
                       </span>
                       <span className="mt-0.5 block text-xs text-muted">
                         {offered
-                          ? a.description
+                          ? placeReady
+                            ? `${a.description} We'll confirm it for your place.`
+                            : a.description
                           : parkInfo
                             ? NEEDS[a.terrain]
                             : `${NEEDS[a.terrain]} · choose a campground first`}
@@ -318,7 +344,9 @@ export default function BookNowForm({
               <span className="text-muted">Campground: </span>
               {parkInfo
                 ? `${parkInfo.name}, ${parkInfo.state}`
-                : "Another campground"}
+                : typed
+                  ? typed.name
+                  : "Not chosen yet"}
             </p>
 
             {!datesReady ? (
