@@ -38,8 +38,9 @@ export default function Footer() {
           className="!bottom-auto top-0 -translate-y-[99%]"
         />
       </div>
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr]">
-        <div>
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-12 px-5 py-16 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr] md:gap-12">
+        {/* Phones: brand on its own row, then Explore and Serving side by side. */}
+        <div className="col-span-2 md:col-span-1">
           <p className="font-display text-3xl tracking-[0.12em] uppercase">
             {SITE_NAME}
           </p>
