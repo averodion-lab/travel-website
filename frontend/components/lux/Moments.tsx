@@ -80,23 +80,23 @@ export default function Moments() {
       {/* Phones and tablets: a 6-column collage (photos in pairs and offsets,
           text beside them). Large screens: the 12-column collage. */}
       <div className="mt-8 grid grid-cols-6 gap-3 sm:mt-12 sm:gap-4 lg:mt-12 lg:grid-cols-12 lg:gap-5">
-        <DriftPhoto src="/images/lake-forest.jpg" alt="A forest lake at first light" className="col-span-3 aspect-[4/5] lg:col-span-4 lg:mt-12 lg:aspect-square" speed={6} />
+        <DriftPhoto src="/images/lake-forest.jpg" alt="A forest lake at first light" className="col-span-3 aspect-[4/5] lg:col-span-4 lg:mt-12 lg:aspect-[5/4]" speed={6} />
         <div className="col-span-3 self-center lg:col-span-3 lg:self-start lg:pt-4">
           <Moment n="01" words={["mornings.", "Slow", true]} text="Coffee on the step, mist still on the lake." />
         </div>
-        <DriftPhoto src="/images/blueridge-pink.jpg" alt="Blue Ridge ridgelines at dawn" className="col-span-5 col-start-2 aspect-[16/10] lg:col-span-5 lg:col-start-auto" speed={12} delay={150} />
+        <DriftPhoto src="/images/blueridge-pink.jpg" alt="Blue Ridge ridgelines at dawn" className="col-span-5 col-start-2 aspect-[16/10] lg:col-span-5 lg:col-start-auto lg:aspect-[16/9]" speed={12} delay={150} />
 
-        <DriftPhoto src="/images/montana/bedroom-2.jpg" alt="The king bedroom" className="col-span-3 aspect-square lg:col-span-3" speed={4} />
-        <DriftPhoto src="/images/smoky-meadow.jpg" alt="Horses in a meadow below the Smokies" className="col-span-3 mt-8 aspect-square lg:col-span-3 lg:mt-0" speed={10} delay={120} />
+        <DriftPhoto src="/images/montana/bedroom-2.jpg" alt="The king bedroom" className="col-span-3 aspect-square lg:col-span-3 lg:aspect-[4/3]" speed={4} />
+        <DriftPhoto src="/images/smoky-meadow.jpg" alt="Horses in a meadow below the Smokies" className="col-span-3 mt-8 aspect-square lg:col-span-3 lg:mt-0 lg:aspect-[4/3]" speed={10} delay={120} />
         <div className="col-span-3 self-center lg:col-span-3 lg:self-start lg:pt-2">
           <Moment n="02" words={["Golden", "afternoons."]} text="Out on the water until the sun goes soft." />
         </div>
-        <DriftPhoto src="/images/lake-jetski.jpg" alt="A jet ski on a lake at golden hour" position="62% 50%" className="col-span-3 aspect-[4/5] lg:col-span-3 lg:aspect-square" speed={7} delay={240} />
+        <DriftPhoto src="/images/lake-jetski.jpg" alt="A jet ski on a lake at golden hour" position="62% 50%" className="col-span-3 aspect-[4/5] lg:col-span-3 lg:aspect-[4/3]" speed={7} delay={240} />
 
         <div className="col-span-3 self-center lg:col-span-3 lg:self-start lg:pt-4">
           <Moment n="03" words={["Long", "evenings."]} text="Chairs pulled close, the fire burning low." />
         </div>
-        <DriftPhoto src="/images/campfire-night.jpg" alt="A campfire at night" className="col-span-3 aspect-[4/5] lg:col-span-6 lg:aspect-[16/10]" speed={9} />
+        <DriftPhoto src="/images/campfire-night.jpg" alt="A campfire at night" className="col-span-3 aspect-[4/5] lg:col-span-6 lg:aspect-[2/1]" speed={9} />
         <div className="col-span-4 col-start-3 lg:col-span-3 lg:col-start-auto lg:pt-4">
           <Moment n="04" words={["Quiet", "nights."]} text="Nothing but the trees, and a sky full of stars." />
         </div>

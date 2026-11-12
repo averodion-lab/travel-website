@@ -112,14 +112,14 @@ export default function HowItWorksPage() {
       />
 
       <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-16">
-        <ol className="space-y-12 sm:space-y-14">
+        <ol className="space-y-12 sm:space-y-14 lg:space-y-10">
           {STEPS.map((step, i) => (
             <li
               key={step.title}
               className="grid items-center gap-5 sm:gap-10 lg:grid-cols-2 lg:gap-20"
             >
               <div
-                className={`relative aspect-[4/3] bg-sand ${i % 2 ? "lg:order-2" : ""}`}
+                className={`relative aspect-[4/3] bg-sand lg:aspect-[16/10] ${i % 2 ? "lg:order-2" : ""}`}
               >
                 <Image
                   src={step.image}

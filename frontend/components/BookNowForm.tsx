@@ -184,7 +184,7 @@ export default function BookNowForm({
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_24rem]">
-      <div className="rounded-md bg-white p-6 shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] sm:p-9">
+      <div className="rounded-md bg-white p-6 shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] sm:p-8">
         {/* Campground */}
         <section>
           <p className="eyebrow text-clay">(01) Where</p>
@@ -221,7 +221,7 @@ export default function BookNowForm({
         </section>
 
         {/* Dates */}
-        <section ref={datesRef} className="mt-9 border-t border-line pt-8">
+        <section ref={datesRef} className="mt-7 border-t border-line pt-6">
           <p className="eyebrow text-clay">(02) When</p>
           <p className="mt-2 font-display text-3xl">Availability</p>
           <div className="relative mt-4 rounded-md border border-line px-4 py-3.5 transition-colors focus-within:border-pine hover:border-pine">
@@ -245,7 +245,7 @@ export default function BookNowForm({
         </section>
 
         {/* Getting there */}
-        <section className="mt-9 border-t border-line pt-8">
+        <section className="mt-7 border-t border-line pt-6">
           <p className="eyebrow text-clay">(03) Getting there</p>
           <p className="mt-2 font-display text-3xl">
             How will the trailer get there?
@@ -264,7 +264,7 @@ export default function BookNowForm({
         </section>
 
         {/* Extras */}
-        <section className="mt-9 border-t border-line pt-8">
+        <section className="mt-7 border-t border-line pt-6">
           <p className="eyebrow text-clay">(04) Extras</p>
           <p className="mt-2 font-display text-3xl">Add to your trip</p>
           <ul className="mt-5 space-y-3">

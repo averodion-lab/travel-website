@@ -110,7 +110,7 @@ function Waiting() {
   return (
     <section className="bg-sand">
       <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:gap-14 sm:px-8 sm:py-20 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:py-24">
-        <InView className="lux-clip relative aspect-[4/5] overflow-hidden">
+        <InView className="lux-clip relative aspect-[4/5] overflow-hidden lg:aspect-square">
           <Image
             src="/images/lake-jetski.jpg"
             alt="A jet ski crossing a lake at golden hour, framed by pines"
@@ -197,7 +197,7 @@ async function Residence() {
           ["/images/montana/kitchen.jpg", "The kitchen"],
           ["/images/montana/fireplace.jpg", "The electric fireplace"],
         ].map(([src, alt], i) => (
-          <InView key={src} delay={i * 150} className="lux-clip relative aspect-[4/3] overflow-hidden">
+          <InView key={src} delay={i * 150} className="lux-clip relative aspect-[4/3] overflow-hidden lg:aspect-[16/10]">
             <Image src={src} alt={alt} fill sizes="33vw" className="object-cover" />
           </InView>
         ))}

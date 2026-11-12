@@ -299,7 +299,7 @@ export default function ParksMap({
           >
             <div
               ref={box}
-              className="parks-map h-[26rem] overflow-hidden rounded-[1.75rem] border border-line sm:h-[34rem] lg:h-[40rem]"
+              className="parks-map h-[26rem] overflow-hidden rounded-md border border-line sm:h-[30rem] lg:h-[32rem]"
               aria-label="Map of campgrounds"
             />
           </div>
@@ -326,7 +326,7 @@ export default function ParksMap({
         </div>
 
         {!compact && (
-          <ul className="space-y-3 lg:h-[40rem] lg:overflow-y-auto lg:pr-1">
+          <ul className="space-y-3 lg:h-[32rem] lg:overflow-y-auto lg:pr-1">
             {shown.map((p) => (
               <li key={p.slug} className="rounded-2xl bg-white p-5">
                 <div className="flex items-start justify-between gap-3">

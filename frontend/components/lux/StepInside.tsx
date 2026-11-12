@@ -60,7 +60,7 @@ export default function StepInside({ rooms }: { rooms: Room[] }) {
 
   return (
     // Height: room to grow, then about one screen per room.
-    <section ref={ref} className="step-inside relative" style={{ height: `${140 + n * 75}vh` }}>
+    <section ref={ref} className="step-inside relative" style={{ height: `${110 + n * 55}vh` }}>
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div
           className="absolute inset-0"
