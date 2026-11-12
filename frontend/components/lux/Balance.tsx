@@ -28,7 +28,7 @@ export default function Balance() {
   }, []);
 
   return (
-    <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden px-5 py-24 text-center text-cream">
+    <section className="relative flex items-center justify-center overflow-hidden px-5 py-16 text-center text-cream sm:min-h-[100svh] sm:py-24">
       <Image src="/images/lake-campsite.jpg" alt="" fill sizes="100vw" className="object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/65" />
       <InView className="balance relative w-full max-w-3xl">
@@ -38,7 +38,7 @@ export default function Balance() {
         </h2>
         <p className="lux-rise mt-4 text-cream/80">Comfort, adventure, nature and rest, prepared to work together.</p>
 
-        <div className="relative mx-auto mt-12 aspect-square w-[80%] max-w-[26rem] sm:w-full">
+        <div className="relative mx-auto mt-8 aspect-square w-[80%] max-w-[26rem] sm:mt-12 sm:w-full">
           <svg viewBox="-160 -160 320 320" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden="true">
             <circle r={R} fill="none" stroke="rgba(247,243,236,0.55)" strokeWidth="1" className="balance-ring" pathLength={1} />
             {POINTS.map((pt, i) => {

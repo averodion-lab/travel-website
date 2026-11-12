@@ -384,7 +384,7 @@ export default function BookingForm() {
                   onChange={(e) => setPark(e.target.value)}
                   className="field"
                 >
-                  <option value="">Not sure yet (we&apos;ll confirm it with you)</option>
+                  <option value="">Not sure yet</option>
                   <option value={CUSTOM}>Somewhere else: type the place</option>
                   {parksByState.map((g) => (
                     <optgroup key={g.state} label={g.state}>

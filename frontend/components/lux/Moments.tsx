@@ -59,8 +59,8 @@ function Moment({ n, words, text }: { n: string; words: [string, string, boolean
  *  moments of a stay (after the avenelle reference site). */
 export default function Moments() {
   return (
-    <section className="mx-auto max-w-7xl px-5 pb-28 pt-6 sm:px-8 sm:pb-36 sm:pt-10">
-      <div className="flex flex-wrap items-end justify-between gap-8">
+    <section className="mx-auto max-w-7xl px-5 pb-14 pt-4 sm:px-8 sm:pb-36 sm:pt-10">
+      <div className="flex flex-wrap items-end justify-between gap-5 sm:gap-8">
         <InView className="lux-rise">
           <p className="lux-label text-clay">Moments kept</p>
           <h2 className="mt-6 font-display text-5xl leading-[1.02] sm:text-7xl">
@@ -79,7 +79,7 @@ export default function Moments() {
 
       {/* Phones and tablets: a 6-column collage (photos in pairs and offsets,
           text beside them). Large screens: the 12-column collage. */}
-      <div className="mt-12 grid grid-cols-6 gap-3 sm:gap-4 lg:mt-16 lg:grid-cols-12 lg:gap-5">
+      <div className="mt-8 grid grid-cols-6 gap-3 sm:mt-12 sm:gap-4 lg:mt-16 lg:grid-cols-12 lg:gap-5">
         <DriftPhoto src="/images/lake-forest.jpg" alt="A forest lake at first light" className="col-span-3 aspect-[4/5] lg:col-span-4 lg:mt-12 lg:aspect-square" speed={6} />
         <div className="col-span-3 self-center lg:col-span-3 lg:self-start lg:pt-4">
           <Moment n="01" words={["mornings.", "Slow", true]} text="Coffee on the step, mist still on the lake." />

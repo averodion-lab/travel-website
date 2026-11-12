@@ -34,7 +34,7 @@ export default function StepInside({ rooms }: { rooms: Room[] }) {
       if (!frameId) frameId = requestAnimationFrame(update);
     };
     const pick = () => {
-      setFrame(mq.matches ? { y: 28, x: 8 } : { y: 22, x: 30 });
+      setFrame(mq.matches ? { y: 12, x: 6 } : { y: 22, x: 30 });
       setStill(reduce);
       onScroll();
     };

@@ -197,7 +197,7 @@ export default function BookNowForm({
             onChange={(e) => setPark(e.target.value)}
             className="field mt-4"
           >
-            <option value="">Not sure yet (we&apos;ll confirm it with you)</option>
+            <option value="">Not sure yet</option>
             <option value={CUSTOM}>Somewhere else: type the place</option>
             {groups.map((g) => (
               <optgroup key={g.state} label={g.state}>

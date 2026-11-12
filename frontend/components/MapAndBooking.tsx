@@ -37,8 +37,8 @@ export default function MapAndBooking({
   return (
     <>
       <ParksMap parks={parks} compact onPick={pick} />
-      <div ref={form} id="book-now" className="mt-16 scroll-mt-28">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+      <div ref={form} id="book-now" className="mt-10 scroll-mt-24 sm:mt-16 sm:scroll-mt-28">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3 sm:mb-8 sm:gap-4">
           <div>
             <p className="eyebrow text-clay">Book now</p>
             <h3 className="mt-3 font-display text-5xl leading-[0.95] sm:text-6xl">
