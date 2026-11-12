@@ -281,8 +281,15 @@ body {
 .parks-map .leaflet-tile {
   transition: opacity 0.35s ease-out;
 }
+/* The map credit: small and faint, on a see-through background. */
 .parks-map .leaflet-control-attribution {
-  font-size: 10px;
+  font-size: 9px;
+  background: rgba(247, 243, 236, 0.55);
+  color: var(--color-muted);
+  border-top-left-radius: 4px;
+}
+.parks-map .leaflet-control-attribution a {
+  color: var(--color-muted);
 }
 .pm-pin {
   position: relative;

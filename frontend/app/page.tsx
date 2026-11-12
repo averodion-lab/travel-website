@@ -248,11 +248,36 @@ export default function Home() {
 
       {/* A framed photo of the living room grows to fill the screen */}
       <StepInside
-        src="/images/montana/living-1.jpg"
-        alt="The living room, with theatre seating and a fireplace"
-        eyebrow="The residence"
-        title="Step"
-        accent="inside."
+        rooms={[
+          {
+            src: "/images/montana/living-1.jpg",
+            alt: "The living room, with theatre seating and a fireplace",
+            eyebrow: "The residence",
+            title: "Step",
+            accent: "inside.",
+          },
+          {
+            src: "/images/montana/kitchen.jpg",
+            alt: "The kitchen, with a residential refrigerator and a gas range",
+            eyebrow: "The kitchen",
+            title: "Cook like",
+            accent: "at home.",
+          },
+          {
+            src: "/images/montana/bedroom-2.jpg",
+            alt: "The king bedroom",
+            eyebrow: "The king suite",
+            title: "Sleep",
+            accent: "deeply.",
+          },
+          {
+            src: "/images/montana/bathroom-2.jpg",
+            alt: "The bathroom, with double sinks and a glass shower",
+            eyebrow: "The bath",
+            title: "Double sinks,",
+            accent: "a glass shower.",
+          },
+        ]}
       />
 
       <section className="mx-auto max-w-7xl px-5 pb-16 pt-12 sm:px-8 sm:pb-20">

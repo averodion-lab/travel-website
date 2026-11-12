@@ -66,8 +66,8 @@ export default function Balance() {
                 onFocus={() => setPicked(i)}
                 onBlur={() => setPicked(null)}
                 onClick={() => setPicked(i)}
-                className={`lux-label absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap px-2 py-3 transition-opacity duration-500 ${
-                  i === current ? "opacity-100" : "opacity-55"
+                className={`lux-label absolute -translate-x-1/2 -translate-y-1/2 whitespace-nowrap px-2 py-3 font-semibold transition-[opacity,color] duration-500 [text-shadow:0_1px_10px_rgba(0,0,0,0.75)] ${
+                  i === current ? "text-[#e7cf9b] opacity-100" : "text-cream opacity-90"
                 }`}
                 style={{ left: `${x.toFixed(2)}%`, top: `${y.toFixed(2)}%` }}
               >

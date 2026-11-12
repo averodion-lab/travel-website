@@ -136,6 +136,12 @@ export default function ParksMap({
         zoomAnimation: !reducedMotion(),
         fadeAnimation: !reducedMotion(),
       });
+      // Credit line: just the Ukrainian flag instead of "🇺🇦 Leaflet" (Leaflet's
+      // licence doesn't require its name). The OpenStreetMap credit below must
+      // stay visible: it's a condition of using their free map tiles.
+      m.attributionControl.setPrefix(
+        '<svg aria-hidden="true" width="12" height="8" viewBox="0 0 12 8" style="display:inline-block;vertical-align:baseline"><path fill="#4C7BE1" d="M0 0h12v4H0z"/><path fill="#FFD500" d="M0 4h12v3H0z"/><path fill="#E0BC00" d="M0 7h12v1H0z"/></svg>',
+      );
       if (touch) {
         // Only when a finger slides across the map, not when a pin is tapped.
         box.current.addEventListener(
@@ -166,7 +172,7 @@ export default function ParksMap({
         keepBuffer: 6, // keep more tiles around the view so panning doesn't show gaps
         updateWhenZooming: false, // load new tiles when a zoom ends, not on every animation frame
         attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors',
+          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>',
       }).addTo(m);
       for (const p of parks) {
         const icon = L.divIcon({
