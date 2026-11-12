@@ -78,7 +78,15 @@ async function Questions() {
       items: [
         {
           q: "Do I need a truck?",
-          a: "No. We deliver the trailer to your campsite, level it and hook everything up, then collect it when you leave.",
+          a: "No. You have three choices when you book: tow it with your own truck, rent our black 2026 RAM 2500 Turbo Diesel, or have us deliver the trailer to your campsite, level it and hook everything up, then collect it when you leave.",
+        },
+        {
+          q: "Can I rent your truck to tow it?",
+          a: "Yes, if you have experience towing a large fifth-wheel trailer; you confirm it when you book. Our 2026 RAM 2500 Turbo Diesel comes with the fifth-wheel hitch and is charged per day of your trip.",
+        },
+        {
+          q: "How much is delivery?",
+          a: "$3.50 a mile, for the drive to your campground when we drop the trailer off and again when we pick it up. Choose a campground when you book and you'll see the exact price before you pay.",
         },
         {
           q: "Can I tow it myself?",

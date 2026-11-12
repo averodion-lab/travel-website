@@ -45,9 +45,32 @@ export type Park = {
   lng: number;
   terrain: ("mountains" | "lake")[];
   addons: Addon[];
+  /** Road miles from the base, for delivery pricing. */
+  delivery_miles: number;
 };
 
-export type ParksResponse = { parks: Park[]; addons: Addon[] };
+export type TransportCode = "self" | "truck" | "delivery";
+
+/** What the API says about getting the trailer to the campsite. */
+export type TransportInfo = {
+  base: string;
+  truck: { code: "truck"; name: string; daily_rate: string; description: string };
+  delivery: { per_mile: string; trips: number };
+};
+
+export type ParksResponse = { parks: Park[]; addons: Addon[]; transport: TransportInfo };
+
+/** The getting-there line of a quote or booking. */
+export type TransportLine = {
+  code: TransportCode;
+  name: string;
+  total: string;
+  miles?: number | null;
+  trips?: number;
+  per_mile?: string;
+  days?: number;
+  daily_rate?: string;
+};
 
 /** One extra on a quote or booking. */
 export type AddonLine = { code: string; name: string; daily_rate: string; days: number; total: string };
@@ -63,6 +86,7 @@ export type Quote = {
   security_deposit: string;
   addons: AddonLine[];
   addons_total: string;
+  transport: TransportLine;
 };
 
 export type QuoteResponse = { quote: Quote; available: boolean; deposit_percent: number };
@@ -84,6 +108,7 @@ export type PublicBooking = {
   park: { slug: string; name: string; city?: string; state?: string } | null;
   addons: AddonLine[];
   addons_total: string;
+  transport: TransportLine;
 };
 
 export class ApiError extends Error {

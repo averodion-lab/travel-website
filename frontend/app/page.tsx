@@ -22,8 +22,8 @@ const STEPS = [
     text: "Enter your details and pay a deposit online. Your confirmation arrives by email.",
   },
   {
-    title: "We deliver and set up",
-    text: "We bring the trailer to your campsite, level it and connect power, water and sewer.",
+    title: "Tow it or we deliver",
+    text: "Tow it with your truck or rent ours, or we bring it to your campsite, level it and connect power, water and sewer.",
   },
   {
     title: "Settle in",
@@ -52,7 +52,9 @@ const EXPLORE = [
 /** Turns a list of features into one sentence: "a, b, c and d." Keeps
  *  abbreviations like "TV" as they are, lowercases the rest. */
 function featureSentence(items: string[]) {
-  const words = items.map((a, i) => (i === 0 || /^[A-Z]{2}/.test(a) ? a : a.charAt(0).toLowerCase() + a.slice(1)));
+  const words = items.map((a, i) =>
+    i === 0 || /^[A-Z]{2}/.test(a) ? a : a.charAt(0).toLowerCase() + a.slice(1),
+  );
   if (words.length < 2) return `${words.join("")}.`;
   return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}.`;
 }
@@ -136,7 +138,12 @@ async function Parks() {
       </p>
     );
   return (
-    <MapAndBooking parks={data.parks} addons={data.addons} camper={trailer} />
+    <MapAndBooking
+      parks={data.parks}
+      addons={data.addons}
+      camper={trailer}
+      transport={data.transport}
+    />
   );
 }
 
@@ -326,7 +333,12 @@ export default function Home() {
           </div>
         </div>
         {/* Cream pines rising into the green, blending into the map section below */}
-        <Treeline color="var(--color-cream)" height={150} seed={53} ridge={false} />
+        <Treeline
+          color="var(--color-cream)"
+          height={150}
+          seed={53}
+          ridge={false}
+        />
       </section>
 
       {/* Destinations: the campgrounds map */}

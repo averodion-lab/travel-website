@@ -110,6 +110,10 @@ class Booking(db.Model):
     # Extras snapshot at booking time: [{code, name, daily_rate, days, total}]
     addons = db.Column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
     addons_total = db.Column(db.Numeric(10, 2), nullable=False, default=0, server_default=text("0"))
+    # Getting there: "self" (own truck), "truck" (renting ours) or "delivery".
+    transport = db.Column(db.String(20), nullable=False, default="self", server_default="self")
+    transport_total = db.Column(db.Numeric(10, 2), nullable=False, default=0, server_default=text("0"))
+    towing_experience = db.Column(db.Boolean, nullable=False, default=False, server_default=text("false"))
     status = db.Column(db.String(20), nullable=False, default=BookingStatus.PENDING)
     stripe_session_id = db.Column(db.String(200), unique=True)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=utcnow)
@@ -161,7 +165,23 @@ class Booking(db.Model):
             "park": self.park_info(),
             "addons": self.addons or [],
             "addons_total": str(self.addons_total or 0),
+            "transport": self.transport_info(),
         }
+
+    def transport_info(self) -> dict:
+        from .catalog import PARKS, TRUCK
+
+        code = self.transport or "self"
+        info = {"code": code, "total": str(self.transport_total or 0)}
+        if code == "truck":
+            info["name"] = f"{TRUCK.name} rental"
+        elif code == "delivery":
+            park = PARKS.get(self.park or "")
+            info["name"] = "Delivery and setup"
+            info["miles"] = park.delivery_miles if park else None
+        else:
+            info["name"] = "Your own truck"
+        return info
 
     def park_info(self) -> dict | None:
         from .catalog import PARKS

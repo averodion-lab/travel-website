@@ -2,7 +2,7 @@
  *  site before the booking system is online). The whole booking flow can be
  *  clicked through, but nothing is saved, charged or sent anywhere.
  *  Turn it on with NEXT_PUBLIC_BOOKING_MODE=preview (see `npm run build:preview`). */
-import type { AddonLine, Camper, ParksResponse, QuoteResponse } from "./api";
+import type { AddonLine, Camper, ParksResponse, QuoteResponse, TransportLine } from "./api";
 
 export const PREVIEW = process.env.NEXT_PUBLIC_BOOKING_MODE === "preview";
 
@@ -101,6 +101,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Blairsville",
+      "delivery_miles": 92,
       "description": "At the base of Blood Mountain in the Chattahoochee National Forest, with a 22-acre mountain lake (Lake Trahlyta) and full-hookup RV sites.",
       "lat": 34.76294,
       "lng": -83.92843,
@@ -123,6 +124,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Chatsworth",
+      "delivery_miles": 61,
       "description": "High-elevation overlooks, hiking trails and a tucked-away mountain lake with a swimming beach. RV sites have water and electric hookups.",
       "lat": 34.76069,
       "lng": -84.69515,
@@ -152,6 +154,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Blairsville",
+      "delivery_miles": 79,
       "description": "In the Blue Ridge Mountains, with full hookups, mountain views and direct access to Lake Nottely for boating and fishing.",
       "lat": 34.872,
       "lng": -84.006,
@@ -175,6 +178,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Fair Play",
+      "delivery_miles": 106,
       "description": "In the Appalachian foothills right on the shore of Lake Hartwell: classic lakeside camping with full hookups for large rigs.",
       "lat": 34.499,
       "lng": -82.97757,
@@ -197,6 +201,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Travelers Rest",
+      "delivery_miles": 163,
       "description": "A peaceful park near the Blue Ridge Mountains, centered on a private 3-acre fishing lake, with spacious full-hookup sites.",
       "lat": 35.04014,
       "lng": -82.44025,
@@ -219,6 +224,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Spruce Pine",
+      "delivery_miles": 245,
       "description": "High in the Blue Ridge Mountains, right off the Blue Ridge Parkway, with a private lake, forest trails and full RV hookups.",
       "lat": 35.89239,
       "lng": -81.97537,
@@ -241,6 +247,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Lake Toxaway",
+      "delivery_miles": 150,
       "description": "A mountain retreat surrounded by creeks and waterfalls, a base for hiking, kayaking and rock climbing.",
       "lat": 35.1438145,
       "lng": -82.930422,
@@ -263,6 +270,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Gatlinburg",
+      "delivery_miles": 177,
       "description": "A wooded resort bordering Great Smoky Mountains National Park, with a running creek and fully equipped concrete RV pads.",
       "lat": 35.72521,
       "lng": -83.48267,
@@ -285,6 +293,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Hermitage",
+      "delivery_miles": 226,
       "description": "Right on the shore of Percy Priest Lake: lakefront sites with concrete pads and full hookups, a short drive from Nashville.",
       "lat": 36.15645,
       "lng": -86.60642,
@@ -307,6 +316,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         }
       ],
       "city": "Langston",
+      "delivery_miles": 122,
       "description": "On the eastern shore of 68,000-acre Lake Guntersville, with waterfront access, mountain-lake views and full hookups.",
       "lat": 34.46252,
       "lng": -86.18366,
@@ -321,6 +331,7 @@ export const PREVIEW_PARKS: ParksResponse = {
     {
       "addons": [],
       "city": "Hartselle",
+      "delivery_miles": 174,
       "description": "A quiet, rural park in the Appalachian foothills with a fishing pond, a golf course and pull-through RV sites.",
       "lat": 34.38876,
       "lng": -86.86359,
@@ -330,7 +341,20 @@ export const PREVIEW_PARKS: ParksResponse = {
       "terrain": [],
       "url": "https://www.qcresort.com/"
     }
-  ]
+  ],
+  "transport": {
+    "base": "Canton / Woodstock, GA",
+    "delivery": {
+      "per_mile": "3.50",
+      "trips": 2
+    },
+    "truck": {
+      "code": "truck",
+      "daily_rate": "175.00",
+      "description": "Our black 2026 RAM 2500 Turbo Diesel with a fifth-wheel hitch. For drivers with experience towing a large trailer.",
+      "name": "2026 RAM 2500 Turbo Diesel"
+    }
+  }
 };
 
 // Same rules as backend/app/services/pricing.py, for display only.
@@ -368,7 +392,44 @@ function extras(parkSlug: string | undefined, codes: string[] | undefined, night
   });
 }
 
-function quote(body: { start?: string; end?: string; park?: string; addons?: string[] }): QuoteResponse {
+/** Same rules as catalog.resolve_transport() and pricing.transport_line(). */
+function getThere(code: string | undefined, parkSlug: string | undefined, experience: boolean, nights: number): TransportLine {
+  const c = code || "self";
+  const park = PREVIEW_PARKS.parks.find((p) => p.slug === parkSlug);
+  const t = PREVIEW_PARKS.transport;
+  if (c === "truck") {
+    if (!experience) {
+      throw new PreviewError("Renting our truck requires experience towing a large trailer. Please confirm it, or choose delivery.");
+    }
+    const rate = Number(t.truck.daily_rate);
+    return { code: "truck", name: `${t.truck.name} rental`, daily_rate: fixed(rate), days: nights, total: fixed(rate * nights) };
+  }
+  if (c === "delivery") {
+    if (!park) {
+      throw new PreviewError("Delivery is priced by distance, so please choose a campground from the list (or call us about another one).");
+    }
+    const per = Number(t.delivery.per_mile);
+    return {
+      code: "delivery",
+      name: "Delivery and setup",
+      miles: park.delivery_miles,
+      trips: t.delivery.trips,
+      per_mile: fixed(per),
+      total: fixed(per * park.delivery_miles * t.delivery.trips),
+    };
+  }
+  if (c !== "self") throw new PreviewError("Please choose how the trailer gets to the campsite.");
+  return { code: "self", name: "Your own truck", total: "0.00" };
+}
+
+function quote(body: {
+  start?: string;
+  end?: string;
+  park?: string;
+  addons?: string[];
+  transport?: string;
+  towing_experience?: boolean;
+}): QuoteResponse {
   const t = PREVIEW_TRAILER;
   const start = body.start ?? "";
   const end = body.end ?? "";
@@ -381,9 +442,10 @@ function quote(body: { start?: string; end?: string; park?: string; addons?: str
   if (nights > MAX_NIGHTS) throw new PreviewError(`Rentals are limited to ${MAX_NIGHTS} nights. Contact us for longer trips.`);
 
   const lines = extras(body.park, body.addons, nights);
+  const transport = getThere(body.transport, body.park, body.towing_experience === true, nights);
   const addonsTotal = cents(lines.reduce((sum, l) => sum + Number(l.total), 0));
   const subtotal = cents(Number(t.daily_rate) * nights);
-  const total = cents(subtotal + Number(t.cleaning_fee) + addonsTotal);
+  const total = cents(subtotal + Number(t.cleaning_fee) + addonsTotal + Number(transport.total));
   const deposit = cents((total * DEPOSIT_PERCENT) / 100);
   return {
     available: true,
@@ -399,6 +461,7 @@ function quote(body: { start?: string; end?: string; park?: string; addons?: str
       security_deposit: fixed(Number(t.security_deposit)),
       addons: lines,
       addons_total: fixed(addonsTotal),
+      transport,
     },
   };
 }

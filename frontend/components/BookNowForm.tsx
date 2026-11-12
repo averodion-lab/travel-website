@@ -6,7 +6,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 import AddonIcon from "@/components/AddonIcon";
 import CardLogos from "@/components/CardLogos";
 import DateRangeField from "@/components/DateRangeField";
-import { api, type Camper, type Park, type QuoteResponse } from "@/lib/api";
+import TransportPicker, {
+  parseTransport,
+  transportLabel,
+} from "@/components/TransportPicker";
+import {
+  api,
+  type Camper,
+  type Park,
+  type QuoteResponse,
+  type TransportInfo,
+} from "@/lib/api";
 import { isISODate, money, rate } from "@/lib/format";
 import { STATE_ORDER } from "@/lib/parks";
 
@@ -21,12 +31,14 @@ export default function BookNowForm({
   camper,
   parks,
   addons,
+  transport: transportInfo,
   park: parkProp,
   onParkChange,
 }: {
   camper: Camper;
   parks: Park[];
   addons: Park["addons"];
+  transport: TransportInfo;
   /** Optional: let the page control the campground (the home page map fills it in). */
   park?: string;
   onParkChange?: (slug: string) => void;
@@ -45,6 +57,11 @@ export default function BookNowForm({
   const [picked, setPicked] = useState<string[]>(() =>
     (params.get("addons") ?? "").split(",").filter(Boolean),
   );
+  // How the trailer gets there, and (for our truck) the towing-experience confirmation.
+  const [transport, setTransport] = useState(() =>
+    parseTransport(params.get("transport")),
+  );
+  const [experience, setExperience] = useState(params.get("exp") === "1");
   const [priced, setPriced] = useState<{
     key: string;
     quote?: QuoteResponse;
@@ -57,9 +74,12 @@ export default function BookNowForm({
     () => picked.filter((c) => parkInfo?.addons.some((a) => a.code === c)),
     [picked, parkInfo],
   );
+  // Delivery is priced by distance, so it needs a campground from the list.
+  const transportCode =
+    transport === "delivery" && !parkInfo ? "self" : transport;
   const datesReady = !!start && !!end;
   const key = datesReady
-    ? `${start}|${end}|${parkSlug}|${chosen.join(",")}`
+    ? `${start}|${end}|${parkSlug}|${chosen.join(",")}|${transportCode}|${experience}`
     : "";
 
   useEffect(() => {
@@ -74,6 +94,8 @@ export default function BookNowForm({
         end,
         park: parkSlug,
         addons: chosen,
+        transport: transportCode,
+        towing_experience: experience,
       }),
     })
       .then((quote) => !cancelled && setPriced({ key, quote }))
@@ -81,7 +103,16 @@ export default function BookNowForm({
     return () => {
       cancelled = true;
     };
-  }, [key, camper.slug, start, end, parkSlug, chosen]);
+  }, [
+    key,
+    camper.slug,
+    start,
+    end,
+    parkSlug,
+    chosen,
+    transportCode,
+    experience,
+  ]);
 
   const current = priced?.key === key ? priced : null;
   const loading = !!key && !current;
@@ -111,6 +142,8 @@ export default function BookNowForm({
     });
     if (parkSlug) qs.set("park", parkSlug);
     if (chosen.length) qs.set("addons", chosen.join(","));
+    if (transportCode !== "self") qs.set("transport", transportCode);
+    if (transportCode === "truck" && experience) qs.set("exp", "1");
     router.push(`/book?${qs}`);
   }
 
@@ -168,9 +201,28 @@ export default function BookNowForm({
           </p>
         </section>
 
+        {/* Getting there */}
+        <section className="mt-9 border-t border-line pt-8">
+          <p className="eyebrow text-clay">(03) Getting there</p>
+          <p className="mt-2 font-display text-3xl">
+            How will the trailer get there?
+          </p>
+          <div className="mt-5">
+            <TransportPicker
+              info={transportInfo}
+              park={parkInfo}
+              nights={q?.days ?? 0}
+              value={transportCode}
+              onChange={setTransport}
+              experience={experience}
+              onExperience={setExperience}
+            />
+          </div>
+        </section>
+
         {/* Extras */}
         <section className="mt-9 border-t border-line pt-8">
-          <p className="eyebrow text-clay">(03) Extras</p>
+          <p className="eyebrow text-clay">(04) Extras</p>
           <p className="mt-2 font-display text-3xl">Add to your trip</p>
           <ul className="mt-5 space-y-3">
             {addons.map((a) => {
@@ -279,6 +331,12 @@ export default function BookNowForm({
                         <dd>{money(a.total)}</dd>
                       </div>
                     ))}
+                    {q.transport && q.transport.code !== "self" && (
+                      <div className="flex justify-between">
+                        <dt>{transportLabel(q.transport)}</dt>
+                        <dd>{money(q.transport.total)}</dd>
+                      </div>
+                    )}
                     <div className="flex justify-between border-t border-line pt-3 text-base font-semibold">
                       <dt>Total</dt>
                       <dd>{money(q.total)}</dd>

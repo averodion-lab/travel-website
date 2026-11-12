@@ -21,7 +21,12 @@ async function Planner() {
     );
   }
   return (
-    <BookNowForm camper={trailer} parks={data.parks} addons={data.addons} />
+    <BookNowForm
+      camper={trailer}
+      parks={data.parks}
+      addons={data.addons}
+      transport={data.transport}
+    />
   );
 }
 
@@ -34,7 +39,7 @@ export default function BookNowPage() {
         <h1 className="mt-3 font-display text-6xl uppercase leading-[0.9] tracking-tight sm:text-7xl">
           Plan your trip
         </h1>
-        <p className="script -mt-1 text-5xl sm:text-6xl">in three steps</p>
+        <p className="script -mt-1 text-5xl sm:text-6xl">in four steps</p>
         <div className="mt-10">
           <Suspense
             fallback={

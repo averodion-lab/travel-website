@@ -6,6 +6,10 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import AddonIcon from "@/components/AddonIcon";
 import CardLogos, { Lock } from "@/components/CardLogos";
+import TransportPicker, {
+  parseTransport,
+  transportLabel,
+} from "@/components/TransportPicker";
 import { PREVIEW } from "@/lib/preview";
 import {
   api,
@@ -37,6 +41,11 @@ export default function BookingForm() {
   const [addons, setAddons] = useState<string[]>(() =>
     (params.get("addons") ?? "").split(",").filter(Boolean),
   );
+  // How the trailer gets there, and (for our truck) the towing-experience confirmation.
+  const [transport, setTransport] = useState(() =>
+    parseTransport(params.get("transport")),
+  );
+  const [experience, setExperience] = useState(params.get("exp") === "1");
   const [loadError, setLoadError] = useState("");
   const [error, setError] = useState("");
   const [datesTaken, setDatesTaken] = useState(false);
@@ -72,7 +81,13 @@ export default function BookingForm() {
       addons.filter((code) => parkInfo?.addons.some((a) => a.code === code)),
     [addons, parkInfo],
   );
-  const choiceKey = `${parkSlug}|${chosen.join(",")}`;
+  // Delivery is priced by distance, so it needs a campground from the list;
+  // our truck needs the towing-experience box ticked before it is priced.
+  const transportCode =
+    transport === "delivery" && !parkInfo ? "self" : transport;
+  const quotedTransport =
+    transportCode === "truck" && !experience ? "self" : transportCode;
+  const choiceKey = `${parkSlug}|${chosen.join(",")}|${quotedTransport}`;
 
   // The server prices the trip, extras included, whenever the choices change.
   useEffect(() => {
@@ -87,6 +102,8 @@ export default function BookingForm() {
         end,
         park: parkSlug,
         addons: chosen,
+        transport: quotedTransport,
+        towing_experience: experience,
       }),
     })
       .then((q) => {
@@ -101,7 +118,18 @@ export default function BookingForm() {
     return () => {
       cancelled = true;
     };
-  }, [valid, catalog, slug, start, end, parkSlug, chosen, choiceKey]);
+  }, [
+    valid,
+    catalog,
+    slug,
+    start,
+    end,
+    parkSlug,
+    chosen,
+    choiceKey,
+    quotedTransport,
+    experience,
+  ]);
 
   const quote = priced?.quote ?? null;
   const repricing = !!priced && priced.key !== choiceKey && !quoteError;
@@ -182,6 +210,8 @@ export default function BookingForm() {
     data.set("park", parkSlug);
     data.delete("addons");
     chosen.forEach((code) => data.append("addons", code));
+    data.set("transport", transportCode);
+    data.set("towing_experience", experience ? "1" : "0");
     try {
       const res = await api<{ reference: string; checkout_url: string }>(
         "/api/bookings",
@@ -318,8 +348,8 @@ export default function BookingForm() {
                   Where are you staying?
                 </h2>
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-                  We deliver the trailer and set it up at your campsite. Reserve
-                  the site with the park directly.{" "}
+                  Reserve your site with the park directly. If we deliver, we
+                  set the trailer up there for you.{" "}
                   <Link href="/destinations" className="text-clay underline">
                     See all parks on the map
                   </Link>
@@ -369,6 +399,25 @@ export default function BookingForm() {
                     </a>
                   </div>
                 )}
+              </section>
+
+              <section>
+                <h2 className="font-display text-4xl">Getting there</h2>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
+                  Tow it yourself, rent our truck, or let us deliver it and set
+                  it up at your campsite.
+                </p>
+                <div className="mt-6 max-w-2xl">
+                  <TransportPicker
+                    info={catalog.transport}
+                    park={parkInfo}
+                    nights={q.days}
+                    value={transportCode}
+                    onChange={setTransport}
+                    experience={experience}
+                    onExperience={setExperience}
+                  />
+                </div>
               </section>
 
               <section>
@@ -468,10 +517,19 @@ export default function BookingForm() {
                     </span>
                   </span>
                 </div>
+                {transportCode === "truck" && !experience && (
+                  <p className="mb-3 text-sm text-clay">
+                    Please confirm your towing experience to rent our truck, or
+                    choose another option.
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={() => goTo("details")}
-                  className="btn btn-primary w-full sm:w-auto sm:min-w-72"
+                  disabled={
+                    (transportCode === "truck" && !experience) || repricing
+                  }
+                  className="btn btn-primary w-full disabled:opacity-50 sm:w-auto sm:min-w-72"
                 >
                   Continue to your details →
                 </button>
@@ -628,7 +686,7 @@ export default function BookingForm() {
                     Edit details
                   </button>
                 </div>
-                <dl className="mt-5 grid gap-px overflow-hidden rounded-2xl border border-line bg-line text-sm sm:grid-cols-3 [&>div:nth-child(4)]:sm:col-span-2">
+                <dl className="mt-5 grid gap-px overflow-hidden rounded-2xl border border-line bg-line text-sm sm:grid-cols-3 [&>div:nth-child(4)]:sm:col-span-2 [&>div:nth-child(6)]:sm:col-span-3">
                   {[
                     ["Name", review.name],
                     ["Email", review.email],
@@ -642,6 +700,12 @@ export default function BookingForm() {
                       q.addons.length
                         ? q.addons.map((a) => a.name).join(", ")
                         : "None",
+                    ],
+                    [
+                      "Getting there",
+                      q.transport.code === "truck"
+                        ? `${q.transport.name} (towing experience confirmed)`
+                        : transportLabel(q.transport),
                     ],
                   ].map(([label, value]) => (
                     <div key={label} className="bg-white px-4 py-3">
@@ -762,7 +826,7 @@ export default function BookingForm() {
                 </div>
               </dl>
               <Link
-                href={`/book-now?${new URLSearchParams({ start: start!, end: end!, ...(parkSlug ? { park: parkSlug } : {}), ...(chosen.length ? { addons: chosen.join(",") } : {}) })}`}
+                href={`/book-now?${new URLSearchParams({ start: start!, end: end!, ...(parkSlug ? { park: parkSlug } : {}), ...(chosen.length ? { addons: chosen.join(",") } : {}), ...(transportCode !== "self" ? { transport: transportCode } : {}), ...(transportCode === "truck" && experience ? { exp: "1" } : {}) })}`}
                 className="eyebrow mt-3 inline-block text-clay hover:underline"
               >
                 Change trip
@@ -795,6 +859,12 @@ export default function BookingForm() {
                     <dd>{money(a.total)}</dd>
                   </div>
                 ))}
+                {q.transport.code !== "self" && (
+                  <div className="flex justify-between">
+                    <dt>{transportLabel(q.transport)}</dt>
+                    <dd>{money(q.transport.total)}</dd>
+                  </div>
+                )}
                 <div className="flex justify-between border-t border-line pt-3 text-base font-semibold">
                   <dt>Total</dt>
                   <dd>{money(q.total)}</dd>

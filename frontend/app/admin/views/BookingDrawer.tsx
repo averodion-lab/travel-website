@@ -78,6 +78,18 @@ export default function BookingDrawer({
               {booking.addons.map((a) => (
                 <Row key={a.code} label={`${a.name}, ${a.days} days`} value={money(a.total)} />
               ))}
+              {booking.transport && (
+                <Row
+                  label={
+                    booking.transport.code === "delivery"
+                      ? `Getting there: delivery and setup${booking.transport.miles ? `, ${booking.transport.miles} mi each way` : ""}`
+                      : booking.transport.code === "truck"
+                        ? `Getting there: renting our truck${booking.towing_experience ? " (towing experience confirmed)" : ""}`
+                        : "Getting there: customer tows it"
+                  }
+                  value={booking.transport.code === "self" ? "Own truck" : money(booking.transport.total)}
+                />
+              )}
             </dl>
           </section>
 

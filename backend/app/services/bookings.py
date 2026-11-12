@@ -32,10 +32,14 @@ def create_booking(
     license_file: FileStorage | None,
     park=None,
     addons=(),
+    transport: str = "self",
+    towing_experience: bool = False,
 ) -> Booking:
     """Create a pending booking that holds the dates until payment.
     `park` and `addons` are already validated catalog objects."""
-    quote = quote_for_camper(camper, start, end, current_app.config, addons)  # validates dates
+    quote = quote_for_camper(
+        camper, start, end, current_app.config, addons, transport_code=transport, park=park
+    )  # validates dates
 
     availability.expire_stale_pending()
     if not availability.is_available(camper.id, start, end):
@@ -69,6 +73,9 @@ def create_booking(
                 {**a, "daily_rate": str(a["daily_rate"]), "total": str(a["total"])} for a in quote.addons
             ],
             addons_total=quote.addons_total,
+            transport=transport,
+            transport_total=quote.transport["total"],
+            towing_experience=towing_experience,
             status=BookingStatus.PENDING,
         )
         db.session.add(booking)

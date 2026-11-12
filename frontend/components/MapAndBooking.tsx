@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import BookNowForm from "@/components/BookNowForm";
 import ParksMap from "@/components/ParksMap";
-import type { Camper, Park } from "@/lib/api";
+import type { Camper, Park, TransportInfo } from "@/lib/api";
 
 /** Home page: the parks map, and right under it the booking card (campground,
  *  dates, extras, live price). "Book the trailer here" in a pin's popup fills
@@ -12,10 +12,12 @@ export default function MapAndBooking({
   parks,
   addons,
   camper,
+  transport,
 }: {
   parks: Park[];
   addons: Park["addons"];
   camper: Camper;
+  transport: TransportInfo;
 }) {
   const [park, setPark] = useState("");
   const form = useRef<HTMLDivElement>(null);
@@ -47,14 +49,16 @@ export default function MapAndBooking({
             </p>
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-muted">
-            Tap a pin above or choose a park here, pick your dates, add a
-            4-wheeler or jet ski, and see your exact total.
+            Tap a pin above or choose a park here, pick your dates, choose how
+            the trailer gets there, add a 4-wheeler or jet ski, and see your
+            exact total.
           </p>
         </div>
         <BookNowForm
           camper={camper}
           parks={parks}
           addons={addons}
+          transport={transport}
           park={park}
           onParkChange={setPark}
         />

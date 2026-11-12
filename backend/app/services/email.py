@@ -45,6 +45,15 @@ def _trip(b: Booking) -> str:
     lines = [f"Campground: {park['name'] if park else 'Not chosen yet'}"]
     for a in b.addons or []:
         lines.append(f"Extra: {a['name']}, {a['days']} days, {_money(Decimal(a['total']))}")
+    t = b.transport_info()
+    getting_there = t["name"]
+    if t["code"] == "delivery" and t.get("miles"):
+        getting_there += f" ({t['miles']} miles each way)"
+    if t["code"] != "self":
+        getting_there += f", {_money(Decimal(t['total']))}"
+    if t["code"] == "truck":
+        getting_there += " (driver confirmed towing experience)"
+    lines.append(f"Getting there: {getting_there}")
     return "\n".join(lines)
 
 

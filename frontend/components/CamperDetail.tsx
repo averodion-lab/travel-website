@@ -22,7 +22,12 @@ function Spec({ label, value }: { label: string; value: string | null }) {
 async function Widget({ camper }: { camper: Camper }) {
   const data = await getParks();
   return (
-    <BookingWidget camper={camper} parks={data?.parks} addons={data?.addons} />
+    <BookingWidget
+      camper={camper}
+      parks={data?.parks}
+      addons={data?.addons}
+      transport={data?.transport}
+    />
   );
 }
 

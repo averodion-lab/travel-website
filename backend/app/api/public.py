@@ -53,6 +53,11 @@ def list_parks():
         {
             "parks": [p.to_dict() for p in catalog.PARKS.values()],
             "addons": [a.to_dict() for a in catalog.ADDONS.values()],
+            "transport": {
+                "base": catalog.BASE,
+                "truck": catalog.TRUCK.to_dict(),
+                "delivery": {"per_mile": str(catalog.DELIVERY_PER_MILE), "trips": catalog.DELIVERY_TRIPS},
+            },
         }
     )
 
@@ -116,8 +121,11 @@ def quote():
     camper = _get_camper(str(data.get("camper", "")))
     start = _parse_date(data.get("start"), "pickup")
     end = _parse_date(data.get("end"), "return")
-    _, addons = catalog.resolve(str(data.get("park") or ""), _addon_codes(data.get("addons")))
-    q = quote_for_camper(camper, start, end, current_app.config, addons)
+    park, addons = catalog.resolve(str(data.get("park") or ""), _addon_codes(data.get("addons")))
+    transport = catalog.resolve_transport(
+        str(data.get("transport") or ""), park, data.get("towing_experience") is True
+    )
+    q = quote_for_camper(camper, start, end, current_app.config, addons, transport_code=transport, park=park)
     availability.expire_stale_pending()
     return jsonify(
         {
@@ -164,6 +172,10 @@ def create_booking():
     park, addons = catalog.resolve(
         _clean(form, "park", "Campground", 60, required=False), form.getlist("addons")
     )
+    towing_experience = form.get("towing_experience") in ("1", "true", "on", "yes")
+    transport = catalog.resolve_transport(
+        _clean(form, "transport", "Transport", 20, required=False), park, towing_experience
+    )
 
     booking = booking_service.create_booking(
         camper=camper,
@@ -171,6 +183,8 @@ def create_booking():
         end=end,
         park=park,
         addons=addons,
+        transport=transport,
+        towing_experience=towing_experience,
         customer=customer,
         license_file=request.files.get("license"),
     )

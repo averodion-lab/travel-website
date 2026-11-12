@@ -6,7 +6,17 @@ import { addMonths, differenceInCalendarDays, startOfDay } from "date-fns";
 import { DayPicker, type DateRange } from "react-day-picker";
 import AddonIcon from "@/components/AddonIcon";
 import CardLogos from "@/components/CardLogos";
-import { api, type Camper, type Park, type QuoteResponse } from "@/lib/api";
+import TransportPicker, {
+  parseTransport,
+  transportLabel,
+} from "@/components/TransportPicker";
+import {
+  api,
+  type Camper,
+  type Park,
+  type QuoteResponse,
+  type TransportInfo,
+} from "@/lib/api";
 import { STATE_ORDER } from "@/lib/parks";
 import { fromISO, isISODate, money, rate, toISO } from "@/lib/format";
 import {
@@ -37,10 +47,12 @@ export default function BookingWidget({
   camper,
   parks = [],
   addons = [],
+  transport: transportInfo,
 }: {
   camper: Camper;
   parks?: Park[];
   addons?: Park["addons"];
+  transport?: TransportInfo;
 }) {
   const router = useRouter();
   const params = useSearchParams();
@@ -58,6 +70,11 @@ export default function BookingWidget({
   const [picked, setPicked] = useState<string[]>(() =>
     (params.get("addons") ?? "").split(",").filter(Boolean),
   );
+  // How the trailer gets there, and (for our truck) the towing-experience confirmation.
+  const [transport, setTransport] = useState(() =>
+    parseTransport(params.get("transport")),
+  );
+  const [experience, setExperience] = useState(params.get("exp") === "1");
   const [calendarError, setCalendarError] = useState("");
   // The latest quote (or error), tagged with the dates it belongs to.
   const [result, setResult] = useState<{
@@ -113,9 +130,12 @@ export default function BookingWidget({
       picked.filter((code) => parkInfo?.addons.some((a) => a.code === code)),
     [picked, parkInfo],
   );
+  // Delivery is priced by distance, so it needs a campground from the list.
+  const transportCode =
+    transport === "delivery" && !parkInfo ? "self" : transport;
   const key =
     start && end && nights >= 1
-      ? `${start}_${end}_${parkSlug}_${chosen.join(",")}`
+      ? `${start}_${end}_${parkSlug}_${chosen.join(",")}_${transportCode}_${experience}`
       : "";
 
   useEffect(() => {
@@ -130,6 +150,8 @@ export default function BookingWidget({
         end,
         park: parkSlug,
         addons: chosen,
+        transport: transportCode,
+        towing_experience: experience,
       }),
     })
       .then((quote) => !cancelled && setResult({ key, quote }))
@@ -137,7 +159,16 @@ export default function BookingWidget({
     return () => {
       cancelled = true;
     };
-  }, [camper.slug, key, start, end, parkSlug, chosen]);
+  }, [
+    camper.slug,
+    key,
+    start,
+    end,
+    parkSlug,
+    chosen,
+    transportCode,
+    experience,
+  ]);
 
   const current = result?.key === key ? result : null;
   const loading = !!key && !current;
@@ -164,6 +195,8 @@ export default function BookingWidget({
     });
     if (parkSlug) qs.set("park", parkSlug);
     if (chosen.length) qs.set("addons", chosen.join(","));
+    if (transportCode !== "self") qs.set("transport", transportCode);
+    if (transportCode === "truck" && experience) qs.set("exp", "1");
     router.push(`/book?${qs}`);
   }
   const toggle = (code: string) =>
@@ -277,6 +310,22 @@ export default function BookingWidget({
           </label>
         )}
 
+        {transportInfo && (
+          <fieldset className="mt-4">
+            <legend className="label">Getting there</legend>
+            <TransportPicker
+              info={transportInfo}
+              park={parkInfo}
+              nights={nights}
+              value={transportCode}
+              onChange={setTransport}
+              experience={experience}
+              onExperience={setExperience}
+              compact
+            />
+          </fieldset>
+        )}
+
         {addons.length > 0 && (
           <fieldset className="mt-4">
             <legend className="label">Extras</legend>
@@ -350,6 +399,13 @@ export default function BookingWidget({
                 <dd>{money(a.total)}</dd>
               </div>
             ))}
+            {estimate.quote.transport &&
+              estimate.quote.transport.code !== "self" && (
+                <div className="flex justify-between">
+                  <dt>{transportLabel(estimate.quote.transport)}</dt>
+                  <dd>{money(estimate.quote.transport.total)}</dd>
+                </div>
+              )}
             <div className="flex justify-between border-t border-line pt-3 text-base font-semibold">
               <dt>Total</dt>
               <dd>{money(estimate.quote.total)}</dd>

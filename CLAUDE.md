@@ -44,7 +44,7 @@ backend/                Flask API (port 5001 locally)
   app/__init__.py       app factory
   app/config.py         all settings from env vars; validate() fails fast
   app/models.py         Camper, Customer (PII), Booking (incl. park, addons snapshot, addons_total), User
-  app/catalog.py        PARKS (11 campgrounds: coordinates, website, mountains/lake) and ADDONS (4-wheeler, jet ski)
+  app/catalog.py        PARKS (11 campgrounds: coordinates, website, mountains/lake, delivery miles) and ADDONS (4-wheeler, jet ski); BASE, TRUCK, DELIVERY_PER_MILE (getting there)
   app/crypto.py         Fernet encryption for PII and license files
   app/api/              public.py (fleet, quote, bookings), webhooks.py (Stripe), admin.py
   app/services/         pricing, availability, bookings, payments, email, storage, reports (owner dashboard numbers)
@@ -54,7 +54,7 @@ backend/                Flask API (port 5001 locally)
   tests/                pytest, runs against real Postgres (database camper_test)
 frontend/               Next.js 16 App Router + Tailwind v4 (port 3210 locally)
   app/                  / , /fleet , /fleet/[slug] , /book-now , /gallery , /how-it-works , /destinations , /faq , /book , /booking/confirmation , /admin
-  components/           Header, Footer, PageHero, BookCta, CamperCard, Gallery (grid | masonry | carousel), BookingWidget, CardLogos, Reveal, CountUp, ParksMap (Leaflet + OpenStreetMap tiles)
+  components/           TransportPicker (own truck / rent our truck / delivery), Header, Footer, PageHero, BookCta, CamperCard, Gallery (grid | masonry | carousel), BookingWidget, CardLogos, Reveal, CountUp, ParksMap (Leaflet + OpenStreetMap tiles)
   app/admin/            AdminApp (login + shell), types.tsx, views/ (Overview, Calendar, Bookings, Customers, BookingDrawer)
   lib/trailer.ts        getTrailer() for server components (first active camper)
   lib/                  api.ts (API client + types), format.ts (money, dates)
@@ -82,7 +82,7 @@ Ports 3000 and 3100 are used by the owner's other projects on this machine; this
 
 1. `/fleet/[slug]` (and `/fleet`): `BookingWidget` loads booked ranges and shows a two-month calendar with month/year dropdowns, plus a campground select and extras checkboxes beside it; the estimate re-prices on every change and "Book now · pay $X" goes to `/book?…&step=details`. The visitor clicks a pickup day, then a return day (a return may land on another booking's pickup day). `POST /api/quote` returns the server-computed price.
 2. Booking card (`components/BookNowForm.tsx`): on the home page right under the parks map (picking a park in the map list fills it in), and on its own at `/book-now` (header "Book Now" button and the closing "Book now" buttons): one card with campground, dates (`DateRangeField`: a pop-up two-month calendar, a bottom sheet on phones) and extras as checkboxes, plus the live quote. "Book now" goes to `/book?…&addons=a,b&step=details`. Calendar rules (minimum stay, booked nights, can't run into the next booking) live in `lib/stay.ts`, shared with the trailer page calendar.
-2b. `/book`: a stepped page (Dates → Your trip → Your details → Payment). "Your trip" picks the campground (`?park=` from the map preselects it) and switches extras on or off: a 4-wheeler at mountain parks, a jet ski at lake parks, charged per day. `POST /api/quote` and `POST /api/bookings` take `park` and `addons`; `catalog.resolve()` rejects an extra the park doesn't offer, and the server sets every price. The payment step reviews the details, shows the accepted cards and the deposit, then the form posts multipart to `POST /api/bookings`. Backend validates, encrypts PII, saves the encrypted license file, creates a **pending** booking (holds dates 35 min), returns `checkout_url`.
+2b. `/book`: a stepped page (Dates → Your trip → Your details → Payment). "Your trip" picks the campground (`?park=` from the map preselects it) and switches extras on or off: a 4-wheeler at mountain parks, a jet ski at lake parks, charged per day. `POST /api/quote` and `POST /api/bookings` take `park` and `addons`; `catalog.resolve()` rejects an extra the park doesn't offer, and the server sets every price. "Getting there" (`transport`: `self` | `truck` | `delivery`, shown in all three booking places via `TransportPicker`): tow with your own truck (free), rent the owner's 2026 RAM 2500 Turbo Diesel (`TRUCK.daily_rate` per day; `towing_experience` must be confirmed or the server refuses), or delivery and setup at $3.50/mile × the park's `delivery_miles` × 2 (drop-off and pick-up). Delivery miles are road miles from Canton/Woodstock, GA (OSRM, Nov 2026); delivery needs a campground from the list. Saved on the booking as `transport`, `transport_total`, `towing_experience`; shown in the emails and the admin drawer. The payment step reviews the details, shows the accepted cards and the deposit, then the form posts multipart to `POST /api/bookings`. Backend validates, encrypts PII, saves the encrypted license file, creates a **pending** booking (holds dates 35 min), returns `checkout_url`.
 3. Stripe Checkout (30 min session). `POST /api/webhooks/stripe` verifies the signature and calls `confirm_booking`, which marks it **confirmed** and sends the customer + owner emails. Idempotent.
 4. `/booking/confirmation?ref=...` polls `GET /api/bookings/<ref>` (no contact details in that response).
 5. Owner dashboard at `/admin` (full-screen, covers the site footer): Overview (revenue, occupancy, who has the trailer, open dates), Calendar (year view by status), Bookings, Customers. Data comes from `GET /api/admin/overview` and `/api/admin/customers`. Revenue definitions are at the top of `services/reports.py`. Owner marks a booking **completed** there; `flask purge-licenses` deletes license data 30 days later.
@@ -151,7 +151,7 @@ References: [Driveza](https://driveza.framer.website), [Hemlock House](https://r
 
 ## Status
 
-MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 38 backend tests pass; frontend lints, type-checks and builds.
+MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 56 backend tests pass; frontend lints, type-checks and builds.
 
 **Live preview:** https://averodion-lab.github.io/travel-website/ (repo `averodion-lab/travel-website`, public, because GitHub Pages on a free account needs a public repo). Every push to `main` runs `.github/workflows/deploy.yml`, which runs `npm run build:preview` with `BASE_PATH=/travel-website` and publishes `frontend/out/` to GitHub Pages. No backend or database is online.
 
@@ -165,5 +165,5 @@ Not done yet:
 3. **Hardening before launch:** rate limiting on `/api/admin/login` and `/api/bookings`, two-factor for admin, refund flow (cancelling in admin does not refund in Stripe), balance collection at pickup is manual.
 4. **Later PRD features:** 3D showcase, destination map, add-ons, blog, About/Contact pages (Contact waits on real contact details), rental terms page.
 5. The local database holds made-up bookings (references `DEMO-…`) so the dashboard has data; remove with `flask demo-data --clear`. The owner cannot yet block dates for personal use or add a booking taken by phone.
-6. Unconfirmed by the owner: add-on prices ($150/day 4-wheeler, $250/day jet ski) and which parks count as mountain or lake (see `catalog.py`; Quail Creek offers neither; small park lakes like Vogel's are not treated as jet-ski lakes). The map uses OpenStreetMap's free tiles, which are meant for light use; switch to a tile provider (Mapbox is in the plan) before heavy traffic.
+6. Unconfirmed by the owner: truck rental $175/day (placeholder, based on what heavy-duty diesel pickups rent for), whether delivery is charged for both trips (assumed yes), how extras get to the campsite when the guest tows it, add-on prices ($150/day 4-wheeler, $250/day jet ski) and which parks count as mountain or lake (see `catalog.py`; Quail Creek offers neither; small park lakes like Vogel's are not treated as jet-ski lakes). The map uses OpenStreetMap's free tiles, which are meant for light use; switch to a tile provider (Mapbox is in the plan) before heavy traffic.
 7. The FAQ, How It Works and Destinations copy assumes delivery and setup by the owner and a 45 ft / 50 amp site requirement; the owner has not confirmed these.

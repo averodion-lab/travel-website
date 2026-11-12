@@ -71,6 +71,8 @@ def _summary(b: Booking) -> dict:
         "park": b.park_info(),
         "addons": b.addons or [],
         "addons_total": str(b.addons_total or 0),
+        "transport": b.transport_info(),
+        "towing_experience": bool(b.towing_experience),
     }
 
 
