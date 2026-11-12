@@ -1,0 +1,104 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import InView from "./InView";
+import useScrollProgress from "./useScrollProgress";
+
+/** A photo that unveils, then drifts at its own speed while scrolling, so the
+ *  collage has a little depth. */
+function DriftPhoto({
+  src,
+  alt = "",
+  className = "",
+  speed = 8,
+  delay = 0,
+  position = "50% 50%",
+}: {
+  src: string;
+  alt?: string;
+  className?: string;
+  speed?: number;
+  delay?: number;
+  position?: string;
+}) {
+  const [ref, p] = useScrollProgress<HTMLDivElement>();
+  return (
+    <div ref={ref} className={className}>
+      <InView delay={delay} className="lux-clip relative h-full w-full overflow-hidden">
+        <div className="absolute inset-x-0 -inset-y-[10%]" style={{ transform: `translateY(${(0.5 - p) * speed}%)` }}>
+          <Image src={src} alt={alt} fill sizes="(min-width:1024px) 40vw, 100vw" className="object-cover" style={{ objectPosition: position }} />
+        </div>
+      </InView>
+    </div>
+  );
+}
+
+function Moment({ n, words, text }: { n: string; words: [string, string, boolean?]; text: string }) {
+  const [plain, accent, accentFirst] = words;
+  return (
+    <InView className="lux-rise">
+      <p className="text-xs text-muted">({n})</p>
+      <h3 className="mt-3 font-display text-4xl leading-tight sm:text-5xl">
+        {accentFirst ? (
+          <>
+            <em>{accent}</em> {plain}
+          </>
+        ) : (
+          <>
+            {plain} <em>{accent}</em>
+          </>
+        )}
+      </h3>
+      <p className="mt-3 text-sm leading-relaxed text-muted">{text}</p>
+    </InView>
+  );
+}
+
+/** "Moments worth remembering": an uneven photo collage with four short
+ *  moments of a stay (after the avenelle reference site). */
+export default function Moments() {
+  return (
+    <section className="mx-auto max-w-7xl px-5 py-28 sm:px-8 sm:py-36">
+      <div className="flex flex-wrap items-end justify-between gap-8">
+        <InView className="lux-rise">
+          <p className="lux-label text-clay">Moments kept</p>
+          <h2 className="mt-6 font-display text-5xl leading-[1.02] sm:text-7xl">
+            Moments worth
+            <br />
+            <em>remembering</em>
+          </h2>
+        </InView>
+        <InView className="lux-rise max-w-sm" delay={150}>
+          <p className="leading-relaxed text-muted">Out here, the smallest moments are often the ones you remember most.</p>
+          <Link href="/gallery" className="lux-label mt-5 inline-block border-b border-ink pb-1">
+            View the gallery ↗
+          </Link>
+        </InView>
+      </div>
+
+      <div className="mt-16 grid grid-cols-2 gap-4 lg:grid-cols-12 lg:gap-5">
+        <DriftPhoto src="/images/lake-forest.jpg" alt="A forest lake at first light" className="col-span-2 aspect-square lg:col-span-4 lg:mt-12" speed={6} />
+        <div className="col-span-2 self-start lg:col-span-3 lg:pt-4">
+          <Moment n="01" words={["mornings.", "Slow", true]} text="Coffee on the step, mist still on the lake." />
+        </div>
+        <DriftPhoto src="/images/blueridge-pink.jpg" alt="Blue Ridge ridgelines at dawn" className="col-span-2 aspect-[16/10] lg:col-span-5" speed={12} delay={150} />
+
+        <DriftPhoto src="/images/montana/bedroom-2.jpg" alt="The king bedroom" className="aspect-square lg:col-span-3" speed={4} />
+        <DriftPhoto src="/images/smoky-meadow.jpg" alt="Horses in a meadow below the Smokies" className="aspect-square lg:col-span-3" speed={10} delay={120} />
+        <div className="col-span-2 self-start lg:col-span-3 lg:pt-2">
+          <Moment n="02" words={["Golden", "afternoons."]} text="Out on the water until the sun goes soft." />
+        </div>
+        <DriftPhoto src="/images/lake-jetski.jpg" alt="A jet ski on a lake at golden hour" position="62% 50%" className="col-span-2 aspect-square lg:col-span-3" speed={7} delay={240} />
+
+        <div className="col-span-2 lg:col-span-3 lg:pt-4">
+          <Moment n="03" words={["Long", "evenings."]} text="Chairs pulled close, the fire burning low." />
+        </div>
+        <DriftPhoto src="/images/campfire-night.jpg" alt="A campfire at night" className="col-span-2 aspect-[16/10] lg:col-span-6" speed={9} />
+        <div className="col-span-2 lg:col-span-3 lg:pt-4">
+          <Moment n="04" words={["Quiet", "nights."]} text="Nothing but the trees, and a sky full of stars." />
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${cormorant.variable} ${montserrat.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col">
+      <body className="film-grain flex min-h-full flex-col">
         {/* Every page opens at the top, also after a reload: stop the browser
             from restoring the old scroll position. A link to a spot on a page
             (like /fleet#book) still lands there: that spot streams in a moment

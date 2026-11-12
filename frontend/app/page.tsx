@@ -6,7 +6,10 @@ import CountUp from "@/components/CountUp";
 import Header from "@/components/Header";
 import MapAndBooking from "@/components/MapAndBooking";
 import InView from "@/components/lux/InView";
-import { LitStatement, ParallaxPhoto, SettlingPhotoSection } from "@/components/lux/ScrollEffects";
+import Balance from "@/components/lux/Balance";
+import Moments from "@/components/lux/Moments";
+import { LitStatement } from "@/components/lux/ScrollEffects";
+import StepInside from "@/components/lux/StepInside";
 import { rate } from "@/lib/format";
 import { getParks } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
@@ -180,12 +183,7 @@ async function Residence() {
           comfort for up to six.
         </p>
       </InView>
-      <ParallaxPhoto
-        src="/images/montana/living-1.jpg"
-        alt="The living room, with theatre seating and a fireplace"
-        className="mt-14 aspect-[16/10] sm:aspect-[21/9]"
-      />
-      <div className="mt-5 grid grid-cols-3 gap-3 sm:gap-5">
+      <div className="mt-14 grid grid-cols-3 gap-3 sm:gap-5">
         {[
           ["/images/montana/bedroom-1.jpg", "The king bedroom"],
           ["/images/montana/kitchen.jpg", "The kitchen"],
@@ -240,23 +238,24 @@ export default function Home() {
         </Suspense>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-28 sm:px-8 sm:py-36">
-        <Suspense fallback={<div className="h-[40rem] animate-pulse bg-sand/60" />}>
+      {/* A framed photo of the living room grows to fill the screen */}
+      <StepInside
+        src="/images/montana/living-1.jpg"
+        alt="The living room, with theatre seating and a fireplace"
+        eyebrow="The residence"
+        title="Step"
+        accent="inside."
+      />
+
+      <section className="mx-auto max-w-7xl px-5 pb-28 pt-12 sm:px-8 sm:pb-36">
+        <Suspense fallback={<div className="h-[30rem] animate-pulse bg-sand/60" />}>
           <Residence />
         </Suspense>
       </section>
 
-      <SettlingPhotoSection
-        src="/images/smoky-sunset.jpg"
-        overlay="bg-black/35"
-        className="flex h-[70svh] min-h-[28rem] items-center justify-center text-center text-cream"
-      >
-        <InView className="lux-rise relative max-w-3xl px-6">
-          <p className="font-display text-4xl leading-tight sm:text-6xl">
-            <em>Wake up to the mountains. Fall asleep by the fire.</em>
-          </p>
-        </InView>
-      </SettlingPhotoSection>
+      <Moments />
+
+      <Balance />
 
       {/* How it works */}
       <section className="mx-auto max-w-7xl px-5 py-28 sm:px-8 sm:py-36">

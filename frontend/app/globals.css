@@ -528,3 +528,42 @@ body {
     transform: none !important;
   }
 }
+
+/* "Everything, in balance" (components/lux/Balance.tsx): the circle draws
+   itself, the active point pulses, its line fades in. Children rise in when
+   the section arrives. */
+.balance.in .lux-rise { opacity: 1; transform: none; }
+.balance.in .lux-rise:nth-child(2) { transition-delay: 0.15s; }
+.balance.in .lux-rise:nth-child(3) { transition-delay: 0.3s; }
+.balance-ring { stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 2.2s cubic-bezier(0.6, 0, 0.2, 1) 0.3s; }
+.in .balance-ring { stroke-dashoffset: 0; }
+@keyframes balance-pulse { 0% { transform: scale(0.6); opacity: 0.9; } 100% { transform: scale(2.2); opacity: 0; } }
+.balance-pulse { transform-box: fill-box; transform-origin: center; animation: balance-pulse 1.8s ease-out infinite; }
+@keyframes balance-text { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.balance-text { animation: balance-text 0.6s ease-out; }
+
+/* Film grain: a very faint moving texture over the whole site, so photos
+   from different sources feel like one shoot. Grey noise, blended softly. */
+.film-grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: film-grain 1s steps(4) infinite;
+}
+@keyframes film-grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-3%, 2%); }
+  50% { transform: translate(2%, -3%); }
+  75% { transform: translate(-2%, -1%); }
+  100% { transform: translate(1%, 3%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .balance-ring { stroke-dashoffset: 0; transition: none; }
+  .balance.in .lux-rise, .balance .lux-rise { opacity: 1; transform: none; }
+  .balance-pulse, .balance-text, .film-grain::after { animation: none; }
+}
