@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Rent a 40-foot luxury fifth wheel, delivered and set up for your trip to the Smoky Mountains, the Blue Ridge and the lakes of the Southeast. Book online in minutes.",
+    "Rent a 40-foot luxury fifth wheel: tow it yourself, rent our truck, or have it delivered and set up for your trip to the Smoky Mountains, the Blue Ridge and the lakes of the Southeast. Book online in minutes.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

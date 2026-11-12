@@ -12,7 +12,7 @@ import { getParks } from "@/lib/parks";
 export const metadata: Metadata = {
   title: "Destinations",
   description:
-    "Mountain and lakeside RV parks in Georgia, the Carolinas, Tennessee and Alabama where we deliver the trailer, with 4-wheelers and jet skis as extras.",
+    "Mountain and lakeside RV parks in Georgia, the Carolinas, Tennessee and Alabama: tow the trailer there or we deliver it, with 4-wheelers and jet skis as extras.",
 };
 
 const SITE_NEEDS = [
@@ -121,7 +121,7 @@ export default function DestinationsPage() {
         eyebrow="Where to go"
         title="Mountains, lakes"
         accent="and open road"
-        text="Eleven RV parks across five states where we deliver and set up the trailer. Tap a pin to see the park."
+        text="Eleven RV parks across five states. Tow the trailer there, or we deliver and set it up. Tap a pin to see the park."
       />
 
       <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8">

@@ -150,7 +150,7 @@ async function Parks() {
 /** Big numbers under the hero. */
 async function Stats() {
   const camper = await getTrailer();
-  const stats = [
+  const stats: { value: number; prefix?: string; suffix: string; label: string }[] = [
     {
       value: camper?.length_ft ? Math.round(camper.length_ft) : 40,
       suffix: " ft",
@@ -162,12 +162,7 @@ async function Stats() {
       label: "guests sleep comfortably",
     },
     { value: 4, suffix: "", label: "slide-outs" },
-    {
-      value: camper ? Number(camper.daily_rate) : 249,
-      prefix: "$",
-      suffix: "",
-      label: "per night",
-    },
+    { value: 11, suffix: "", label: "campgrounds to choose from" },
   ];
   return (
     <dl className="mx-auto grid max-w-7xl grid-cols-2 gap-y-10 px-5 py-16 sm:px-8 lg:grid-cols-4">
@@ -222,8 +217,8 @@ export default function Home() {
             className="rise mt-8 max-w-xl text-base leading-relaxed text-cream/85"
             style={{ animationDelay: "0.55s" }}
           >
-            One forty-foot luxury fifth wheel, delivered and set up for the
-            Smokies, the Blue Ridge and every lake in between.
+            One forty-foot luxury fifth wheel for the Smokies, the Blue Ridge
+            and every lake in between. Tow it, rent our truck, or we deliver.
           </p>
           <div
             className="rise mt-9 flex flex-wrap justify-center gap-4"
@@ -239,7 +234,7 @@ export default function Home() {
         </div>
         <Treeline color="var(--color-cream)" height={220} seed={3} />
         <p className="eyebrow absolute bottom-[calc(clamp(121px,15.28vw,220px)+0.75rem)] left-5 z-10 hidden text-left leading-relaxed sm:left-8 sm:block">
-          Delivered
+          Tow it or we deliver
           <br />
           across the Southeast
         </p>
@@ -355,8 +350,8 @@ export default function Home() {
               </h2>
               <p className="script text-5xl sm:text-6xl">and open road</p>
               <p className="mt-5 max-w-xl leading-relaxed text-bark">
-                Eleven RV parks across five states where we deliver and set up
-                the trailer. Tap a pin to see the park, then book right below
+                Eleven RV parks across five states, with delivery and setup at
+                any of them. Tap a pin to see the park, then book right below
                 the map.
               </p>
             </div>

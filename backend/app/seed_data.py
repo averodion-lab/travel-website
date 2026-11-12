@@ -20,8 +20,8 @@ CAMPERS = [
             "a raised front kitchen with a residential refrigerator, a living room with "
             "theater seating, two sofas and a fireplace, and a private king bedroom with "
             "its own closet. It sleeps six, runs two-zone air conditioning on 50 amp "
-            "service and carries 70 gallons of fresh water. We deliver it to your campsite, "
-            "level it and hook everything up, so you arrive to a home that is ready."
+            "service and carries 70 gallons of fresh water. Tow it with your truck, rent ours, "
+            "or have us deliver it, level it and hook everything up, so you arrive to a home that is ready."
         ),
         "layout": "Front kitchen, central living room, king bedroom",
         "sleeps": 6,
