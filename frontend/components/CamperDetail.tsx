@@ -94,7 +94,7 @@ export default function CamperDetail({ camper }: { camper: Camper }) {
         ))}
       </div>
 
-      <section id="book" className="mt-16 scroll-mt-28">
+      <section id="book" className="mt-12 scroll-mt-28">
         <p className="eyebrow text-clay">Availability</p>
         <h2 className="mt-3 font-display text-5xl">Pick your dates.</h2>
         <div className="mt-8">
@@ -108,7 +108,7 @@ export default function CamperDetail({ camper }: { camper: Camper }) {
         </div>
       </section>
 
-      <div className="mt-20 grid gap-14 lg:grid-cols-2">
+      <div className="mt-14 grid gap-12 lg:grid-cols-2">
         <div>
           {camper.description && (
             <section>
@@ -175,7 +175,7 @@ export default function CamperDetail({ camper }: { camper: Camper }) {
         </div>
       </div>
 
-      <div className="mt-20 text-center">
+      <div className="mt-14 text-center">
         <a href="#book" className="btn btn-primary">
           Check availability
         </a>

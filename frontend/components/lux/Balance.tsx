@@ -28,7 +28,7 @@ export default function Balance() {
   }, []);
 
   return (
-    <section className="relative flex items-center justify-center overflow-hidden px-5 py-16 text-center text-cream sm:min-h-[100svh] sm:py-24">
+    <section className="relative flex items-center justify-center overflow-hidden px-5 py-16 text-center text-cream sm:min-h-[85svh] sm:py-20">
       <Image src="/images/lake-campsite.jpg" alt="" fill sizes="100vw" className="object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/65" />
       <InView className="balance relative w-full max-w-3xl">

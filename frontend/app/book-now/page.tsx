@@ -34,7 +34,7 @@ export default function BookNowPage() {
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-7xl px-5 pb-28 pt-12 sm:px-8">
+      <main className="mx-auto max-w-7xl px-5 pb-24 pt-10 sm:px-8 sm:pb-16">
         <p className="eyebrow text-clay">Book now</p>
         <h1 className="mt-3 font-display text-6xl leading-[0.9] sm:text-7xl">
           Plan your trip

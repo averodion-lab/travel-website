@@ -105,7 +105,7 @@ async function Questions() {
   ];
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-10 sm:space-y-12">
       {groups.map((group, g) => (
         <section
           key={group.title}
@@ -154,7 +154,7 @@ export default function FaqPage() {
         title="Questions"
         accent="answered"
       />
-      <main className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
+      <main className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16">
         <Suspense
           fallback={<div className="h-[40rem] animate-pulse bg-sand/60" />}
         >

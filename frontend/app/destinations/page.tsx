@@ -125,7 +125,7 @@ export default function DestinationsPage() {
         text="Eighteen RV parks across five states, or anywhere else you choose. Tow the trailer there, or we deliver and set it up. Tap a pin to see the park."
       />
 
-      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
+      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-14">
         <Reveal>
           <p className="eyebrow text-clay">(01) Campgrounds we deliver to</p>
           <h2 className="mt-4 font-display text-5xl leading-[0.95] sm:text-6xl">
@@ -159,7 +159,7 @@ export default function DestinationsPage() {
       </section>
 
       <section className="border-y border-line bg-sand/50">
-        <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
+        <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-14">
           <Reveal>
             <p className="eyebrow text-clay">(02) Optional extras</p>
             <h2 className="mt-4 font-display text-5xl leading-[0.95] sm:text-6xl">
@@ -182,7 +182,7 @@ export default function DestinationsPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-5 py-14 sm:gap-14 sm:px-8 sm:py-20 lg:grid-cols-[1fr_1.2fr]">
+      <section className="mx-auto grid max-w-7xl gap-6 px-5 py-14 sm:gap-14 sm:px-8 sm:py-14 lg:grid-cols-[1fr_1.2fr]">
         <div>
           <p className="eyebrow text-clay">(03) Somewhere else in mind?</p>
           <h2 className="mt-4 font-display text-5xl sm:text-6xl">

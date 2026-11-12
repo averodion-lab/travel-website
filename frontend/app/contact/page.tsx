@@ -21,7 +21,7 @@ export default function ContactPage() {
     <>
       <Header overlay />
       <PageHero image="/images/lake-forest.jpg" eyebrow="Contact" title="Let's plan" accent="your stay." />
-      <main className="mx-auto grid max-w-7xl gap-10 px-5 py-10 sm:px-8 sm:py-24 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
+      <main className="mx-auto grid max-w-7xl gap-10 px-5 py-10 sm:px-8 sm:py-16 lg:grid-cols-[1fr_1.4fr] lg:gap-20">
         {/* Phones: the form comes first, the notes after it. */}
         <div className="order-2 lg:order-1">
           <p className="lux-label text-clay">Write to us</p>

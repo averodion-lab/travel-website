@@ -41,7 +41,7 @@ export default function FleetPage() {
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-7xl px-5 pb-28 pt-10 sm:px-8">
+      <main className="mx-auto max-w-7xl px-5 pb-24 pt-10 sm:px-8 sm:pb-16">
         <Suspense fallback={<div className="h-96 animate-pulse border border-line bg-sand/60" />}>
           <Fleet />
         </Suspense>

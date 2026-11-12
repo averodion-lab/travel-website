@@ -15,7 +15,7 @@ export default function StepInside({ rooms }: { rooms: Room[] }) {
   const [s, setS] = useState(0);
   // Starting frame, as % cut from top/bottom and from the sides. Portrait
   // screens (phones) start wider and shorter so it reads as a framed photo.
-  const [frame, setFrame] = useState({ y: 22, x: 30 });
+  const [frame, setFrame] = useState({ y: 12, x: 20 });
   const [still, setStill] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function StepInside({ rooms }: { rooms: Room[] }) {
       if (!frameId) frameId = requestAnimationFrame(update);
     };
     const pick = () => {
-      setFrame(mq.matches ? { y: 12, x: 6 } : { y: 22, x: 30 });
+      setFrame(mq.matches ? { y: 12, x: 6 } : { y: 12, x: 20 });
       setStill(reduce);
       onScroll();
     };
@@ -60,7 +60,7 @@ export default function StepInside({ rooms }: { rooms: Room[] }) {
 
   return (
     // Height: room to grow, then about one screen per room.
-    <section ref={ref} className="step-inside relative" style={{ height: `${160 + n * 85}vh` }}>
+    <section ref={ref} className="step-inside relative" style={{ height: `${140 + n * 75}vh` }}>
       <div className="sticky top-0 h-[100svh] overflow-hidden">
         <div
           className="absolute inset-0"

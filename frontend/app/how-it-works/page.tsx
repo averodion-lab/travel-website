@@ -111,8 +111,8 @@ export default function HowItWorksPage() {
         text="Four steps, about five minutes online, and the trailer is waiting for you at the campsite."
       />
 
-      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-24">
-        <ol className="space-y-12 sm:space-y-20">
+      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-16">
+        <ol className="space-y-12 sm:space-y-14">
           {STEPS.map((step, i) => (
             <li
               key={step.title}
@@ -146,7 +146,7 @@ export default function HowItWorksPage() {
       </section>
 
       <section className="border-y border-line bg-sand/50">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 sm:gap-14 sm:px-8 sm:py-24 lg:grid-cols-[1fr_1.2fr]">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 sm:gap-14 sm:px-8 sm:py-16 lg:grid-cols-[1fr_1.2fr]">
           <div>
             <p className="eyebrow text-clay">Payment</p>
             <h2 className="mt-3 font-display text-4xl sm:mt-4 sm:text-6xl">
@@ -168,7 +168,7 @@ export default function HowItWorksPage() {
       </section>
 
       <section className="bg-pine-dark text-cream">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 sm:gap-14 sm:px-8 sm:py-24 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 sm:gap-14 sm:px-8 sm:py-16 lg:grid-cols-2">
           <div className="relative min-h-[16rem] sm:min-h-[26rem]">
             <Image
               src="/images/montana/living-2.jpg"

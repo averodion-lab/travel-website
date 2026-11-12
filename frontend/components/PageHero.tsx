@@ -17,7 +17,7 @@ export default function PageHero({
   seed?: number;
 }) {
   return (
-    <section className="relative flex min-h-[32rem] flex-col items-center justify-end overflow-hidden px-5 pb-24 pt-40 text-center text-cream sm:min-h-[40rem] sm:pb-28">
+    <section className="relative flex min-h-[32rem] flex-col items-center justify-end overflow-hidden px-5 pb-24 pt-40 text-center text-cream sm:min-h-[34rem] sm:pb-20">
       <div className="absolute inset-0 overflow-hidden">
         <Image
           src={image}

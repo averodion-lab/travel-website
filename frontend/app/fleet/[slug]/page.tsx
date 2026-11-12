@@ -44,7 +44,7 @@ export default function CamperPage({ params }: PageProps<"/fleet/[slug]">) {
   return (
     <>
       <Header />
-      <main className="mx-auto max-w-7xl px-5 pb-28 pt-10 sm:px-8">
+      <main className="mx-auto max-w-7xl px-5 pb-24 pt-10 sm:px-8 sm:pb-16">
         <Suspense fallback={<div className="h-[40rem] animate-pulse bg-sand/60" />}>
           <Detail params={params} />
         </Suspense>

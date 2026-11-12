@@ -35,7 +35,7 @@ export default function GalleryPage() {
         title="Step inside"
         accent="take a look around"
       />
-      <main className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
+      <main className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-14">
         <p className="mb-8 text-center text-sm text-muted">
           Slide left and right to see every photo. Tap one to see it full
           screen.

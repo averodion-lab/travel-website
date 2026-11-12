@@ -109,7 +109,7 @@ function Hero() {
 function Waiting() {
   return (
     <section className="bg-sand">
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:gap-14 sm:px-8 sm:py-24 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:py-32">
+      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:gap-14 sm:px-8 sm:py-20 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:py-24">
         <InView className="lux-clip relative aspect-[4/5] overflow-hidden">
           <Image
             src="/images/lake-jetski.jpg"
@@ -191,7 +191,7 @@ async function Residence() {
           comfort for up to six.
         </p>
       </InView>
-      <div className="mt-8 grid grid-cols-3 gap-3 sm:mt-14 sm:gap-5">
+      <div className="mt-8 grid grid-cols-3 gap-3 sm:mt-10 sm:gap-5">
         {[
           ["/images/montana/bedroom-1.jpg", "The king bedroom"],
           ["/images/montana/kitchen.jpg", "The kitchen"],
@@ -231,7 +231,7 @@ export default function Home() {
       <Hero />
 
       {/* The experience, in one sentence */}
-      <section id="experience" className="mx-auto max-w-5xl scroll-mt-24 px-5 py-14 text-center sm:py-44">
+      <section id="experience" className="mx-auto max-w-5xl scroll-mt-24 px-5 py-14 text-center sm:py-24">
         <p className="lux-label text-clay">The experience</p>
         <div className="mt-5 sm:mt-10">
           <LitStatement text="We bring a forty-foot luxury residence to the mountains or the lake, prepare every detail around it, and hand you the keys. All you do is arrive." />
@@ -280,7 +280,7 @@ export default function Home() {
         ]}
       />
 
-      <section className="mx-auto max-w-7xl px-5 pb-10 pt-8 sm:px-8 sm:pb-20 sm:pt-12">
+      <section className="mx-auto max-w-7xl px-5 pb-10 pt-8 sm:px-8 sm:pb-14 sm:pt-12">
         <Suspense fallback={<div className="h-[30rem] animate-pulse bg-sand/60" />}>
           <Residence />
         </Suspense>
@@ -291,11 +291,11 @@ export default function Home() {
       <Balance />
 
       {/* How it works */}
-      <section className="mx-auto max-w-7xl px-5 pb-14 pt-12 sm:px-8 sm:py-36">
+      <section className="mx-auto max-w-7xl px-5 pb-14 pt-12 sm:px-8 sm:py-20">
         <p className="lux-label text-center text-clay">How it works</p>
         <h2 className="mt-4 text-center font-display text-4xl sm:mt-5 sm:text-5xl">Three simple steps</h2>
         {/* Phones: numeral beside each step. Larger screens: three centred columns. */}
-        <ol className="mt-10 grid gap-6 sm:mt-16 sm:grid-cols-3 sm:gap-12">
+        <ol className="mt-10 grid gap-6 sm:mt-12 sm:grid-cols-3 sm:gap-12">
           {STEPS.map(([title, text], i) => (
             <InView
               as="li"
@@ -314,7 +314,7 @@ export default function Home() {
             </InView>
           ))}
         </ol>
-        <p className="mt-10 text-center sm:mt-14">
+        <p className="mt-10 text-center sm:mt-10">
           <Link href="/how-it-works" className="tap lux-label border-b border-ink pb-1">
             Every detail of your stay
           </Link>
@@ -323,7 +323,7 @@ export default function Home() {
 
       {/* Where to stay: the parks map, with the booking card under it */}
       <section id="destinations" className="border-t border-line bg-sand/60">
-        <div className="mx-auto max-w-7xl scroll-mt-20 px-5 pb-12 pt-14 sm:px-8 sm:py-32">
+        <div className="mx-auto max-w-7xl scroll-mt-20 px-5 pb-12 pt-14 sm:px-8 sm:py-20">
           <InView className="lux-rise flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-2xl">
               <p className="lux-label text-clay">Where to stay</p>
