@@ -20,9 +20,9 @@ export default function Footer() {
         <p className="mt-5 max-w-md font-display text-xl italic leading-relaxed text-cream/70">
           A luxury residence, delivered and prepared in the mountains and by the lakes of the Southeast.
         </p>
-        <nav className="mt-12 flex flex-wrap justify-center gap-x-8 gap-y-4" aria-label="Footer">
+        <nav className="mt-10 flex flex-wrap justify-center gap-x-6 gap-y-1" aria-label="Footer">
           {LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className="lux-label text-cream/80 transition-colors hover:text-clay">
+            <Link key={l.href} href={l.href} className="lux-label inline-block py-3 text-cream/80 transition-colors hover:text-clay">
               {l.label}
             </Link>
           ))}
@@ -34,7 +34,7 @@ export default function Footer() {
       <div className="border-t border-cream/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-5 py-6 text-xs text-cream/45 sm:flex-row sm:justify-between sm:px-8">
           <p>© {SITE_NAME}. All rights reserved.</p>
-          <Link href="/admin" className="hover:text-cream">
+          <Link href="/admin" className="inline-block py-3 hover:text-cream">
             Owner sign in
           </Link>
         </div>

@@ -195,7 +195,7 @@ export default function DateRangeField({
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-lg hover:bg-sand"
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-lg hover:bg-sand"
             >
               ×
             </button>
@@ -252,7 +252,9 @@ export default function DateRangeField({
         onClick={() => setOpen((o) => !o)}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className={`w-full text-left text-sm outline-none ${className}`}
+        // The button's hit area covers its whole (positioned) box, so tapping
+        // anywhere on "Pickup and return" opens the calendar.
+        className={`w-full text-left text-sm outline-none after:absolute after:inset-0 after:content-[''] ${className}`}
       >
         {summary}
       </button>

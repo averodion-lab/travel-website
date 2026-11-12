@@ -96,7 +96,7 @@ function Hero() {
           <a href="#book-now" className="btn btn-light lux-shine">
             Reserve your stay
           </a>
-          <a href="#experience" className="lux-label border-b border-current pb-1">
+          <a href="#experience" className="tap lux-label border-b border-current pb-1">
             Discover the experience
           </a>
         </div>
@@ -274,7 +274,7 @@ export default function Home() {
           ))}
         </ol>
         <p className="mt-14 text-center">
-          <Link href="/how-it-works" className="lux-label border-b border-ink pb-1">
+          <Link href="/how-it-works" className="tap lux-label border-b border-ink pb-1">
             Every detail of your stay
           </Link>
         </p>
@@ -294,7 +294,7 @@ export default function Home() {
                 below the map.
               </p>
             </div>
-            <Link href="/destinations" className="lux-label border-b border-ink pb-1">
+            <Link href="/destinations" className="tap lux-label border-b border-ink pb-1">
               All places and extras
             </Link>
           </InView>

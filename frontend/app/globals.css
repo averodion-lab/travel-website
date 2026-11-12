@@ -568,3 +568,46 @@ body {
   .balance-pulse, .balance-text, .film-grain::after { animation: none; }
 }
 
+
+/* ------------------------------------------------------------------
+   Phones
+   ------------------------------------------------------------------ */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+/* A bigger invisible tap area around small text links (about 44px tall). */
+.tap {
+  position: relative;
+}
+.tap::after {
+  content: "";
+  position: absolute;
+  inset: -12px -6px;
+}
+@media (max-width: 639px) {
+  /* iPhones zoom the page when a field's text is under 16px. */
+  .field,
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  /* The small spaced capitals read a little larger on a phone. */
+  .lux-label,
+  .eyebrow {
+    font-size: 0.72rem;
+  }
+}
+/* Map zoom buttons big enough for a thumb. */
+.leaflet-touch .leaflet-bar a {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 20px;
+}
+/* Touch screens: keep the film grain still (saves battery). */
+@media (hover: none) {
+  .film-grain::after {
+    animation: none;
+  }
+}

@@ -71,7 +71,7 @@ export default function Moments() {
         </InView>
         <InView className="lux-rise max-w-sm" delay={150}>
           <p className="leading-relaxed text-muted">Out here, the smallest moments are often the ones you remember most.</p>
-          <Link href="/gallery" className="lux-label mt-5 inline-block border-b border-ink pb-1">
+          <Link href="/gallery" className="tap lux-label mt-5 inline-block border-b border-ink pb-1">
             View the gallery ↗
           </Link>
         </InView>

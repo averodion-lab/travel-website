@@ -422,7 +422,7 @@ export default function BookingForm() {
                       href={parkInfo.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="eyebrow mt-3 inline-block text-clay hover:underline"
+                      className="tap eyebrow mt-3 inline-block text-clay hover:underline"
                     >
                       Park website ↗
                     </a>
@@ -692,7 +692,7 @@ export default function BookingForm() {
               <button
                 type="button"
                 onClick={() => goTo("trip")}
-                className="eyebrow text-muted hover:text-ink"
+                className="tap eyebrow text-muted hover:text-ink"
               >
                 ← Back to your trip
               </button>
@@ -854,7 +854,7 @@ export default function BookingForm() {
               </dl>
               <Link
                 href={`/book-now?${new URLSearchParams({ start: start!, end: end!, ...(parkSlug ? { park: parkSlug } : {}), ...(parkSlug === CUSTOM && typed ? Object.fromEntries((() => { const q = new URLSearchParams(); setPlaceParams(q, typed); return [...q]; })()) : {}), ...(chosen.length ? { addons: chosen.join(",") } : {}), ...(transportCode !== "self" ? { transport: transportCode } : {}), ...(transportCode === "truck" && experience ? { exp: "1" } : {}) })}`}
-                className="eyebrow mt-3 inline-block text-clay hover:underline"
+                className="tap eyebrow mt-3 inline-block text-clay hover:underline"
               >
                 Change trip
               </Link>

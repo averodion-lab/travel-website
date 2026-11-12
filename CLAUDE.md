@@ -103,6 +103,7 @@ Dates are half-open `[start_date, end_date)`: a return day can be the next custo
 - Inner pages use `PageHero` (photo banner, title and italic accent rise in) and end with `BookCta` (the campfire photo: "Your stay in nature, prepared for you."). Header: links split around the centred name, "Reserve" on the right. Footer: dark, centred.
 - Card brand marks (`CardLogos`) are inline SVG. Cards are entered only on Stripe's page, never in our own form.
 - If a new rule in `globals.css` doesn't show up in dev, touch the file again or restart `npm run dev` (the Turbopack CSS output was seen going stale once).
+- **Phones**: form fields are 16px below 640px (iPhones zoom on smaller text); `.tap` gives small text links an invisible ~44px tap area; the phone/tablet menu is a full-screen ivory overlay (`#site-menu`, outside `<header>` because the header's backdrop blur would trap a fixed child; locks page scroll, Escape closes); film grain is still on touch screens; `themeColor` colours the browser bar. Check new pages at 360 and 390 px wide.
 - `Header` is a fixed client component (transparent over a hero with `overlay`, solid after scrolling). Anything that calls `usePathname()` must sit inside `<Suspense>` or `/fleet/[slug]` fails to prerender; that is why the nav links have their own boundary.
 - `Treeline` (pine silhouettes) is no longer used on the site; the luxury design dropped it.
 - Older motion helpers still used on inner pages: `Reveal`, `.hero-zoom`, `.rise`, `CountUp`. All respect `prefers-reduced-motion`.

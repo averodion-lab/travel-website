@@ -224,7 +224,7 @@ export default function BookNowForm({
         <section ref={datesRef} className="mt-9 border-t border-line pt-8">
           <p className="eyebrow text-clay">(02) When</p>
           <p className="mt-2 font-display text-3xl">Availability</p>
-          <div className="mt-4 rounded-xl border border-line px-4 py-3.5 transition-colors focus-within:border-pine hover:border-pine">
+          <div className="relative mt-4 rounded-md border border-line px-4 py-3.5 transition-colors focus-within:border-pine hover:border-pine">
             <span className="label !mb-1">Pickup and return</span>
             <DateRangeField
               camperSlug={camper.slug}
