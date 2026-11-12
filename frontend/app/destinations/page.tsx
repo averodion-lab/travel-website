@@ -34,7 +34,30 @@ async function Parks() {
         moment.
       </p>
     );
-  return <ParksMap parks={data.parks} />;
+  return (
+    <>
+      <ParksMap parks={data.parks} compact />
+      {/* In place of a long park list: what to add, depending on where you stay. */}
+      <div className="mt-8 grid gap-3 sm:grid-cols-2">
+        <p className="flex items-center gap-4 rounded-2xl bg-white p-5 leading-relaxed text-bark">
+          <AddonIcon code="atv" size={52} />
+          <span>
+            <strong className="font-semibold text-ink">
+              In the mountains?
+            </strong>{" "}
+            Add a 4-wheeler and make the trails part of the fun.
+          </span>
+        </p>
+        <p className="flex items-center gap-4 rounded-2xl bg-white p-5 leading-relaxed text-bark">
+          <AddonIcon code="jetski" size={52} />
+          <span>
+            <strong className="font-semibold text-ink">By the lake?</strong> Add
+            a jet ski for a better day on the water.
+          </span>
+        </p>
+      </div>
+    </>
+  );
 }
 
 async function Extras() {
@@ -108,9 +131,9 @@ export default function DestinationsPage() {
             Pick your park
           </h2>
           <p className="mt-4 max-w-2xl leading-relaxed text-bark">
-            Each name links to the park&apos;s own website, where you reserve
-            your campsite. Then book the trailer here and we&apos;ll have it
-            waiting when you arrive.
+            Tap a pin to see the park and its website, where you reserve your
+            campsite. Then book the trailer and we&apos;ll have it waiting when
+            you arrive.
           </p>
         </Reveal>
         <div className="mt-10">
