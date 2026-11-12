@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import AddonIcon from "@/components/AddonIcon";
@@ -87,23 +88,23 @@ async function Extras() {
       {cards.map((c, i) => (
         <Reveal key={c.title} delay={i * 120}>
           <div
-            className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-[1.75rem] p-8 ${c.tone}`}
+            className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-md p-5 sm:p-8 ${c.tone}`}
           >
             <AddonIcon
               code={c.code}
               size={96}
-              className="mb-6 sm:absolute sm:right-8 sm:top-8 sm:mb-0"
+              className="absolute right-5 top-5 !h-16 !w-16 sm:right-8 sm:top-8 sm:!h-24 sm:!w-24"
             />
-            <div className="relative sm:max-w-[70%]">
+            <div className="relative max-w-[70%]">
               <p className="eyebrow opacity-70">{c.where}</p>
-              <h3 className="mt-3 font-display text-5xl leading-none">
+              <h3 className="mt-2 font-display text-4xl leading-none sm:mt-3 sm:text-5xl">
                 {c.title}
               </h3>
-              <p className="mt-4 max-w-sm text-sm leading-relaxed opacity-85">
+              <p className="mt-3 max-w-sm text-sm leading-relaxed opacity-85 sm:mt-4">
                 {c.text}
               </p>
             </div>
-            <p className="relative mt-8 font-display text-3xl">{c.price}</p>
+            <p className="relative mt-4 font-display text-2xl sm:mt-8 sm:text-3xl">{c.price}</p>
           </div>
         </Reveal>
       ))}
@@ -124,7 +125,7 @@ export default function DestinationsPage() {
         text="Eighteen RV parks across five states, or anywhere else you choose. Tow the trailer there, or we deliver and set it up. Tap a pin to see the park."
       />
 
-      <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
+      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
         <Reveal>
           <p className="eyebrow text-clay">(01) Campgrounds we deliver to</p>
           <h2 className="mt-4 font-display text-5xl leading-[0.95] sm:text-6xl">
@@ -135,6 +136,16 @@ export default function DestinationsPage() {
             campsite. Then book the trailer and we&apos;ll have it waiting when
             you arrive.
           </p>
+          {/* Somewhere not on the map: type it in when booking. */}
+          <Link
+            href="/book-now?park=custom"
+            className="mt-6 flex items-center justify-between gap-4 rounded-md border border-ink/80 bg-white px-5 py-4 transition-colors hover:bg-ink hover:text-cream sm:inline-flex sm:justify-start"
+          >
+            <span>
+              <span className="lux-label block text-clay">Or choose your own</span>
+              <span className="mt-1 block font-display text-xl sm:text-2xl">Type any campground or place →</span>
+            </span>
+          </Link>
         </Reveal>
         <div className="mt-10">
           <Suspense
@@ -148,7 +159,7 @@ export default function DestinationsPage() {
       </section>
 
       <section className="border-y border-line bg-sand/50">
-        <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
+        <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
           <Reveal>
             <p className="eyebrow text-clay">(02) Optional extras</p>
             <h2 className="mt-4 font-display text-5xl leading-[0.95] sm:text-6xl">
@@ -171,7 +182,7 @@ export default function DestinationsPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-14 px-5 py-20 sm:px-8 lg:grid-cols-[1fr_1.2fr]">
+      <section className="mx-auto grid max-w-7xl gap-6 px-5 py-14 sm:gap-14 sm:px-8 sm:py-20 lg:grid-cols-[1fr_1.2fr]">
         <div>
           <p className="eyebrow text-clay">(03) Somewhere else in mind?</p>
           <h2 className="mt-4 font-display text-5xl sm:text-6xl">
@@ -187,7 +198,7 @@ export default function DestinationsPage() {
           {SITE_NEEDS.map(([label, value]) => (
             <div
               key={label}
-              className="grid gap-1 py-5 sm:grid-cols-[12rem_1fr] sm:gap-6"
+              className="grid gap-1 py-3 sm:grid-cols-[12rem_1fr] sm:gap-6 sm:py-5"
             >
               <dt className="eyebrow pt-1 text-bark">{label}</dt>
               <dd className="text-sm leading-relaxed">{value}</dd>

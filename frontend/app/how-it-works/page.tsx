@@ -88,7 +88,7 @@ async function PaymentFacts() {
       {facts.map(([label, value]) => (
         <div
           key={label}
-          className="grid gap-1 py-5 sm:grid-cols-[12rem_1fr] sm:gap-6"
+          className="grid gap-1 py-3 sm:grid-cols-[12rem_1fr] sm:gap-6 sm:py-5"
         >
           <dt className="eyebrow pt-1 text-bark">{label}</dt>
           <dd className="text-sm leading-relaxed">{value}</dd>
@@ -111,12 +111,12 @@ export default function HowItWorksPage() {
         text="Four steps, about five minutes online, and the trailer is waiting for you at the campsite."
       />
 
-      <section className="mx-auto max-w-7xl px-5 py-24 sm:px-8">
-        <ol className="space-y-20">
+      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-24">
+        <ol className="space-y-12 sm:space-y-20">
           {STEPS.map((step, i) => (
             <li
               key={step.title}
-              className="grid items-center gap-10 lg:grid-cols-2 lg:gap-20"
+              className="grid items-center gap-5 sm:gap-10 lg:grid-cols-2 lg:gap-20"
             >
               <div
                 className={`relative aspect-[4/3] bg-sand ${i % 2 ? "lg:order-2" : ""}`}
@@ -133,10 +133,10 @@ export default function HowItWorksPage() {
                 <p className="eyebrow text-clay">
                   ({String(i + 1).padStart(2, "0")})
                 </p>
-                <h2 className="mt-4 font-display text-5xl sm:text-6xl">
+                <h2 className="mt-2 font-display text-4xl sm:mt-4 sm:text-6xl">
                   {step.title}
                 </h2>
-                <p className="mt-6 max-w-lg leading-relaxed text-bark">
+                <p className="mt-3 max-w-lg leading-relaxed text-bark sm:mt-6">
                   {step.text}
                 </p>
               </div>
@@ -146,13 +146,13 @@ export default function HowItWorksPage() {
       </section>
 
       <section className="border-y border-line bg-sand/50">
-        <div className="mx-auto grid max-w-7xl gap-14 px-5 py-24 sm:px-8 lg:grid-cols-[1fr_1.2fr]">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 sm:gap-14 sm:px-8 sm:py-24 lg:grid-cols-[1fr_1.2fr]">
           <div>
             <p className="eyebrow text-clay">Payment</p>
-            <h2 className="mt-4 font-display text-5xl sm:text-6xl">
+            <h2 className="mt-3 font-display text-4xl sm:mt-4 sm:text-6xl">
               Simple, secure, by card.
             </h2>
-            <p className="mt-6 max-w-md leading-relaxed text-bark">
+            <p className="mt-4 max-w-md leading-relaxed text-bark sm:mt-6">
               Card payments run through Stripe&apos;s secure checkout. We never
               see or store your card number.
             </p>
@@ -168,8 +168,8 @@ export default function HowItWorksPage() {
       </section>
 
       <section className="bg-pine-dark text-cream">
-        <div className="mx-auto grid max-w-7xl gap-14 px-5 py-24 sm:px-8 lg:grid-cols-2">
-          <div className="relative min-h-[26rem]">
+        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-14 sm:gap-14 sm:px-8 sm:py-24 lg:grid-cols-2">
+          <div className="relative min-h-[16rem] sm:min-h-[26rem]">
             <Image
               src="/images/montana/living-2.jpg"
               alt="Sofas and theater seating in the trailer"
@@ -180,14 +180,14 @@ export default function HowItWorksPage() {
           </div>
           <div>
             <p className="eyebrow text-cream/60">Included with every rental</p>
-            <h2 className="mt-4 font-display text-5xl sm:text-6xl">
+            <h2 className="mt-3 font-display text-4xl sm:mt-4 sm:text-6xl">
               Ready before you are.
             </h2>
-            <ul className="mt-10 divide-y divide-cream/15 border-y border-cream/15">
+            <ul className="mt-6 divide-y divide-cream/15 border-y border-cream/15 sm:mt-10">
               {INCLUDED.map(([title, text]) => (
                 <li
                   key={title}
-                  className="grid gap-1 py-5 sm:grid-cols-[14rem_1fr] sm:gap-6"
+                  className="grid gap-1 py-3 sm:grid-cols-[14rem_1fr] sm:gap-6 sm:py-5"
                 >
                   <h3 className="eyebrow pt-1">{title}</h3>
                   <p className="text-sm leading-relaxed text-cream/75">
@@ -196,7 +196,7 @@ export default function HowItWorksPage() {
                 </li>
               ))}
             </ul>
-            <Link href="/faq" className="btn btn-outline mt-10">
+            <Link href="/faq" className="btn btn-outline mt-6 sm:mt-10">
               More questions answered →
             </Link>
           </div>

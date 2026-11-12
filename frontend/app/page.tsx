@@ -163,11 +163,11 @@ async function Numbers() {
   return (
     <dl className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
       {stats.map(([value, suffix, text], i) => (
-        <InView key={text} delay={i * 120} className="lux-rise px-5 py-14 text-center">
-          <dd className="font-display text-6xl sm:text-7xl">
+        <InView key={text} delay={i * 120} className="lux-rise px-2 py-6 text-center sm:px-5 sm:py-14">
+          <dd className="font-display text-5xl sm:text-7xl">
             <RollingNumber value={value} suffix={suffix} delay={i * 150} />
           </dd>
-          <dt className="lux-label mt-3 text-muted">{text}</dt>
+          <dt className="lux-label mt-2 text-muted sm:mt-3">{text}</dt>
         </InView>
       ))}
     </dl>
@@ -291,22 +291,30 @@ export default function Home() {
       <Balance />
 
       {/* How it works */}
-      <section className="mx-auto max-w-7xl px-5 py-28 sm:px-8 sm:py-36">
+      <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-36">
         <p className="lux-label text-center text-clay">How it works</p>
-        <h2 className="mt-5 text-center font-display text-5xl">Three simple steps</h2>
-        <ol className="mt-16 grid gap-12 sm:grid-cols-3">
+        <h2 className="mt-4 text-center font-display text-4xl sm:mt-5 sm:text-5xl">Three simple steps</h2>
+        {/* Phones: numeral beside each step. Larger screens: three centred columns. */}
+        <ol className="mt-10 grid gap-6 sm:mt-16 sm:grid-cols-3 sm:gap-12">
           {STEPS.map(([title, text], i) => (
-            <InView as="li" key={title} delay={i * 160} className="lux-rise text-center">
-              <p className="font-display text-6xl text-clay">
+            <InView
+              as="li"
+              key={title}
+              delay={i * 160}
+              className="lux-rise flex items-start gap-5 border-t border-line pt-5 sm:block sm:border-0 sm:pt-0 sm:text-center"
+            >
+              <p className="w-12 shrink-0 font-display text-4xl leading-none text-clay sm:w-auto sm:text-6xl">
                 <em>{["I", "II", "III"][i]}</em>
               </p>
-              <div className="lux-grow mx-auto mt-6 h-px w-12 bg-clay" />
-              <h3 className="mt-6 font-display text-3xl">{title}</h3>
-              <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-muted">{text}</p>
+              <div className="lux-grow mx-auto mt-6 hidden h-px w-12 bg-clay sm:block" />
+              <div>
+                <h3 className="font-display text-2xl sm:mt-6 sm:text-3xl">{title}</h3>
+                <p className="mt-1 max-w-xs text-sm leading-relaxed text-muted sm:mx-auto sm:mt-3">{text}</p>
+              </div>
             </InView>
           ))}
         </ol>
-        <p className="mt-14 text-center">
+        <p className="mt-10 text-center sm:mt-14">
           <Link href="/how-it-works" className="tap lux-label border-b border-ink pb-1">
             Every detail of your stay
           </Link>
