@@ -2,12 +2,12 @@ import { Suspense, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import BookCta from "@/components/BookCta";
-import CountUp from "@/components/CountUp";
 import Header from "@/components/Header";
 import MapAndBooking from "@/components/MapAndBooking";
 import InView from "@/components/lux/InView";
 import Balance from "@/components/lux/Balance";
 import Moments from "@/components/lux/Moments";
+import RollingNumber from "@/components/lux/RollingNumber";
 import { LitStatement } from "@/components/lux/ScrollEffects";
 import StepInside from "@/components/lux/StepInside";
 import { rate } from "@/lib/format";
@@ -155,9 +155,9 @@ async function Numbers() {
   return (
     <dl className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
       {stats.map(([value, suffix, text], i) => (
-        <InView key={text} delay={i * 120} className={`lux-rise px-5 py-14 text-center ${i ? "lg:border-l lg:border-line" : ""}`}>
-          <dd className="font-display text-6xl">
-            <CountUp value={value} suffix={suffix} />
+        <InView key={text} delay={i * 120} className="lux-rise px-5 py-14 text-center">
+          <dd className="font-display text-6xl sm:text-7xl">
+            <RollingNumber value={value} suffix={suffix} delay={i * 150} />
           </dd>
           <dt className="lux-label mt-3 text-muted">{text}</dt>
         </InView>
@@ -232,7 +232,7 @@ export default function Home() {
 
       <Waiting />
 
-      <section className="border-b border-line">
+      <section>
         <Suspense fallback={<div className="h-48" />}>
           <Numbers />
         </Suspense>
