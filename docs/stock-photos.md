@@ -52,6 +52,8 @@ Some are western US scenery — good for mood, not for specific Southeastern des
 [![](https://images.unsplash.com/photo-1723219453752-1b80eb5ae81e?w=480&q=80)](https://unsplash.com/photos/a-lake-surrounded-by-trees-in-the-middle-of-a-forest--i5K38RgSZ4)
 [![](https://images.unsplash.com/photo-1598822300476-b9cf1fb156ab?w=480&q=80)](https://unsplash.com/photos/green-trees-near-lake-and-mountain-during-daytime-kokjC1WcD4M)
 
+Jet ski on a lake at golden hour, framed by pines (Pexels, free to use; saved as `public/images/lake-jetski.jpg`): https://www.pexels.com/photo/jet-ski-on-vibrant-summer-lake-in-quebec-33080883/ (Saint-Michel-des-Saints, Québec, not a Southeastern lake).
+
 ## Lakeside campsites & campfire nights (Unsplash)
 
 [![](https://images.unsplash.com/photo-1650755669701-c15ed98ac7dd?w=480&q=80)](https://unsplash.com/photos/a-path-with-trees-and-a-body-of-water-in-the-background-59Utgw4xPo4)

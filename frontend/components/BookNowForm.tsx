@@ -168,7 +168,7 @@ export default function BookNowForm({
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_24rem]">
-      <div className="rounded-[2rem] bg-white p-6 shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] sm:p-9">
+      <div className="rounded-md bg-white p-6 shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] sm:p-9">
         {/* Campground */}
         <section>
           <p className="eyebrow text-clay">(01) Where</p>
@@ -299,7 +299,7 @@ export default function BookNowForm({
 
       {/* Summary */}
       <aside className="lg:sticky lg:top-28 lg:self-start">
-        <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">
+        <div className="overflow-hidden rounded-md bg-white shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">
           {camper.image_url && (
             <div className="relative aspect-[3/2]">
               <Image

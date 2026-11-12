@@ -214,7 +214,7 @@ export default function BookingWidget({
       : `${nights} nights selected.`;
 
   return (
-    <div className="grid overflow-hidden rounded-[2rem] bg-white shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] lg:grid-cols-[1fr_25rem]">
+    <div className="grid overflow-hidden rounded-md bg-white shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] lg:grid-cols-[1fr_25rem]">
       {/* Calendar */}
       <div className="p-5 sm:p-8">
         <div className="flex flex-wrap items-baseline justify-between gap-3">

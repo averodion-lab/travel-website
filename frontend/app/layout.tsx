@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Montserrat, Mrs_Saint_Delafield } from "next/font/google";
+import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import Footer from "@/components/Footer";
 import { SITE_NAME } from "@/lib/api";
 import "./globals.css";
@@ -16,13 +16,6 @@ const montserrat = Montserrat({
   subsets: ["latin"],
 });
 
-// Handwritten accent used sparingly next to big headlines.
-const script = Mrs_Saint_Delafield({
-  variable: "--font-script",
-  subsets: ["latin"],
-  weight: "400",
-});
-
 export const metadata: Metadata = {
   title: {
     default: `${SITE_NAME} | Luxury Fifth-Wheel Rental in the Southeast`,
@@ -34,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${montserrat.variable} ${script.variable} h-full antialiased`}>
+    <html lang="en" className={`${cormorant.variable} ${montserrat.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         {/* Every page opens at the top, also after a reload: stop the browser
             from restoring the old scroll position. A link to a spot on a page

@@ -1,19 +1,21 @@
-import Image from "next/image";
 import Link from "next/link";
+import InView from "@/components/lux/InView";
+import { SettlingPhotoSection } from "@/components/lux/ScrollEffects";
 
-/** Closing call to action used at the bottom of most pages. */
-export default function BookCta({ image = "/images/smoky-sunset.jpg" }: { image?: string }) {
+/** Closing call to action at the bottom of most pages: the campfire photo
+ *  settles as it scrolls in, and the text rises into place. */
+export default function BookCta({ image = "/images/campfire-night.jpg" }: { image?: string }) {
   return (
-    <section className="relative px-5 py-32 text-center text-cream">
-      <Image src={image} alt="" fill sizes="100vw" className="object-cover" />
-      <div className="absolute inset-0 bg-ink/50" />
-      <div className="relative">
-        <h2 className="font-display text-6xl uppercase leading-[0.92] sm:text-7xl">Ready to book</h2>
-        <p className="script -mt-1 text-6xl sm:text-7xl">your getaway?</p>
-        <Link href="/book-now" className="btn btn-light mt-10">
-          Book now
+    <SettlingPhotoSection src={image} overlay="bg-black/50" className="flex min-h-[80svh] items-center justify-center text-center text-cream">
+      <InView className="lux-rise relative px-6">
+        <p className="lux-label text-[#d8bd86]">Reserve your stay</p>
+        <h2 className="mx-auto mt-6 max-w-3xl font-display text-5xl leading-[1.05] sm:text-7xl">
+          Your stay in nature, <em>prepared for you.</em>
+        </h2>
+        <Link href="/book-now" className="btn btn-light lux-shine mt-10">
+          Check availability
         </Link>
-      </div>
-    </section>
+      </InView>
+    </SettlingPhotoSection>
   );
 }

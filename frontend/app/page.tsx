@@ -1,451 +1,309 @@
-import { Suspense } from "react";
+import { Suspense, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import BookCta from "@/components/BookCta";
 import CountUp from "@/components/CountUp";
-import Gallery from "@/components/Gallery";
 import Header from "@/components/Header";
-import Reveal from "@/components/Reveal";
 import MapAndBooking from "@/components/MapAndBooking";
-import Treeline from "@/components/Treeline";
+import InView from "@/components/lux/InView";
+import { LitStatement, ParallaxPhoto, SettlingPhotoSection } from "@/components/lux/ScrollEffects";
 import { rate } from "@/lib/format";
 import { getParks } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
 
-const STEPS = [
-  {
-    title: "Pick your dates",
-    text: "The live calendar shows which days are open. Click your pickup day, then your return day.",
-  },
-  {
-    title: "Reserve with a deposit",
-    text: "Enter your details and pay a deposit online. Your confirmation arrives by email.",
-  },
-  {
-    title: "Tow it or we deliver",
-    text: "Tow it with your truck or rent ours, or we bring it to your campsite, level it and connect power, water and sewer.",
-  },
-  {
-    title: "Settle in",
-    text: "We walk you through everything, hand over the keys and stay a phone call away.",
-  },
+/* Home page, design option E: option A's quiet luxury look (ivory, black,
+   brass) with option C's motion. */
+
+const HERO_SLIDES = [
+  { src: "/images/lake-fall.jpg", alt: "An autumn forest reflected in a still lake" },
+  { src: "/images/smoky-sunset.jpg", alt: "Sunset over the Great Smoky Mountains" },
+  { src: "/images/lake-jetski.jpg", alt: "A jet ski crossing a lake at golden hour" },
 ];
 
-const EXPLORE = [
-  {
-    title: "The trailer",
-    text: "Photos, the floor plan, full specs and the live calendar.",
-    href: "/fleet",
-  },
-  {
-    title: "How it works",
-    text: "Booking, payment, delivery and what happens at handover.",
-    href: "/how-it-works",
-  },
-  {
-    title: "Good to know",
-    text: "Cards we accept, campsite requirements, towing and more.",
-    href: "/faq",
-  },
-];
-
-/** Turns a list of features into one sentence: "a, b, c and d." Keeps
- *  abbreviations like "TV" as they are, lowercases the rest. */
-function featureSentence(items: string[]) {
-  const words = items.map((a, i) =>
-    i === 0 || /^[A-Z]{2}/.test(a) ? a : a.charAt(0).toLowerCase() + a.slice(1),
+function Icon({ children }: { children: ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-7 w-7"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
   );
-  if (words.length < 2) return `${words.join("")}.`;
-  return `${words.slice(0, -1).join(", ")} and ${words[words.length - 1]}.`;
 }
 
-/** The trailer, with its live price and specs from the API. */
-async function Trailer() {
-  const camper = await getTrailer();
-  if (!camper) {
-    return (
-      <p className="text-muted">
-        The trailer details are loading slowly right now. Please refresh in a
-        moment.
-      </p>
-    );
-  }
-  const href = `/fleet/${camper.slug}`;
-  // Every photo of the trailer except the floor plan, in gallery order.
-  const photos = camper.gallery.filter((src) => !src.includes("floorplan"));
+const WAITING: { title: string; text: string; icon: ReactNode }[] = [
+  {
+    title: "Your home, set up",
+    text: "Delivered to your site, levelled, slide-outs open, power and water connected.",
+    icon: <path d="M3 11 12 4l9 7M5 10v10h14V10M10 20v-5h4v5" />,
+  },
+  {
+    title: "Chairs around the fire",
+    text: "Outdoor chairs set out and the fire pit ready for your first evening.",
+    icon: <path d="M12 3c2 3 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-8ZM4 21h16" />,
+  },
+  {
+    title: "Bikes to explore",
+    text: "Bikes waiting at the trailer for the trails and the lake path.",
+    icon: (
+      <path d="M5.5 18a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM18.5 18a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM5.5 14.5 9 7h5l4.5 7.5M9 7l3.5 7.5h-7M13 5h3" />
+    ),
+  },
+  {
+    title: "Toys, ready to go",
+    text: "Add a 4-wheeler in the mountains or a jet ski on the lake, fuelled and ready.",
+    icon: <path d="M2 16c2 0 2-1.5 4-1.5S8 16 10 16s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M5 12l3-4h7l4 4H5Z" />,
+  },
+];
 
+const STEPS = [
+  ["Choose your place", "A mountain park or a lakeside campground, from eleven across the Southeast."],
+  ["We prepare everything", "We deliver the residence and set up your campsite before you arrive."],
+  ["Arrive and unwind", "Walk in to a home that is ready. We stay a phone call away."],
+];
+
+function Hero() {
+  return (
+    <section className="relative flex h-[100svh] min-h-[38rem] items-end overflow-hidden text-cream">
+      {HERO_SLIDES.map((s, i) => (
+        <div key={s.src} className="lux-slide absolute inset-0" style={{ animationDelay: `${i * 7}s` }}>
+          <Image src={s.src} alt={i === 0 ? s.alt : ""} fill priority={i === 0} sizes="100vw" className="object-cover" />
+        </div>
+      ))}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/40" />
+      <div className="relative mx-auto w-full max-w-7xl px-5 pb-16 sm:px-8 sm:pb-24">
+        <p className="lux-label lux-fade text-cream/85" style={{ animationDelay: "0.2s" }}>
+          Luxury camping in the Southeast
+        </p>
+        <h1 className="mt-5 font-display text-[3.2rem] font-normal leading-[1.02] sm:text-[5.5rem]">
+          <span className="lux-line">
+            <span style={{ animationDelay: "0.35s" }}>Nature, with</span>
+          </span>
+          <span className="lux-line">
+            <em style={{ animationDelay: "0.55s" }}>hotel comfort.</em>
+          </span>
+        </h1>
+        <div className="lux-fade mt-10 flex flex-wrap items-center gap-6" style={{ animationDelay: "0.95s" }}>
+          <a href="#book-now" className="btn btn-light lux-shine">
+            Reserve your stay
+          </a>
+          <a href="#experience" className="lux-label border-b border-current pb-1">
+            Discover the experience
+          </a>
+        </div>
+      </div>
+      <div className="lux-cue absolute bottom-6 right-10 hidden h-14 w-px bg-white/50 sm:block" />
+    </section>
+  );
+}
+
+function Waiting() {
+  return (
+    <section className="bg-sand">
+      <div className="mx-auto grid max-w-7xl gap-14 px-5 py-24 sm:px-8 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:py-32">
+        <InView className="lux-clip relative aspect-[4/5] overflow-hidden">
+          <Image
+            src="/images/lake-jetski.jpg"
+            alt="A jet ski crossing a lake at golden hour, framed by pines"
+            fill
+            sizes="(min-width:1024px) 45vw, 100vw"
+            className="lux-settle object-cover object-[62%_50%]"
+          />
+        </InView>
+        <div>
+          <InView className="lux-rise">
+            <p className="lux-label text-clay">When you arrive</p>
+            <h2 className="mt-5 font-display text-4xl leading-tight sm:text-5xl">
+              Everything is <em>already waiting.</em>
+            </h2>
+          </InView>
+          <ul className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2">
+            {WAITING.map((w, i) => (
+              <InView as="li" key={w.title} delay={150 + i * 140} className="lux-rise border-t border-line pt-6">
+                <span className="text-clay">
+                  <Icon>{w.icon}</Icon>
+                </span>
+                <h3 className="mt-4 font-display text-2xl">{w.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{w.text}</p>
+              </InView>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** Numbers that count up, from the trailer's live data. */
+async function Numbers() {
+  const camper = await getTrailer();
+  const stats: [number, string, string][] = [
+    [camper?.length_ft ? Math.round(camper.length_ft) : 40, " ft", "of private residence"],
+    [camper?.sleeps ?? 6, "", "guests, two bedrooms"],
+    [11, "", "mountain and lake places"],
+    [4, "", "slide-outs of open space"],
+  ];
+  return (
+    <dl className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
+      {stats.map(([value, suffix, text], i) => (
+        <InView key={text} delay={i * 120} className={`lux-rise px-5 py-14 text-center ${i ? "lg:border-l lg:border-line" : ""}`}>
+          <dd className="font-display text-6xl">
+            <CountUp value={value} suffix={suffix} />
+          </dd>
+          <dt className="lux-label mt-3 text-muted">{text}</dt>
+        </InView>
+      ))}
+    </dl>
+  );
+}
+
+/** The trailer: a wide photo that moves slower than the page, three smaller
+ *  photos that unveil, and the live price. */
+async function Residence() {
+  const camper = await getTrailer();
+  const href = camper ? `/fleet/${camper.slug}` : "/fleet";
   return (
     <>
-      <Reveal>
-        <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="eyebrow text-clay">(01) {camper.class_type}</p>
-            <h2 className="mt-4 font-display text-6xl uppercase leading-[0.9] tracking-tight sm:text-8xl">
-              {camper.name}
-            </h2>
-            {camper.tagline && (
-              <p className="mt-4 max-w-xl font-display text-2xl italic text-bark">
-                {camper.tagline}
-              </p>
-            )}
-          </div>
-          <div className="flex items-center gap-6">
-            <p>
-              <span className="font-display text-5xl">
-                {rate(camper.daily_rate)}
-              </span>
-              <span className="text-sm text-muted"> / night</span>
-            </p>
-            <Link href={`${href}#book`} className="btn btn-primary">
-              Check availability →
-            </Link>
-          </div>
+      <InView className="lux-rise flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p className="lux-label text-clay">The residence</p>
+          <h2 className="mt-5 font-display text-5xl sm:text-7xl">{camper?.name ?? "The Montana"}</h2>
         </div>
-      </Reveal>
-
-      <Reveal>
-        <Gallery photos={photos} name={camper.name} layout="carousel" />
-      </Reveal>
-
-      <Reveal>
-        <div className="mt-14 grid gap-10 lg:grid-cols-[1.2fr_1fr]">
-          <p className="text-lg leading-relaxed text-bark">
-            {camper.description}
+        <p className="max-w-sm text-sm leading-relaxed text-muted">
+          A king suite, a living room with a fireplace and theatre seating, and a full kitchen. Forty feet of quiet
+          comfort for up to six.
+        </p>
+      </InView>
+      <ParallaxPhoto
+        src="/images/montana/living-1.jpg"
+        alt="The living room, with theatre seating and a fireplace"
+        className="mt-14 aspect-[16/10] sm:aspect-[21/9]"
+      />
+      <div className="mt-5 grid grid-cols-3 gap-3 sm:gap-5">
+        {[
+          ["/images/montana/bedroom-1.jpg", "The king bedroom"],
+          ["/images/montana/kitchen.jpg", "The kitchen"],
+          ["/images/montana/fireplace.jpg", "The electric fireplace"],
+        ].map(([src, alt], i) => (
+          <InView key={src} delay={i * 150} className="lux-clip relative aspect-[4/3] overflow-hidden">
+            <Image src={src} alt={alt} fill sizes="33vw" className="object-cover" />
+          </InView>
+        ))}
+      </div>
+      <div className="mt-12 flex flex-wrap items-center gap-8">
+        <Link href={href} className="btn btn-primary">
+          View the residence
+        </Link>
+        {camper && (
+          <p className="text-sm text-muted">
+            From <span className="font-display text-2xl text-ink">{rate(camper.daily_rate)}</span> a night
           </p>
-          <div>
-            <p className="leading-relaxed text-bark">
-              <span className="eyebrow mr-2 text-clay">On board</span>
-              {featureSentence(camper.amenities.slice(0, 12))}
-            </p>
-            <Link href={href} className="btn btn-outline mt-8">
-              Photos, floor plan and specs →
-            </Link>
-          </div>
-        </div>
-      </Reveal>
+        )}
+      </div>
     </>
   );
 }
 
-/** The campgrounds map (same as on /destinations). */
+/** The parks map with the booking card under it. */
 async function Parks() {
   const [data, trailer] = await Promise.all([getParks(), getTrailer()]);
   if (!data || !trailer)
-    return (
-      <p className="text-muted">
-        The campground map is loading slowly right now. Please refresh in a
-        moment.
-      </p>
-    );
-  return (
-    <MapAndBooking
-      parks={data.parks}
-      addons={data.addons}
-      camper={trailer}
-      transport={data.transport}
-    />
-  );
-}
-
-/** Big numbers under the hero. */
-async function Stats() {
-  const camper = await getTrailer();
-  const stats: { value: number; prefix?: string; suffix: string; label: string }[] = [
-    {
-      value: camper?.length_ft ? Math.round(camper.length_ft) : 40,
-      suffix: " ft",
-      label: "of living space",
-    },
-    {
-      value: camper?.sleeps ?? 6,
-      suffix: "",
-      label: "guests sleep comfortably",
-    },
-    { value: 4, suffix: "", label: "slide-outs" },
-    { value: 11, suffix: "", label: "campgrounds to choose from" },
-  ];
-  return (
-    <dl className="mx-auto grid max-w-7xl grid-cols-2 gap-y-10 px-5 py-16 sm:px-8 lg:grid-cols-4">
-      {stats.map((s, i) => (
-        <div
-          key={s.label}
-          className={`px-2 text-center ${i > 0 ? "lg:border-l lg:border-ink/15" : ""}`}
-        >
-          <dd className="font-display text-7xl leading-none sm:text-8xl">
-            <CountUp value={s.value} prefix={s.prefix} suffix={s.suffix} />
-          </dd>
-          <dt className="eyebrow mt-4 text-muted">{s.label}</dt>
-        </div>
-      ))}
-    </dl>
-  );
+    return <p className="text-muted">The campground map is loading slowly right now. Please refresh in a moment.</p>;
+  return <MapAndBooking parks={data.parks} addons={data.addons} camper={trailer} transport={data.transport} />;
 }
 
 export default function Home() {
   return (
     <>
       <Header overlay />
+      <Hero />
 
-      {/* Hero */}
-      <section className="relative flex min-h-[46rem] flex-col items-center justify-center overflow-hidden px-5 pb-56 pt-32 sm:pb-64 text-center text-cream sm:min-h-screen">
-        <Image
-          src="/images/smoky-sunset.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="hero-zoom object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/35 via-transparent to-ink/60" />
-        <div className="relative z-10 flex w-full flex-col items-center">
-          <p className="script rise text-6xl sm:text-7xl">The</p>
-          <h1 className="font-display text-[3.4rem] uppercase leading-[0.88] tracking-tight sm:text-[9.5rem]">
-            <span className="rise block" style={{ animationDelay: "0.12s" }}>
-              Mountains
-            </span>
-            <span className="rise block" style={{ animationDelay: "0.24s" }}>
-              are calling
-            </span>
-          </h1>
-          <p
-            className="script rise mt-2 text-5xl sm:text-8xl"
-            style={{ animationDelay: "0.4s" }}
-          >
-            Book your luxury getaway
-          </p>
-          <p
-            className="rise mt-8 max-w-xl text-base leading-relaxed text-cream/85"
-            style={{ animationDelay: "0.55s" }}
-          >
-            One forty-foot luxury fifth wheel for the Smokies, the Blue Ridge
-            and every lake in between. Tow it, rent our truck, or we deliver.
-          </p>
-          <div
-            className="rise mt-9 flex flex-wrap justify-center gap-4"
-            style={{ animationDelay: "0.7s" }}
-          >
-            <a href="#book-now" className="btn btn-primary">
-              Book now
-            </a>
-            <Link href="/gallery" className="btn btn-light">
-              Step inside
-            </Link>
-          </div>
+      {/* The experience, in one sentence */}
+      <section id="experience" className="mx-auto max-w-5xl scroll-mt-24 px-5 py-32 text-center sm:py-44">
+        <p className="lux-label text-clay">The experience</p>
+        <div className="mt-10">
+          <LitStatement text="We bring a forty-foot luxury residence to the mountains or the lake, prepare every detail around it, and hand you the keys. All you do is arrive." />
         </div>
-        <Treeline color="var(--color-cream)" height={220} seed={3} />
-        <p className="eyebrow absolute bottom-[calc(clamp(121px,15.28vw,220px)+0.75rem)] left-5 z-10 hidden text-left leading-relaxed sm:left-8 sm:block">
-          Tow it or we deliver
-          <br />
-          across the Southeast
-        </p>
-        <p className="eyebrow absolute bottom-[calc(clamp(121px,15.28vw,220px)+0.75rem)] right-5 z-10 hidden text-right leading-relaxed sm:right-8 sm:block">
-          Sleeps six
-          <br />
-          Forty feet
-        </p>
       </section>
 
-      {/* Numbers */}
+      <Waiting />
+
       <section className="border-b border-line">
-        <Suspense fallback={<div className="h-56" />}>
-          <Stats />
+        <Suspense fallback={<div className="h-48" />}>
+          <Numbers />
         </Suspense>
       </section>
 
-      {/* The trailer (extra room at the bottom for the pines rising from the next section) */}
-      <section className="mx-auto max-w-7xl px-5 pb-40 pt-24 sm:px-8 sm:pb-56 sm:pt-32">
-        <Suspense
-          fallback={
-            <div className="h-[44rem] animate-pulse rounded-[2rem] bg-sand/60" />
-          }
-        >
-          <Trailer />
+      <section className="mx-auto max-w-7xl px-5 py-28 sm:px-8 sm:py-36">
+        <Suspense fallback={<div className="h-[40rem] animate-pulse bg-sand/60" />}>
+          <Residence />
         </Suspense>
       </section>
 
-      {/* Intro */}
-      <section className="relative overflow-x-clip bg-pine-dark text-cream">
-        <Treeline
-          color="var(--color-pine-dark)"
-          height={170}
-          seed={17}
-          className="!bottom-auto top-0 -translate-y-[99%]"
-        />
-        <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 pb-40 pt-24 sm:px-8 sm:pb-52 sm:pt-32 lg:grid-cols-2">
-          <Reveal>
-            <p className="eyebrow text-cream/60">(02) Why rent with us</p>
-            <h2 className="mt-5 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl">
-              More than a rental.
-            </h2>
-            <p className="script mt-1 text-5xl sm:text-6xl">
-              A better way to get away
-            </p>
-            <p className="mt-8 max-w-lg leading-relaxed text-cream/75">
-              Wake up to mountain light, cook breakfast with the door open, and
-              fall asleep to a campfire. We rent one trailer and look after it
-              like our own home, so every trip starts clean, stocked and ready.
-            </p>
-            <Link href="/how-it-works" className="btn btn-light mt-9">
-              How it works →
-            </Link>
-          </Reveal>
-          <div className="grid grid-cols-5 gap-4">
-            <Reveal className="col-span-3">
-              <div className="relative aspect-[3/4] overflow-hidden rounded-t-full">
-                <Image
-                  src="/images/smoky-fall.jpg"
-                  alt="Fall color in the Smoky Mountains"
-                  fill
-                  sizes="(min-width:1024px) 30vw, 60vw"
-                  className="object-cover"
-                />
-              </div>
-            </Reveal>
-            <div className="col-span-2 flex flex-col gap-4 pt-16">
-              <Reveal delay={120}>
-                <div className="relative aspect-square overflow-hidden rounded-2xl">
-                  <Image
-                    src="/images/montana/bedroom-2.jpg"
-                    alt="King bedroom in the trailer"
-                    fill
-                    sizes="(min-width:1024px) 20vw, 40vw"
-                    className="object-cover"
-                  />
-                </div>
-              </Reveal>
-              <Reveal delay={240}>
-                <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
-                  <Image
-                    src="/images/campfire-night.jpg"
-                    alt="Campfire beside a glowing tent at night"
-                    fill
-                    sizes="(min-width:1024px) 20vw, 40vw"
-                    className="object-cover"
-                  />
-                </div>
-              </Reveal>
-            </div>
-          </div>
-        </div>
-        {/* Cream pines rising into the green, blending into the map section below */}
-        <Treeline
-          color="var(--color-cream)"
-          height={150}
-          seed={53}
-          ridge={false}
-        />
-      </section>
-
-      {/* Destinations: the campgrounds map */}
-      <section
-        id="destinations"
-        className="mx-auto max-w-7xl scroll-mt-20 px-5 py-24 sm:px-8 sm:py-32"
+      <SettlingPhotoSection
+        src="/images/smoky-sunset.jpg"
+        overlay="bg-black/35"
+        className="flex h-[70svh] min-h-[28rem] items-center justify-center text-center text-cream"
       >
-        <Reveal>
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div className="max-w-2xl">
-              <p className="eyebrow text-clay">(03) Where to go</p>
-              <h2 className="mt-4 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-7xl">
-                Mountains, lakes
-              </h2>
-              <p className="script text-5xl sm:text-6xl">and open road</p>
-              <p className="mt-5 max-w-xl leading-relaxed text-bark">
-                Eleven RV parks across five states, with delivery and setup at
-                any of them. Tap a pin to see the park, then book right below
-                the map.
-              </p>
-            </div>
-            <Link href="/destinations" className="btn btn-outline">
-              Extras and campsite tips →
-            </Link>
-          </div>
-        </Reveal>
-        <div className="mt-12">
-          <Suspense
-            fallback={
-              <div className="h-[34rem] animate-pulse rounded-[1.75rem] bg-sand/60" />
-            }
-          >
-            <Parks />
-          </Suspense>
-        </div>
-      </section>
+        <InView className="lux-rise relative max-w-3xl px-6">
+          <p className="font-display text-4xl leading-tight sm:text-6xl">
+            <em>Wake up to the mountains. Fall asleep by the fire.</em>
+          </p>
+        </InView>
+      </SettlingPhotoSection>
 
       {/* How it works */}
-      <section
-        id="how-it-works"
-        className="relative scroll-mt-20 overflow-hidden px-5 pb-44 pt-28 text-cream sm:px-8"
-      >
-        <Image
-          src="/images/lake-campsite.jpg"
-          alt=""
-          fill
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-ink/70" />
-        <div className="relative mx-auto max-w-7xl">
-          <Reveal className="text-center">
-            <p className="eyebrow">(04) How it works</p>
-            <h2 className="mt-4 font-display text-5xl uppercase tracking-tight sm:text-7xl">
-              From booking
-            </h2>
-            <p className="script text-5xl sm:text-6xl">to campfire</p>
-          </Reveal>
-          <ol className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((step, i) => (
-              <li key={step.title}>
-                <Reveal delay={i * 110} className="h-full">
-                  <div className="h-full rounded-2xl border border-cream/40 bg-cream/5 p-7 backdrop-blur-sm transition-colors duration-300 hover:bg-cream hover:text-ink">
-                    <p className="font-display text-6xl italic opacity-70">
-                      {String(i + 1).padStart(2, "0")}
-                    </p>
-                    <h3 className="eyebrow mt-6">{step.title}</h3>
-                    <p className="mt-3 text-sm leading-relaxed opacity-85">
-                      {step.text}
-                    </p>
-                  </div>
-                </Reveal>
-              </li>
-            ))}
-          </ol>
-          <div className="mt-12 text-center">
-            <Link href="/how-it-works" className="btn btn-light">
-              See every step
-            </Link>
-          </div>
-        </div>
-        <Treeline
-          color="var(--color-cream)"
-          height={150}
-          seed={41}
-          ridge={false}
-        />
+      <section className="mx-auto max-w-7xl px-5 py-28 sm:px-8 sm:py-36">
+        <p className="lux-label text-center text-clay">How it works</p>
+        <h2 className="mt-5 text-center font-display text-5xl">Three simple steps</h2>
+        <ol className="mt-16 grid gap-12 sm:grid-cols-3">
+          {STEPS.map(([title, text], i) => (
+            <InView as="li" key={title} delay={i * 160} className="lux-rise text-center">
+              <p className="font-display text-6xl text-clay">
+                <em>{["I", "II", "III"][i]}</em>
+              </p>
+              <div className="lux-grow mx-auto mt-6 h-px w-12 bg-clay" />
+              <h3 className="mt-6 font-display text-3xl">{title}</h3>
+              <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-muted">{text}</p>
+            </InView>
+          ))}
+        </ol>
+        <p className="mt-14 text-center">
+          <Link href="/how-it-works" className="lux-label border-b border-ink pb-1">
+            Every detail of your stay
+          </Link>
+        </p>
       </section>
 
-      {/* Explore */}
-      <section className="mx-auto max-w-7xl px-5 pb-24 sm:px-8">
-        <div className="grid border-t border-ink md:grid-cols-3">
-          {EXPLORE.map((item, i) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`group block py-10 transition-colors hover:bg-sand/50 md:px-8 ${i > 0 ? "md:border-l md:border-ink/15" : ""}`}
-            >
-              <h2 className="font-display text-4xl uppercase leading-none tracking-tight sm:text-5xl">
-                {item.title}
+      {/* Where to stay: the parks map, with the booking card under it */}
+      <section id="destinations" className="border-t border-line bg-sand/60">
+        <div className="mx-auto max-w-7xl scroll-mt-20 px-5 py-28 sm:px-8 sm:py-32">
+          <InView className="lux-rise flex flex-wrap items-end justify-between gap-6">
+            <div className="max-w-2xl">
+              <p className="lux-label text-clay">Where to stay</p>
+              <h2 className="mt-5 font-display text-5xl leading-[1.05] sm:text-6xl">
+                Choose your place, <em>we&apos;ll prepare it.</em>
               </h2>
-              <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
-                {item.text}
+              <p className="mt-5 max-w-xl leading-relaxed text-muted">
+                Eleven mountain and lakeside parks across the Southeast. Tap a pin to see the park, then reserve right
+                below the map.
               </p>
-              <p className="eyebrow mt-6 inline-flex items-center gap-3">
-                Learn more{" "}
-                <span className="transition-transform duration-300 group-hover:translate-x-2">
-                  →
-                </span>
-              </p>
+            </div>
+            <Link href="/destinations" className="lux-label border-b border-ink pb-1">
+              All places and extras
             </Link>
-          ))}
+          </InView>
+          <div className="mt-12">
+            <Suspense fallback={<div className="h-[34rem] animate-pulse bg-sand" />}>
+              <Parks />
+            </Suspense>
+          </div>
         </div>
       </section>
 

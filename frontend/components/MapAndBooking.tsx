@@ -41,7 +41,7 @@ export default function MapAndBooking({
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="eyebrow text-clay">Book now</p>
-            <h3 className="mt-3 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-6xl">
+            <h3 className="mt-3 font-display text-5xl leading-[0.95] sm:text-6xl">
               Plan your trip
             </h3>
             <p className="script -mt-1 text-4xl sm:text-5xl">

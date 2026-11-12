@@ -96,7 +96,7 @@ async function Extras() {
             />
             <div className="relative sm:max-w-[70%]">
               <p className="eyebrow opacity-70">{c.where}</p>
-              <h3 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight">
+              <h3 className="mt-3 font-display text-5xl leading-none">
                 {c.title}
               </h3>
               <p className="mt-4 max-w-sm text-sm leading-relaxed opacity-85">
@@ -127,7 +127,7 @@ export default function DestinationsPage() {
       <section className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
         <Reveal>
           <p className="eyebrow text-clay">(01) Campgrounds we deliver to</p>
-          <h2 className="mt-4 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-6xl">
+          <h2 className="mt-4 font-display text-5xl leading-[0.95] sm:text-6xl">
             Pick your park
           </h2>
           <p className="mt-4 max-w-2xl leading-relaxed text-bark">
@@ -151,7 +151,7 @@ export default function DestinationsPage() {
         <div className="mx-auto max-w-7xl px-5 py-20 sm:px-8">
           <Reveal>
             <p className="eyebrow text-clay">(02) Optional extras</p>
-            <h2 className="mt-4 font-display text-5xl uppercase leading-[0.95] tracking-tight sm:text-6xl">
+            <h2 className="mt-4 font-display text-5xl leading-[0.95] sm:text-6xl">
               Make a day of it
             </h2>
             <p className="mt-4 max-w-2xl leading-relaxed text-bark">

@@ -238,7 +238,7 @@ export default function BookingForm() {
 
   if (previewDone) {
     return (
-      <div className="mx-auto max-w-2xl rounded-[2rem] border border-line bg-white/80 px-6 py-14 text-center sm:px-12">
+      <div className="mx-auto max-w-2xl rounded-md border border-line bg-white/80 px-6 py-14 text-center sm:px-12">
         <p className="eyebrow text-clay">Online booking opens soon</p>
         <h2 className="mt-4 font-display text-5xl leading-none sm:text-6xl">
           Almost there.
@@ -334,7 +334,7 @@ export default function BookingForm() {
         <form
           ref={formRef}
           onSubmit={onSubmit}
-          className="space-y-12 rounded-[2rem] bg-white p-6 shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] sm:p-9"
+          className="space-y-12 rounded-md bg-white p-6 shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] sm:p-9"
         >
           <p className="eyebrow text-clay sm:hidden">
             Step {stepIndex + 1} of 4: {steps[stepIndex].label}
@@ -800,7 +800,7 @@ export default function BookingForm() {
         </form>
 
         <aside className="lg:sticky lg:top-28 lg:self-start">
-          <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">
+          <div className="overflow-hidden rounded-md bg-white shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">
             {camper.image_url && (
               <div className="relative aspect-[3/2]">
                 <Image
@@ -907,7 +907,7 @@ function Notice({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[2rem] bg-white px-6 py-16 text-center shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">
+    <div className="rounded-md bg-white px-6 py-16 text-center shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)]">
       <p className="font-display text-4xl">{title}</p>
       {text && <p className="mx-auto mt-4 max-w-md text-muted">{text}</p>}
       {children}
