@@ -189,14 +189,14 @@ export default function Home() {
       {/* Hero */}
       <section className="relative flex min-h-[46rem] flex-col items-center justify-center overflow-hidden px-5 pb-56 pt-32 sm:pb-64 text-center text-cream sm:min-h-screen">
         <Image
-          src="/images/blueridge-rays.jpg"
+          src="/images/smoky-sunset.jpg"
           alt=""
           fill
           priority
           sizes="100vw"
           className="hero-zoom object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/55 via-ink/20 to-ink/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/35 via-transparent to-ink/60" />
         <div className="relative z-10 flex w-full flex-col items-center">
           <p className="script rise text-6xl sm:text-7xl">The</p>
           <h1 className="font-display text-[3.4rem] uppercase leading-[0.88] tracking-tight sm:text-[9.5rem]">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import AddonIcon from "@/components/AddonIcon";
@@ -124,6 +124,25 @@ export default function BookNowForm({
       : "");
   const canContinue = !!current?.quote?.available && !loading;
 
+  // Phones: a bar pinned to the bottom of the screen keeps the total and the
+  // button in view while filling in the card; it hides once the summary's
+  // own button is on screen.
+  const datesRef = useRef<HTMLElement>(null);
+  const summaryButton = useRef<HTMLButtonElement>(null);
+  const [summaryVisible, setSummaryVisible] = useState(false);
+  useEffect(() => {
+    const el = summaryButton.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) =>
+      setSummaryVisible(entry.isIntersecting),
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  function toDates() {
+    datesRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   const groups = STATE_ORDER.map((state) => ({
     state,
     parks: parks.filter((p) => p.state === state),
@@ -178,7 +197,7 @@ export default function BookNowForm({
         </section>
 
         {/* Dates */}
-        <section className="mt-9 border-t border-line pt-8">
+        <section ref={datesRef} className="mt-9 border-t border-line pt-8">
           <p className="eyebrow text-clay">(02) When</p>
           <p className="mt-2 font-display text-3xl">Availability</p>
           <div className="mt-4 rounded-xl border border-line px-4 py-3.5 transition-colors focus-within:border-pine hover:border-pine">
@@ -358,6 +377,7 @@ export default function BookNowForm({
             )}
 
             <button
+              ref={summaryButton}
               type="button"
               disabled={!canContinue}
               onClick={next}
@@ -376,6 +396,50 @@ export default function BookNowForm({
           </div>
         </div>
       </aside>
+
+      {/* Phones: total and button pinned to the bottom of the screen. */}
+      <div
+        aria-hidden={summaryVisible}
+        className={`sticky bottom-0 z-20 -mx-5 -mt-8 flex items-center justify-between gap-4 border-t border-line bg-white/95 px-5 py-3 shadow-[0_-10px_24px_-16px_rgba(33,29,26,0.45)] backdrop-blur-md transition-opacity sm:-mx-8 sm:px-8 lg:hidden ${
+          summaryVisible ? "pointer-events-none opacity-0" : ""
+        }`}
+      >
+        <div className={`min-w-0 transition-opacity ${loading ? "opacity-50" : ""}`}>
+          {q && current?.quote?.available ? (
+            <>
+              <p className="text-xs text-muted">Total · {q.days} nights</p>
+              <p className="font-display text-2xl leading-none">{money(q.total)}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs text-muted">{datesReady ? "Checking dates…" : "From"}</p>
+              <p className="font-display text-2xl leading-none">
+                {datesReady ? " " : `${rate(camper.daily_rate)}/night`}
+              </p>
+            </>
+          )}
+        </div>
+        {datesReady ? (
+          <button
+            type="button"
+            tabIndex={summaryVisible ? -1 : 0}
+            disabled={!canContinue}
+            onClick={next}
+            className="btn btn-primary shrink-0 !px-5"
+          >
+            Book now
+          </button>
+        ) : (
+          <button
+            type="button"
+            tabIndex={summaryVisible ? -1 : 0}
+            onClick={toDates}
+            className="btn btn-primary shrink-0 !px-5"
+          >
+            Choose dates
+          </button>
+        )}
+      </div>
     </div>
   );
 }
