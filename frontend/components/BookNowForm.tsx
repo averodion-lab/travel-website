@@ -179,7 +179,7 @@ export default function BookNowForm({
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_24rem]">
+    <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
       <div className="rounded-md bg-white p-6 shadow-[0_24px_60px_-34px_rgba(33,29,26,0.45)] sm:p-8">
         {/* Campground */}
         <section>

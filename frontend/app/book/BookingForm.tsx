@@ -348,7 +348,7 @@ export default function BookingForm() {
         })}
       </ol>
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_24rem]">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <form
           ref={formRef}
           onSubmit={onSubmit}
@@ -368,7 +368,7 @@ export default function BookingForm() {
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
                   Reserve your site with the park directly. If we deliver, we
                   set the trailer up there for you.{" "}
-                  <Link href="/destinations" className="text-clay underline">
+                  <Link href="/destinations" className="tap text-clay underline">
                     See all parks on the map
                   </Link>
                 </p>

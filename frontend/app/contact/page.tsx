@@ -30,7 +30,7 @@ export default function ContactPage() {
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted sm:mt-5 sm:text-base">
             Send a message and we&apos;ll reply within a day. Ready to book? You can{" "}
-            <Link href="/book-now" className="text-ink underline">
+            <Link href="/book-now" className="tap text-ink underline">
               reserve online
             </Link>{" "}
             and see your exact price.

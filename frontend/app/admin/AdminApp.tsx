@@ -88,7 +88,7 @@ function Login({ onToken }: { onToken: (token: string) => void }) {
           <button type="submit" disabled={busy} className="btn btn-dark mt-7 w-full">
             {busy ? "Signing in…" : "Sign in"}
           </button>
-          <Link href="/" className="eyebrow mt-8 inline-block text-muted hover:text-ink">← Back to website</Link>
+          <Link href="/" className="tap eyebrow mt-8 inline-block text-muted hover:text-ink">← Back to website</Link>
         </form>
       </div>
     </div>
