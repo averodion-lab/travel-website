@@ -79,8 +79,8 @@ def test_change_dates_reprices_and_keeps_the_deposit(client, camper, sent_emails
     assert (b.start_date, b.end_date, b.days) == (day(30), day(35), 5)
     assert b.deposit_due == deposit  # already paid
     assert b.addons[0]["qty"] == 2 and b.addons[0]["days"] == 5
-    assert b.addons_total == Decimal("500.00")  # $50 x 5 days x 2 bikes
-    assert b.total_price == Decimal("150.00") * 5 + Decimal("80.00") + Decimal("500.00")
+    assert b.addons_total == Decimal("330.00")  # $33 x 5 days x 2 bikes
+    assert b.total_price == Decimal("150.00") * 5 + Decimal("80.00") + Decimal("330.00")
     assert any("changed" in m["subject"].lower() for m in sent_emails)
 
 

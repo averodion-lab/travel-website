@@ -1,4 +1,4 @@
-"""Electric bikes: an extra at every campground, $50 a day each, up to 3."""
+"""Electric bikes: an extra at every campground, $33 a day each, up to 3."""
 from decimal import Decimal
 
 from app.catalog import ADDONS, PARKS
@@ -17,7 +17,7 @@ def quote(client, **extra):
 
 
 def test_ebike_is_offered_everywhere_up_to_three():
-    assert EBIKE.daily_rate == Decimal("50.00")
+    assert EBIKE.daily_rate == Decimal("33.00")
     assert EBIKE.max_qty == 3
     for park in PARKS.values():
         assert "ebike" in [a.code for a in park.addons]
@@ -27,13 +27,13 @@ def test_ebikes_are_charged_per_bike_per_day(client, camper):
     q = quote(client, park="vogel", addons=["ebike:3"]).get_json()["quote"]
     line = q["addons"][0]
     assert (line["code"], line["qty"], line["days"]) == ("ebike", 3, 4)
-    assert line["total"] == "600.00"  # $50 x 4 days x 3 bikes
-    assert q["total"] == f"{BASE_TOTAL + 600:.2f}"
+    assert line["total"] == "396.00"  # $33 x 4 days x 3 bikes
+    assert q["total"] == f"{BASE_TOTAL + 396:.2f}"
 
 
 def test_one_bike_when_no_quantity_is_given(client, camper):
     q = quote(client, park="vogel", addons=["ebike"]).get_json()["quote"]
-    assert q["addons"][0]["qty"] == 1 and q["addons"][0]["total"] == "200.00"
+    assert q["addons"][0]["qty"] == 1 and q["addons"][0]["total"] == "132.00"
 
 
 def test_more_than_three_bikes_is_refused(client, camper):
@@ -50,7 +50,7 @@ def test_booking_saves_the_bike_count(client, camper, sent_emails):
     assert res.status_code == 201, res.get_json()
     b = db.session.query(Booking).one()
     assert b.addons[0]["qty"] == 2
-    assert b.addons_total == Decimal("400.00")
+    assert b.addons_total == Decimal("264.00")
     owner = next(m for m in sent_emails if m["to"] == "owner@example.com")
     assert "Electric bike x2" in owner["body"]
 

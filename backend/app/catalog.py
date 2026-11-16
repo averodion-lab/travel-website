@@ -143,7 +143,7 @@ ADDONS: dict[str, Addon] = {
         Addon("jetski", "Jet ski", Decimal("250.00"), "lake",
               "A jet ski that rides along on the trailer, ready for the lake.",
               gear="Life jacket included"),
-        Addon("ebike", "Electric bike", Decimal("50.00"), "any",
+        Addon("ebike", "Electric bike", Decimal("33.00"), "any",
               "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
               max_qty=3),
     )

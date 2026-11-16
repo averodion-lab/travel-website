@@ -94,7 +94,7 @@ async function Questions() {
         },
         {
           q: "Can I rent a 4-wheeler, a jet ski or e-bikes?",
-          a: "Yes, as optional extras when you book, charged per day of your trip. 4-wheelers are available at our mountain parks (helmet included) and jet skis at our lake parks (life jacket included). Electric bikes are $50 a day each and you can add up to three, at any campground. They ride along on the trailer, whether we deliver it or you tow it. The Destinations page shows which park offers what.",
+          a: "Yes, as optional extras when you book, charged per day of your trip. 4-wheelers are available at our mountain parks (helmet included) and jet skis at our lake parks (life jacket included). Electric bikes are $33 a day each and we have three, so you can add up to three, at any campground. They ride along on the trailer, whether we deliver it or you tow it. The Destinations page shows which park offers what.",
         },
         {
           q: "Can I cancel or change my booking?",

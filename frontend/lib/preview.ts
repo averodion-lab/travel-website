@@ -94,7 +94,7 @@ export const PREVIEW_PARKS: ParksResponse = {
     },
     {
       "code": "ebike",
-      "daily_rate": "50.00",
+      "daily_rate": "33.00",
       "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
       "gear": "",
       "max_qty": 3,
@@ -116,7 +116,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -150,7 +150,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -193,7 +193,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -228,7 +228,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -262,7 +262,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -296,7 +296,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -330,7 +330,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -364,7 +364,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -398,7 +398,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -432,7 +432,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -466,7 +466,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -500,7 +500,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -534,7 +534,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -568,7 +568,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -611,7 +611,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -646,7 +646,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -689,7 +689,7 @@ export const PREVIEW_PARKS: ParksResponse = {
         },
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
@@ -715,7 +715,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "addons": [
         {
           "code": "ebike",
-          "daily_rate": "50.00",
+          "daily_rate": "33.00",
           "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
           "gear": "",
           "max_qty": 3,
