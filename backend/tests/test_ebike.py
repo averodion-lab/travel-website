@@ -67,3 +67,4 @@ def test_free_cancellation_deadline_is_24_hours_before_pickup(client, camper, se
     assert public["free_change_until"] == (day(40) - timedelta(days=1)).isoformat()
     customer = next(m for m in sent_emails if m["to"] != "owner@example.com")
     assert "24 hours before pickup" in customer["body"]
+    assert "free for 24 hours after payment" in customer["body"]

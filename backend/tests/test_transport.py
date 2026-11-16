@@ -86,3 +86,12 @@ def test_booking_with_delivery_saves_the_miles(client, camper, sent_emails):
     b = db.session.query(Booking).one()
     assert b.transport == "delivery"
     assert b.transport_total == (DELIVERY_PER_MILE * PARKS["fort-mountain"].delivery_miles * DELIVERY_TRIPS)
+
+
+def test_towing_it_yourself_needs_towing_experience_to_book(client, camper, sent_emails):
+    res = post_booking(client, day(10), day(14), transport="self", towing_experience="0")
+    assert res.status_code == 400 and "experience" in res.get_json()["error"]
+    # the quote for "your own truck" is still shown before the box is ticked
+    assert quote(client, transport="self").status_code == 200
+    # delivery doesn't need it
+    assert post_booking(client, day(20), day(24), transport="delivery", park="vogel", towing_experience="0").status_code == 201

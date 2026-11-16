@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from datetime import date
 from decimal import ROUND_HALF_UP, Decimal
 
-from ..catalog import DELIVERY_PER_MILE, DELIVERY_TRIPS, TRUCK
+from ..catalog import DELIVERY_PER_MILE, DELIVERY_TRIPS, TRUCK, needs_security_deposit
 from ..errors import ApiError
 
 CENT = Decimal("0.01")
@@ -96,7 +96,12 @@ def calculate_quote(
         total=total,
         deposit_due=deposit_due,
         balance_due=total - deposit_due,
-        security_deposit=Decimal(security_deposit).quantize(CENT),
+        # Only with our truck, a 4-wheeler or a jet ski.
+        security_deposit=(
+            Decimal(security_deposit).quantize(CENT)
+            if needs_security_deposit(transport_code, [line["code"] for line in addon_lines])
+            else Decimal("0.00")
+        ),
         addons=addon_lines,
         addons_total=addons_total,
         transport=transport,

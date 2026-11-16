@@ -10,6 +10,7 @@ const LINKS = [
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
   { href: "/booking/manage", label: "Manage booking" },
+  { href: "/policies", label: "Policies" },
   { href: "/book-now", label: "Reserve" },
 ];
 

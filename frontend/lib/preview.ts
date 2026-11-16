@@ -29,7 +29,8 @@ export const PREVIEW_TRAILER: Camper = {
     "Outdoor speakers",
     "Pass-through storage",
     "Bedding and towels",
-    "Cookware and dishes"
+    "Cookware and dishes",
+    "Pet friendly"
   ],
   "class_type": "Luxury Fifth Wheel",
   "cleaning_fee": "175.00",
@@ -1005,7 +1006,12 @@ async function quote(body: {
       total: fixed(total),
       deposit_due: fixed(deposit),
       balance_due: fixed(total - deposit),
-      security_deposit: fixed(Number(t.security_deposit)),
+      // Only with our truck, a 4-wheeler or a jet ski (catalog.needs_security_deposit).
+      security_deposit: fixed(
+        transport.code === "truck" || lines.some((l) => l.code === "atv" || l.code === "jetski")
+          ? Number(t.security_deposit)
+          : 0,
+      ),
       addons: lines,
       addons_total: fixed(addonsTotal),
       transport,

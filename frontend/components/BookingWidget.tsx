@@ -1,5 +1,6 @@
 "use client";
 
+import CancelNote from "@/components/CancelNote";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { addMonths, differenceInCalendarDays, startOfDay } from "date-fns";
@@ -212,7 +213,7 @@ export default function BookingWidget({
     if (parkSlug === CUSTOM) setPlaceParams(qs, typed);
     if (chosen.length) qs.set("addons", chosen.join(","));
     if (transportCode !== "self") qs.set("transport", transportCode);
-    if (transportCode === "truck" && experience) qs.set("exp", "1");
+    if (transportCode !== "delivery" && experience) qs.set("exp", "1");
     router.push(`/book?${qs}`);
   }
   const groups = STATE_ORDER.map((state) => ({
@@ -409,8 +410,13 @@ export default function BookingWidget({
             </div>
             <p className="pt-1 text-xs leading-relaxed text-muted">
               The balance of {money(estimate.quote.balance_due)} is due at
-              pickup, along with a refundable{" "}
-              {money(estimate.quote.security_deposit)} security deposit.
+              pickup
+              {Number(estimate.quote.security_deposit) > 0
+                ? `, along with a refundable ${money(estimate.quote.security_deposit)} security deposit (for our truck, 4-wheeler or jet ski).`
+                : "."}
+            </p>
+            <p className="pt-1 text-xs leading-relaxed text-muted">
+              <CancelNote />
             </p>
           </dl>
         )}

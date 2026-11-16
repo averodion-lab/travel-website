@@ -7,10 +7,17 @@ import DateRangeField from "@/components/DateRangeField";
 import { api, type PublicBooking } from "@/lib/api";
 import { longDate, money } from "@/lib/format";
 
-type Found = { booking: PublicBooking; can_change: boolean };
+type Found = {
+  booking: PublicBooking;
+  can_change: boolean;
+  can_cancel: boolean;
+  /** What cancelling now would refund (cancellation policy). */
+  cancel?: { percent: number; refund: string; reason: string };
+};
 
-/** Guests find their booking (number + email) and cancel it or move the
- *  dates, free of charge up to 24 hours before pickup. */
+/** Guests find their booking (number + email) and move the dates (free up to
+ *  24 hours before pickup) or cancel it (free within 24 hours of payment,
+ *  then the cancellation policy). */
 export default function ManageBooking() {
   const params = useSearchParams();
   const [reference, setReference] = useState(params.get("ref") ?? "");
@@ -56,7 +63,9 @@ export default function ManageBooking() {
     const res = await call("cancel");
     if (res)
       setNotice(
-        "Your booking is cancelled. We've emailed you a confirmation; your deposit is being refunded.",
+        Number(res.booking.refunded_amount ?? 0) > 0
+          ? `Your booking is cancelled and ${money(res.booking.refunded_amount ?? "0")} is being refunded to your card. We've emailed you a confirmation.`
+          : "Your booking is cancelled. We've emailed you a confirmation.",
       );
   }
 
@@ -162,24 +171,30 @@ export default function ManageBooking() {
           ))}
         </dl>
 
-        {b.status === "confirmed" && found.can_change && mode === "view" && (
-          <div className="mt-8 flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => setMode("change")}
-              className="btn btn-primary"
-            >
-              Change dates
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("cancel")}
-              className="btn btn-outline"
-            >
-              Cancel booking
-            </button>
-          </div>
-        )}
+        {b.status === "confirmed" &&
+          (found.can_change || found.can_cancel) &&
+          mode === "view" && (
+            <div className="mt-8 flex flex-wrap gap-3">
+              {found.can_change && (
+                <button
+                  type="button"
+                  onClick={() => setMode("change")}
+                  className="btn btn-primary"
+                >
+                  Change dates
+                </button>
+              )}
+              {found.can_cancel && (
+                <button
+                  type="button"
+                  onClick={() => setMode("cancel")}
+                  className="btn btn-outline"
+                >
+                  Cancel booking
+                </button>
+              )}
+            </div>
+          )}
 
         {mode === "change" && (
           <div className="mt-8 border-t border-line pt-6">
@@ -228,9 +243,33 @@ export default function ManageBooking() {
           <div className="mt-8 border-t border-line pt-6">
             <p className="font-display text-2xl">Cancel this booking?</p>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              Your dates will be released and your deposit of{" "}
-              {money(b.deposit_due)} refunded to your card. This can&apos;t be
-              undone.
+              {found.cancel && Number(found.cancel.refund) > 0 ? (
+                <>
+                  You&apos;re cancelling {found.cancel.reason}, so{" "}
+                  <strong className="text-ink">
+                    {money(found.cancel.refund)}
+                  </strong>{" "}
+                  of your {money(b.deposit_due)} deposit is refunded to your
+                  card.
+                </>
+              ) : (
+                <>
+                  You&apos;re cancelling{" "}
+                  {found.cancel?.reason ?? "close to pickup"}, so under{" "}
+                  <Link
+                    href="/policies#cancellation"
+                    target="_blank"
+                    className="underline"
+                  >
+                    our cancellation policy
+                  </Link>{" "}
+                  the {money(b.deposit_due)} deposit isn&apos;t refunded.
+                  {found.can_change &&
+                    " Moving your dates instead is still free."}
+                </>
+              )}{" "}
+              Nothing more is due, your dates are released, and this
+              can&apos;t be undone.
             </p>
             <div className="mt-5 flex flex-wrap gap-3">
               <button
@@ -254,7 +293,11 @@ export default function ManageBooking() {
 
         {b.status === "confirmed" && !found.can_change && (
           <p className="mt-8 rounded-md bg-sand px-4 py-3 text-sm leading-relaxed text-bark">
-            Free cancellation and date changes ended 24 hours before pickup.{" "}
+            Date changes online end 24 hours before pickup
+            {found.can_cancel
+              ? ""
+              : ", and on pickup day cancelling is by message"}
+            .{" "}
             <Link href="/contact" className="underline">
               Contact us
             </Link>{" "}
@@ -285,8 +328,18 @@ export default function ManageBooking() {
         <p className="lux-label text-clay">Your price</p>
         {b.status === "cancelled" ? (
           <p className="mt-4 text-sm leading-relaxed">
-            Your deposit of <strong>{money(b.deposit_due)}</strong> is being
-            refunded to your card. Nothing more is due.
+            {Number(b.refunded_amount ?? 0) > 0 ? (
+              <>
+                <strong>{money(b.refunded_amount ?? "0")}</strong> of your{" "}
+                {money(b.deposit_due)} deposit is being refunded to your card.
+              </>
+            ) : (
+              <>
+                The deposit wasn&apos;t refundable under the cancellation
+                policy.
+              </>
+            )}{" "}
+            Nothing more is due.
           </p>
         ) : (
           <dl className="mt-4 space-y-2 text-sm">
@@ -306,8 +359,21 @@ export default function ManageBooking() {
         )}
         {b.status === "confirmed" && (
           <p className="mt-5 text-xs leading-relaxed text-muted">
-            Free cancellation and date changes until{" "}
-            {longDate(b.free_change_until)} (24 hours before pickup).
+            Free date changes until {longDate(b.free_change_until)} (24 hours
+            before pickup).{" "}
+            {found.cancel &&
+              (found.cancel.percent === 100
+                ? `Cancelling now refunds your full deposit (${found.cancel.reason}).`
+                : found.cancel.percent > 0
+                  ? `Cancelling now refunds ${found.cancel.percent}% of your deposit (${found.cancel.reason}).`
+                  : "Cancelling now isn't refunded.")}{" "}
+            <Link
+              href="/policies#cancellation"
+              target="_blank"
+              className="tap underline"
+            >
+              See details
+            </Link>
           </p>
         )}
         <button

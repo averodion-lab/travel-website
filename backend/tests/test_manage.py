@@ -95,3 +95,38 @@ def test_change_can_overlap_its_own_old_dates(client, camper, sent_emails):
     ref = book(client, day(10), day(14))
     res = manage(client, "change", ref, start=day(12).isoformat(), end=day(16).isoformat())
     assert res.status_code == 200, res.get_json()
+
+
+def test_cancel_refund_follows_the_policy(client, camper, sent_emails):
+    from datetime import datetime, time, timedelta, timezone
+
+    from app.services import manage
+
+    book(client, day(40), day(44))
+    b = db.session.query(Booking).one()
+    paid = b.confirmed_at
+
+    def at(days_before_pickup: int):
+        return datetime.combine(b.start_date - timedelta(days=days_before_pickup), time(12), tzinfo=timezone.utc)
+
+    # free for 24 hours after payment, however close the trip is
+    assert manage.cancel_terms(b, paid + timedelta(hours=23))["percent"] == 100
+    assert manage.cancel_terms(b, at(20))["percent"] == 100
+    assert manage.cancel_terms(b, at(14))["percent"] == 100
+    assert manage.cancel_terms(b, at(13))["percent"] == 50
+    assert manage.cancel_terms(b, at(7))["percent"] == 50
+    assert manage.cancel_terms(b, at(6))["percent"] == 0
+    half = manage.cancel_terms(b, at(10))
+    assert half["refund"] == (b.deposit_due / 2).quantize(Decimal("0.01"))
+
+
+def test_cancelling_saves_the_refund_and_says_so(client, camper, sent_emails):
+    ref = book(client, day(40), day(44))
+    sent_emails.clear()
+    res = manage(client, "find", ref).get_json()
+    assert res["can_cancel"] is True and res["cancel"]["percent"] == 100  # just paid
+    manage(client, "cancel", ref)
+    b = db.session.query(Booking).one()
+    assert b.refunded_amount == b.deposit_due
+    guest = next(m for m in sent_emails if m["to"] == EMAIL)
+    assert "within 24 hours of payment" in guest["body"]

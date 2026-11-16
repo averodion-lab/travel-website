@@ -194,7 +194,7 @@ def create_booking():
     park, addons = catalog.resolve(park_slug, form.getlist("addons"), place)
     towing_experience = form.get("towing_experience") in ("1", "true", "on", "yes")
     transport = catalog.resolve_transport(
-        _clean(form, "transport", "Transport", 20, required=False), park, towing_experience
+        _clean(form, "transport", "Transport", 20, required=False), park, towing_experience, booking=True
     )
 
     booking = booking_service.create_booking(
@@ -289,7 +289,11 @@ def _manage_guard() -> dict:
 
 
 def _manage_response(b) -> dict:
-    return {"booking": b.public_dict(), "can_change": manage.can_change(b)}
+    out = {"booking": b.public_dict(), "can_change": manage.can_change(b), "can_cancel": manage.can_cancel(b)}
+    if out["can_cancel"]:
+        terms = manage.cancel_terms(b)
+        out["cancel"] = {"percent": terms["percent"], "refund": str(terms["refund"]), "reason": terms["reason"]}
+    return out
 
 
 @bp.post("/manage/find")

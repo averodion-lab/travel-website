@@ -1,5 +1,6 @@
 "use client";
 
+import { securityDepositText } from "@/components/CancelNote";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -139,12 +140,29 @@ export default function Confirmation() {
             </div>
           </dl>
           <p className="mt-4 text-xs leading-relaxed text-muted">
-            A refundable {money(booking.security_deposit)} security deposit is held at pickup. Bring the driver&apos;s
-            license you uploaded.
+            {Number(booking.security_deposit) > 0 &&
+              `${securityDepositText(booking.security_deposit, money)} `}
+            Bring the driver&apos;s license you uploaded.
           </p>
           <p className="mt-3 rounded-md bg-sand px-4 py-3 text-xs leading-relaxed text-bark">
-            <strong className="font-semibold">Free cancellation and date changes</strong> until{" "}
-            {longDate(booking.free_change_until)} (24 hours before pickup).{" "}
+            {booking.free_cancel_until && (
+              <>
+                <strong className="font-semibold">Free cancellation</strong> until{" "}
+                {new Date(booking.free_cancel_until).toLocaleString("en-US", {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })}{" "}
+                (24 hours after payment); after that,{" "}
+                <Link href="/policies#cancellation" className="tap underline">
+                  our cancellation policy
+                </Link>{" "}
+                applies.{" "}
+              </>
+            )}
+            Free date changes until {longDate(booking.free_change_until)} (24 hours before pickup).{" "}
             <Link href={`/booking/manage?ref=${booking.reference}`} className="tap underline">
               Cancel or change online
             </Link>

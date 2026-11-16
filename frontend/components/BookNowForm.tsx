@@ -1,5 +1,6 @@
 "use client";
 
+import CancelNote from "@/components/CancelNote";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -174,7 +175,7 @@ export default function BookNowForm({
     if (parkSlug === CUSTOM) setPlaceParams(qs, typed);
     if (chosen.length) qs.set("addons", chosen.join(","));
     if (transportCode !== "self") qs.set("transport", transportCode);
-    if (transportCode === "truck" && experience) qs.set("exp", "1");
+    if (transportCode !== "delivery" && experience) qs.set("exp", "1");
     router.push(`/book?${qs}`);
   }
 
@@ -379,8 +380,9 @@ export default function BookNowForm({
             </button>
             <p className="mt-3 text-center text-xs text-muted">
               Next: your details and payment. You won&apos;t be charged yet.
-              <br />
-              Free cancellation and date changes up to 24 hours before pickup.
+            </p>
+            <p className="mt-2 text-center text-xs leading-relaxed text-muted">
+              <CancelNote />
             </p>
             <CardLogos className="mt-5 justify-center" />
           </div>

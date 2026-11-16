@@ -65,12 +65,15 @@ def parse_webhook(payload: bytes, signature: str | None):
     )
 
 
-def refund_deposit(booking: Booking) -> bool:
-    """Refund the deposit paid through Stripe Checkout. Returns True when a
-    refund was made (or simulated in development)."""
+def refund_deposit(booking: Booking, amount=None) -> bool:
+    """Refund the deposit paid through Stripe Checkout, in full or `amount`
+    (a Decimal) of it. Returns True when the refund was made (or simulated in
+    development, or there was nothing to refund)."""
     cfg = current_app.config
+    if amount is not None and amount <= 0:
+        return True
     if payments_mode() == "mock":
-        current_app.logger.warning("MOCK payment: refund for %s simulated", booking.reference)
+        current_app.logger.warning("MOCK payment: refund of %s for %s simulated", amount or "deposit", booking.reference)
         return True
     if not booking.stripe_session_id:
         return False
@@ -78,7 +81,8 @@ def refund_deposit(booking: Booking) -> bool:
         session = stripe.checkout.Session.retrieve(booking.stripe_session_id, api_key=cfg["STRIPE_SECRET_KEY"])
         if not session.payment_intent:
             return False
-        stripe.Refund.create(payment_intent=session.payment_intent, api_key=cfg["STRIPE_SECRET_KEY"])
+        extra = {"amount": int(amount * 100)} if amount is not None and amount < booking.deposit_due else {}
+        stripe.Refund.create(payment_intent=session.payment_intent, api_key=cfg["STRIPE_SECRET_KEY"], **extra)
         return True
     except stripe.StripeError:
         # The booking stays cancelled; the owner refunds by hand in Stripe.

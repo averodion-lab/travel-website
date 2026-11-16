@@ -22,6 +22,7 @@ export type Summary = Brief & {
   transport?: { code: "self" | "truck" | "delivery"; name: string; total: string; miles?: number | null };
   /** Last day the guest can cancel or change dates free of charge. */
   free_change_until?: string;
+  refunded_amount?: string | null;
   towing_experience?: boolean;
 };
 

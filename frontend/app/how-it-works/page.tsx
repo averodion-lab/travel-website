@@ -79,8 +79,8 @@ async function PaymentFacts() {
     [
       "Security deposit",
       trailer
-        ? `A refundable ${money(trailer.security_deposit)} is held at pickup and released after the trailer is returned and inspected.`
-        : "A refundable security deposit is held at pickup and released after the trailer is returned and inspected.",
+        ? `Only if you rent our truck, a 4-wheeler or a jet ski: a refundable ${money(trailer.security_deposit)} is held at pickup and released after everything is returned and checked.`
+        : "Only if you rent our truck, a 4-wheeler or a jet ski: a refundable amount is held at pickup and released after everything is returned and checked.",
     ],
   ];
   return (

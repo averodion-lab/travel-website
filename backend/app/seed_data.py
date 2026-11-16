@@ -36,7 +36,7 @@ CAMPERS = [
             "Double-sink bathroom", "Glass-door shower", "Four slide-outs",
             "Air conditioning and furnace", "Power awnings", "Outside shower",
             "Outdoor speakers", "Pass-through storage", "Bedding and towels",
-            "Cookware and dishes",
+            "Cookware and dishes", "Pet friendly",
         ],
         "daily_rate": Decimal("299.00"),
         "cleaning_fee": Decimal("175.00"),

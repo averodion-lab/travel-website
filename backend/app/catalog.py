@@ -65,10 +65,27 @@ class AddonChoice:
         return self.addon.daily_rate
 
 
-# Guests can cancel or change their dates free of charge up to this many hours
-# before pickup (with no set pickup time, that means until the day before).
-# Within that window they contact us.
+# Date changes are free up to this many hours before pickup (with no set
+# pickup time, that means through the day before the pickup date).
 FREE_CHANGE_HOURS = 24
+
+# Cancelling: free for this many hours after payment, whenever the trip is.
+FREE_CANCEL_HOURS = 24
+# After that, the share of the paid deposit refunded by days left before
+# pickup (first matching row wins). Kinder than the big RV platforms, which
+# usually refund in full only 30+ days out and add processing fees.
+CANCEL_REFUNDS: tuple[tuple[int, int], ...] = ((14, 100), (7, 50), (0, 0))
+
+# The refundable security deposit (held at pickup) applies only when the guest
+# takes something motorized of ours: the truck, a 4-wheeler or a jet ski.
+SECURITY_DEPOSIT_TRANSPORT = frozenset({"truck"})
+SECURITY_DEPOSIT_ADDONS = frozenset({"atv", "jetski"})
+
+
+def needs_security_deposit(transport_code: str | None, addon_codes) -> bool:
+    return (transport_code or "self") in SECURITY_DEPOSIT_TRANSPORT or any(
+        c in SECURITY_DEPOSIT_ADDONS for c in addon_codes
+    )
 
 # Where the trailer is kept; delivery miles are counted from here.
 BASE = "Canton / Woodstock, GA"
@@ -381,11 +398,20 @@ def resolve(
     return park, addons
 
 
-def resolve_transport(code: str | None, park: Park | Place | None, towing_experience: bool) -> str:
-    """Validate how the trailer gets to the campsite."""
+def resolve_transport(
+    code: str | None, park: Park | Place | None, towing_experience: bool, booking: bool = False
+) -> str:
+    """Validate how the trailer gets to the campsite. Towing it yourself needs
+    confirmed towing experience too, checked when booking (`booking`): a quote
+    for "your own truck" is free either way."""
     code = code or "self"
     if code not in TRANSPORT_CODES:
         raise ApiError("Please choose how the trailer gets to the campsite.")
+    if code == "self" and booking and not towing_experience:
+        raise ApiError(
+            "Towing the trailer yourself requires experience towing a large fifth-wheel trailer. "
+            "Please confirm it, or choose delivery."
+        )
     if code == "truck" and not towing_experience:
         raise ApiError(
             "Renting our truck requires experience towing a large trailer. Please confirm it, or choose delivery."

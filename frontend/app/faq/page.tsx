@@ -5,6 +5,7 @@ import CardLogos from "@/components/CardLogos";
 import Header from "@/components/Header";
 import PageHero from "@/components/PageHero";
 import { money, rate } from "@/lib/format";
+import Link from "next/link";
 import { getTrailer } from "@/lib/trailer";
 
 export const metadata: Metadata = {
@@ -49,8 +50,24 @@ async function Questions() {
         {
           q: "Is there a security deposit?",
           a: t
-            ? `Yes. A refundable ${money(t.security_deposit)} is held at pickup and released after the trailer is returned and inspected.`
-            : "Yes. A refundable security deposit is held at pickup and released after the trailer is returned and inspected.",
+            ? `Yes, if you rent our truck or add a jet ski or a 4-wheeler. Then a refundable ${money(t.security_deposit)} is held on your card at pickup and released after everything is returned and checked. Staying with the trailer alone, or adding e-bikes, needs no security deposit.`
+            : "Yes, if you rent our truck or add a jet ski or a 4-wheeler. Then a refundable security deposit is held on your card at pickup and released after everything is returned and checked. Staying with the trailer alone, or adding e-bikes, needs no security deposit.",
+        },
+        {
+          q: "Can I cancel or change my booking?",
+          a: (
+            <>
+              Yes, online on the Manage booking page (link in your confirmation
+              email and at the bottom of every page). Changing your dates is
+              free up to 24 hours before pickup. Cancellation is free within 24
+              hours of payment; after that, the deposit is refunded in full up
+              to 14 days before pickup, 50% from 13 to 7 days, and not in the
+              last 7 days. No fees either way.{" "}
+              <Link href="/policies#cancellation" className="tap underline hover:text-clay">
+                See details
+              </Link>
+            </>
+          ),
         },
       ],
     },
@@ -62,6 +79,23 @@ async function Questions() {
           a: t
             ? `${t.sleeps}: a king bed in the private bedroom and two sofas that fold out into beds in the living room.`
             : "A king bed in the private bedroom and two sofas that fold out into beds in the living room.",
+        },
+        {
+          q: "Can I bring my dog?",
+          a: "Yes, the trailer is pet friendly and there's no pet fee. Please keep pets off the beds, clean up after them, and don't leave them alone in the trailer for long.",
+        },
+        {
+          q: "Are there trailer rules?",
+          a: (
+            <>
+              Just a few: return it clean (dishes done, trash out, fridge
+              emptied), no smoking or vaping inside, and towing experience is
+              required if you tow it yourself.{" "}
+              <Link href="/policies#rules" className="tap underline hover:text-clay">
+                See all the rules
+              </Link>
+            </>
+          ),
         },
         {
           q: "What is included?",
@@ -90,15 +124,11 @@ async function Questions() {
         },
         {
           q: "Can I tow it myself?",
-          a: "Yes, if you have a one-ton truck with a fifth-wheel hitch. The trailer weighs 13,870 lb empty and is rated to 17,070 lb loaded, so smaller trucks are not suitable.",
+          a: "Yes, if you have a one-ton truck with a fifth-wheel hitch and experience towing a large fifth-wheel trailer; you confirm it when you book. The trailer weighs 13,870 lb empty and is rated to 17,070 lb loaded, so smaller trucks are not suitable. Not sure? Choose delivery and we'll set it up for you.",
         },
         {
           q: "Can I rent a 4-wheeler, a jet ski or e-bikes?",
           a: "Yes, as optional extras when you book, charged per day of your trip. 4-wheelers are available at our mountain parks (helmet included) and jet skis at our lake parks (life jacket included). Electric bikes are $33 a day each and we have three, so you can add up to three, at any campground. They ride along on the trailer, whether we deliver it or you tow it. The Destinations page shows which park offers what.",
-        },
-        {
-          q: "Can I cancel or change my booking?",
-          a: "Yes. You can cancel or change your dates free of charge up to 24 hours before pickup. Do it online on the Manage booking page (link in your confirmation email and at the bottom of every page) with your booking number and email. Within 24 hours of pickup, please contact us and we'll see what we can do.",
         },
         {
           q: "Why do you need a driver's license?",

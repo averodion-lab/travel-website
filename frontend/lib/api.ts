@@ -139,6 +139,10 @@ export type PublicBooking = {
   transport: TransportLine;
   /** Last day to cancel or change dates free of charge (24 hours before pickup). */
   free_change_until: string;
+  /** Cancelling is free until this time (24 hours after payment). */
+  free_cancel_until: string | null;
+  /** Deposit refunded when the guest cancelled. */
+  refunded_amount: string | null;
 };
 
 export class ApiError extends Error {

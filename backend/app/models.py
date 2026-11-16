@@ -126,6 +126,8 @@ class Booking(db.Model):
     completed_at = db.Column(db.DateTime(timezone=True))
     cancelled_at = db.Column(db.DateTime(timezone=True))
     notified_at = db.Column(db.DateTime(timezone=True))  # emails sent
+    # Deposit refunded when the guest cancelled (cancellation policy).
+    refunded_amount = db.Column(db.Numeric(10, 2), nullable=True)
 
     camper = db.relationship("Camper", lazy="joined")
     customer = db.relationship("Customer", lazy="joined", backref="bookings")
@@ -172,7 +174,17 @@ class Booking(db.Model):
             "addons_total": str(self.addons_total or 0),
             "transport": self.transport_info(),
             "free_change_until": self.free_change_until().isoformat(),
+            "free_cancel_until": self.free_cancel_until().isoformat() if self.confirmed_at else None,
+            "refunded_amount": str(self.refunded_amount) if self.refunded_amount is not None else None,
         }
+
+    def free_cancel_until(self):
+        """Cancelling is free (full deposit refund) for 24 hours after payment."""
+        from datetime import timedelta
+
+        from .catalog import FREE_CANCEL_HOURS
+
+        return (self.confirmed_at or self.created_at) + timedelta(hours=FREE_CANCEL_HOURS)
 
     def free_change_until(self):
         """Last day to cancel or change dates free of charge: 24 hours before

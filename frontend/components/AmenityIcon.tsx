@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 /** A small full-colour illustration of a trailer feature, picked by keywords
  *  in its name ("King bedroom with closet" → bed, "Glass-door shower" →
  *  shower …). Drawn in the site palette (brass wood, olive fabric, cream and
- *  white, dark glass) and shown in the same white round badge as the extras. */
+ *  white, dark glass), standing on the page with no badge behind it. */
 
 const O = "#2f3a2c"; // outline (olive ink)
 const B = "#9c7b4b"; // brass / wood
@@ -262,6 +262,16 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M43 8c-2.4 1.8-3 6.5-3 9.5h3V40" fill={BL} />
     </>
   ),
+  pet: (
+    <>
+      <ellipse cx="24" cy="30" rx="9" ry="7.5" fill={B} />
+      <path d="M19 28.5c1.5-1.6 3.2-2.4 5-2.4s3.5.8 5 2.4" stroke={BD} fill="none" />
+      <ellipse cx="11.5" cy="20" rx="3.6" ry="4.6" fill={B} transform="rotate(-20 11.5 20)" />
+      <ellipse cx="19" cy="12.5" rx="3.6" ry="4.8" fill={B} transform="rotate(-6 19 12.5)" />
+      <ellipse cx="29" cy="12.5" rx="3.6" ry="4.8" fill={B} transform="rotate(6 29 12.5)" />
+      <ellipse cx="36.5" cy="20" rx="3.6" ry="4.6" fill={B} transform="rotate(20 36.5 20)" />
+    </>
+  ),
   check: (
     <>
       <circle cx="24" cy="24" r="15" fill={P} />
@@ -271,6 +281,7 @@ const ICONS: Record<string, ReactNode> = {
 };
 
 const RULES: [RegExp, string][] = [
+  [/pet|dog/i, "pet"],
   [/bedding|towel|linen/i, "linen"],
   [/sofa|couch/i, "sofa"],
   [/bed(room)?\b|king|queen|bunk/i, "bed"],
@@ -296,12 +307,10 @@ const RULES: [RegExp, string][] = [
 export default function AmenityIcon({ name, className = "" }: { name: string; className?: string }) {
   const key = RULES.find(([re]) => re.test(name))?.[1] ?? "check";
   return (
-    <span
-      className={`inline-grid h-14 w-14 shrink-0 place-items-center rounded-full bg-white shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06),0_4px_10px_-4px_rgba(0,0,0,0.35)] ${className}`}
-    >
+    <span className={`inline-grid h-12 w-12 shrink-0 place-items-center ${className}`}>
       <svg
         viewBox="0 0 48 48"
-        className="h-[2.4rem] w-[2.4rem]"
+        className="h-12 w-12"
         stroke={O}
         strokeWidth="1.4"
         strokeLinecap="round"

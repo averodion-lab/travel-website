@@ -75,6 +75,7 @@ def _summary(b: Booking) -> dict:
         "free_change_until": b.free_change_until().isoformat(),
         "transport": b.transport_info(),
         "towing_experience": bool(b.towing_experience),
+        "refunded_amount": str(b.refunded_amount) if b.refunded_amount is not None else None,
     }
 
 

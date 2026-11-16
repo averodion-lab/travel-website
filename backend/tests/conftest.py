@@ -122,6 +122,7 @@ def booking_form(start: date, end: date, **overrides) -> dict:
         "address": "1 Mountain Rd, Asheville, NC",
         "license_number": "NC-1234567",
         "agree_terms": "1",
+        "towing_experience": "1",  # needed when towing it yourself (the default)
         "license": (io.BytesIO(b"\xff\xd8fake-jpeg-bytes"), "license.jpg"),
     }
     form.update(overrides)

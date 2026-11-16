@@ -1,5 +1,6 @@
 "use client";
 
+import CancelNote, { securityDepositText } from "@/components/CancelNote";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { rampWhere } from "@/lib/parks";
 import Image from "next/image";
@@ -505,9 +506,9 @@ export default function BookingForm() {
                     </span>
                   </span>
                 </div>
-                {transportCode === "truck" && !experience && (
+                {transportCode !== "delivery" && !experience && (
                   <p className="mb-3 text-sm text-clay">
-                    Please confirm your towing experience to rent our truck, or
+                    Please confirm your towing experience to tow the trailer, or
                     choose another option.
                   </p>
                 )}
@@ -515,7 +516,7 @@ export default function BookingForm() {
                   type="button"
                   onClick={() => goTo("details")}
                   disabled={
-                    (transportCode === "truck" && !experience) || repricing
+                    (transportCode !== "delivery" && !experience) || repricing
                   }
                   className="btn btn-primary w-full disabled:opacity-50 sm:w-auto sm:min-w-72"
                 >
@@ -691,8 +692,8 @@ export default function BookingForm() {
                     ],
                     [
                       "Getting there",
-                      q.transport.code === "truck"
-                        ? `${q.transport.name} (towing experience confirmed)`
+                      q.transport.code !== "delivery"
+                        ? `${transportLabel(q.transport)} (towing experience confirmed)`
                         : transportLabel(q.transport),
                     ],
                   ].map(([label, value]) => (
@@ -753,13 +754,21 @@ export default function BookingForm() {
                     className="mt-1 h-4 w-4 accent-pine"
                   />
                   <span>
-                    I agree to the rental terms, and I confirm the driver is at
-                    least 25 years old and holds a valid driver&apos;s license.
+                    I agree to the{" "}
+                    <Link
+                      href="/policies"
+                      target="_blank"
+                      className="tap underline hover:text-clay"
+                    >
+                      policies and trailer rules
+                    </Link>{" "}
+                    (return it clean, no smoking inside, towing experience if
+                    you tow it yourself), and I confirm the driver is at least
+                    25 years old and holds a valid driver&apos;s license.
                   </span>
                 </label>
-                <p className="mt-3 text-xs leading-relaxed text-muted">
-                  Free cancellation and date changes up to 24 hours before
-                  pickup.
+                <p className="mt-3 rounded-md bg-sand px-4 py-3 text-xs leading-relaxed text-bark">
+                  <CancelNote />
                 </p>
 
                 {error && (
@@ -818,7 +827,7 @@ export default function BookingForm() {
                 </div>
               </dl>
               <Link
-                href={`/book-now?${new URLSearchParams({ start: start!, end: end!, ...(parkSlug ? { park: parkSlug } : {}), ...(parkSlug === CUSTOM && typed ? Object.fromEntries((() => { const q = new URLSearchParams(); setPlaceParams(q, typed); return [...q]; })()) : {}), ...(chosen.length ? { addons: chosen.join(",") } : {}), ...(transportCode !== "self" ? { transport: transportCode } : {}), ...(transportCode === "truck" && experience ? { exp: "1" } : {}) })}`}
+                href={`/book-now?${new URLSearchParams({ start: start!, end: end!, ...(parkSlug ? { park: parkSlug } : {}), ...(parkSlug === CUSTOM && typed ? Object.fromEntries((() => { const q = new URLSearchParams(); setPlaceParams(q, typed); return [...q]; })()) : {}), ...(chosen.length ? { addons: chosen.join(",") } : {}), ...(transportCode !== "self" ? { transport: transportCode } : {}), ...(transportCode !== "delivery" && experience ? { exp: "1" } : {}) })}`}
                 className="tap eyebrow mt-3 inline-block text-clay hover:underline"
               >
                 Change trip
@@ -870,11 +879,11 @@ export default function BookingForm() {
                   <dd>{money(q.balance_due)}</dd>
                 </div>
               </dl>
-              <p className="mt-4 text-xs leading-relaxed text-muted">
-                A refundable {money(q.security_deposit)} security deposit is
-                held at pickup and released after the trailer is returned and
-                inspected.
-              </p>
+              {Number(q.security_deposit) > 0 && (
+                <p className="mt-4 text-xs leading-relaxed text-muted">
+                  {securityDepositText(q.security_deposit, money)}
+                </p>
+              )}
               <div className="mt-5 flex items-center justify-between gap-3 border-t border-line pt-5">
                 <p className="flex items-center gap-2 text-xs text-muted">
                   <Lock /> Secure checkout

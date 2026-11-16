@@ -5,7 +5,7 @@ import ManageBooking from "./ManageBooking";
 
 export const metadata: Metadata = {
   title: "Manage your booking",
-  description: "Cancel or change the dates of your booking, free of charge up to 24 hours before pickup.",
+  description: "Change the dates of your booking or cancel it online.",
   robots: { index: false },
 };
 
@@ -19,7 +19,8 @@ export default function ManageBookingPage() {
           Manage <em>your stay.</em>
         </h1>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-          Cancel or change your dates free of charge up to 24 hours before pickup.
+          Change your dates free up to 24 hours before pickup, or cancel online. Cancellation is free within 24
+          hours of payment.
         </p>
         <div className="mt-8">
           <Suspense fallback={<div className="h-80 animate-pulse bg-sand/60" />}>

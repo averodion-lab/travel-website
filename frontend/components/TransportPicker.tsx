@@ -3,9 +3,10 @@
 import type { TransportCode, TransportInfo } from "@/lib/api";
 import { money, rate } from "@/lib/format";
 
-/** "How will the trailer get there?": tow it with your own truck, rent ours
- *  (towing experience required) or have it delivered and set up, priced by
- *  the mile. Prices shown here are previews; the server's quote is the price. */
+/** "How will the trailer get there?": tow it with your own truck or rent ours
+ *  (either way the driver must confirm towing experience) or have it
+ *  delivered and set up, priced by the mile. Prices shown here are previews;
+ *  the server's quote is the price. */
 export default function TransportPicker({
   info,
   park,
@@ -113,7 +114,7 @@ export default function TransportPicker({
                 )}
               </span>
             </label>
-            {o.code === "truck" && on && (
+            {(o.code === "truck" || o.code === "self") && on && (
               <label
                 className={`mt-2 flex items-start gap-3 rounded-xl bg-cream text-sm leading-relaxed ${compact ? "px-3 py-2.5" : "px-4 py-3"}`}
               >
