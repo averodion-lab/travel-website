@@ -102,6 +102,30 @@ TRANSPORT_CODES = ("self", "truck", "delivery")
 
 
 @dataclass(frozen=True)
+class Ramp:
+    """Where a jet ski goes into the water at a lake park: a boat ramp mapped
+    in OpenStreetMap (leisure=slipway), checked against the park's own pages.
+    `in_park`: inside the park itself; otherwise the nearest public ramp."""
+
+    name: str
+    lat: float
+    lng: float
+    in_park: bool
+    miles: float  # straight-line miles from the campground
+    fee: str = ""  # e.g. "Free", "Park parking fee"
+
+    def to_dict(self) -> dict:
+        return {
+            "name": self.name,
+            "lat": self.lat,
+            "lng": self.lng,
+            "in_park": self.in_park,
+            "miles": self.miles,
+            "fee": self.fee,
+        }
+
+
+@dataclass(frozen=True)
 class Park:
     slug: str
     name: str
@@ -115,11 +139,16 @@ class Park:
     delivery_miles: int = 0  # road miles from BASE
 
     @property
+    def ramp(self) -> Ramp | None:
+        return RAMPS.get(self.slug)
+
+    @property
     def addons(self) -> list[Addon]:
         return [a for a in ADDONS.values() if a.terrain == "any" or a.terrain in self.terrain]
 
     def to_dict(self) -> dict:
         return {
+            "ramp": self.ramp.to_dict() if self.ramp else None,
             "slug": self.slug,
             "name": self.name,
             "state": self.state,
@@ -234,6 +263,22 @@ PARKS: dict[str, Park] = {
              "pull-through RV sites.",
              34.38876, -86.86359, frozenset(), 174),
     )
+}
+
+# Boat ramps for the lake parks (jet skis go in here). Positions are mapped
+# boat ramps from OpenStreetMap (leisure=slipway), Nov 2026; names, fees and
+# "inside the park" from the parks' own pages and ramp directories. Every
+# park with "lake" terrain must have one (tests/test_ramps.py).
+RAMPS: dict[str, Ramp] = {
+    "red-top-mountain": Ramp("Red Top Mountain boat ramp", 34.14711, -84.71862, True, 0.6, "Park parking fee"),
+    "don-carter": Ramp("Don Carter State Park boat ramp", 34.39073, -83.73889, True, 0.4, "Park parking fee"),
+    "devils-fork": Ramp("Devils Fork main boat ramp", 34.96325, -82.94961, True, 0.4, "Park entry fee"),
+    "harrison-bay": Ramp("Wolftever Bridge boat launch", 35.15016, -85.10798, True, 0.3, "Free"),
+    "lake-guntersville": Ramp("Lake Guntersville State Park ramp", 34.39957, -86.20956, True, 0.3),
+    "nashville-shores": Ramp("Nashville Shores marina ramp", 36.15485, -86.60553, True, 0.1),
+    "lake-nottely": Ramp("Lake Nottely RV Park boat ramp", 34.8736, -84.00427, True, 0.2),
+    "carolina-landing": Ramp("Glenn Ferry boat ramp", 34.48826, -82.94535, False, 2.0, "Free"),
+    "mountain-lakes": Ramp("Town Creek (Hwy 227) boat ramp", 34.4063, -86.1781, False, 3.9, "Free"),
 }
 
 _NEEDS = {"mountains": "mountain parks", "lake": "lake parks"}

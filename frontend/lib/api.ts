@@ -39,7 +39,21 @@ export type Addon = {
   gear: string;
 };
 
+/** Where a jet ski goes into the lake at a lake park. */
+export type Ramp = {
+  name: string;
+  lat: number;
+  lng: number;
+  /** Inside the park itself; otherwise the nearest public ramp. */
+  in_park: boolean;
+  /** Straight-line miles from the campground. */
+  miles: number;
+  fee: string;
+};
+
 export type Park = {
+  /** Boat ramp for lake parks (jet skis); null elsewhere. */
+  ramp: Ramp | null;
   slug: string;
   name: string;
   state: string;

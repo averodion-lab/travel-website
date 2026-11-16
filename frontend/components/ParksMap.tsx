@@ -5,9 +5,9 @@ import { preconnect } from "react-dom";
 import Link from "next/link";
 import type { Map as LeafletMap, Marker } from "leaflet";
 import AddonIcon, { ADDON_ICONS } from "@/components/AddonIcon";
-import type { Park } from "@/lib/api";
+import type { Park, Ramp } from "@/lib/api";
 import { rate } from "@/lib/format";
-import { STATE_ORDER } from "@/lib/parks";
+import { STATE_ORDER, rampWhere } from "@/lib/parks";
 
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -35,6 +35,22 @@ const BADGE =
 const esc = (s: string) =>
   s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
+/** A small anchor: the boat-ramp symbol on the map and in park details. */
+const ANCHOR_SVG =
+  '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><path d="M12 7.2V21M8 11h8M4.5 14a7.5 7.5 0 0 0 15 0"/></svg>';
+
+
+const directions = (r: Ramp) =>
+  `https://www.google.com/maps/dir/?api=1&destination=${r.lat},${r.lng}`;
+
+/** `slug` adds a "Show ramp" link that flies the map to the ramp. */
+function rampHtml(r: Ramp, slug?: string) {
+  const show = slug
+    ? `<a href="#" data-ramp="${esc(slug)}">Show ramp</a> · `
+    : "";
+  return `<div class="pm-ramp"><span class="pm-ramp-icon">${ANCHOR_SVG}</span><div><p class="pm-ramp-title">Jet ski launch: ${esc(r.name)}</p><p class="pm-ramp-where">${esc(rampWhere(r))}</p><p class="pm-ramp-where">${show}<a href="${directions(r)}" target="_blank" rel="noopener noreferrer">Directions ↗</a></p></div></div>`;
+}
+
 function popupHtml(p: Park) {
   const extras = p.addons
     .map((a) => {
@@ -52,6 +68,7 @@ function popupHtml(p: Park) {
       <a class="pm-name" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.name)} ↗</a>
       <p class="pm-text">${esc(p.description)}</p>
       ${extras ? `<div class="pm-chips">${extras}</div>` : ""}
+      ${p.ramp ? rampHtml(p.ramp, p.slug) : ""}
       <a class="pm-book" data-pick="${esc(p.slug)}" href="${BASE}/fleet?park=${encodeURIComponent(p.slug)}#book">Book the trailer here →</a>
     </div>`;
 }
@@ -71,6 +88,7 @@ export default function ParksMap({
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<LeafletMap | null>(null);
   const markers = useRef(new Map<string, Marker>());
+  const rampMarkers = useRef(new Map<string, Marker>());
   const [state, setState] = useState("All");
   const [ready, setReady] = useState(false);
   // Short tip shown over the map ("use two fingers", "click to zoom").
@@ -98,6 +116,23 @@ export default function ParksMap({
     const el = box.current;
     if (!el) return;
     const onClick = (e: MouseEvent) => {
+      // "Show ramp" in a park's popup: fly to its boat ramp and open it.
+      const rampLink = (e.target as HTMLElement).closest<HTMLAnchorElement>(
+        "a[data-ramp]",
+      );
+      if (rampLink) {
+        e.preventDefault();
+        const m = map.current;
+        const marker = rampMarkers.current.get(rampLink.dataset.ramp ?? "");
+        if (!m || !marker) return;
+        m.closePopup();
+        m.once("moveend", () => marker.openPopup());
+        m.flyTo(marker.getLatLng(), 14, {
+          animate: !reducedMotion(),
+          duration: 0.9,
+        });
+        return;
+      }
       const link = (e.target as HTMLElement).closest<HTMLAnchorElement>(
         "a[data-pick]",
       );
@@ -196,9 +231,41 @@ export default function ParksMap({
           .addTo(m);
         pins.set(p.slug, marker);
       }
+      // Boat ramps (where the jet ski goes in): shown once zoomed in on an area,
+      // so at state level they don't crowd the park pins.
+      const ramps = L.layerGroup(
+        parks
+          .filter((p) => p.ramp)
+          .map((p) => {
+            const r = p.ramp!;
+            const rm = L.marker([r.lat, r.lng], {
+              icon: L.divIcon({
+                className: "",
+                html: `<span class="pm-ramp-pin">${ANCHOR_SVG}</span>`,
+                iconSize: [26, 26],
+                iconAnchor: [13, 13],
+                popupAnchor: [0, -12],
+              }),
+              title: `${r.name} (boat ramp for ${p.name})`,
+              alt: r.name,
+              keyboard: true,
+            }).bindPopup(
+              `<div class="pm-popup"><p class="pm-place">Boat ramp · ${esc(p.name)}</p>${rampHtml(r)}</div>`,
+              { maxWidth: narrow ? 230 : 280, className: "pm-leaflet-popup" },
+            );
+            rampMarkers.current.set(p.slug, rm);
+            return rm;
+          }),
+      );
+      const showRamps = () => {
+        if (m.getZoom() >= 10.5) ramps.addTo(m);
+        else ramps.remove();
+      };
+      m.on("zoomend", showRamps);
       m.fitBounds(L.latLngBounds(parks.map((p) => [p.lat, p.lng])), {
         padding: [40, 40],
       });
+      showRamps();
       map.current = m;
       setReady(true);
     });
@@ -322,6 +389,13 @@ export default function ParksMap({
                 <span className={`pm-dot pm-${k}`} /> {KIND_LABEL[k]}
               </li>
             ))}
+            <li className="flex items-center gap-2">
+              <span
+                className="pm-ramp-key"
+                dangerouslySetInnerHTML={{ __html: ANCHOR_SVG }}
+              />{" "}
+              Boat ramp (zoom in)
+            </li>
           </ul>
         </div>
 
@@ -369,6 +443,29 @@ export default function ParksMap({
                         {a.name} available · {rate(a.daily_rate)}/day
                       </span>
                     ))}
+                  </p>
+                )}
+                {p.ramp && (
+                  <p className="mt-3 flex items-start gap-2 text-xs leading-relaxed text-bark">
+                    <span
+                      className="pm-ramp-key mt-0.5"
+                      dangerouslySetInnerHTML={{ __html: ANCHOR_SVG }}
+                    />
+                    <span>
+                      <span className="font-semibold">
+                        Jet ski launch: {p.ramp.name}
+                      </span>
+                      <br />
+                      {rampWhere(p.ramp)} ·{" "}
+                      <a
+                        href={directions(p.ramp)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="tap underline hover:text-clay"
+                      >
+                        Directions ↗
+                      </a>
+                    </span>
                   </p>
                 )}
                 <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">

@@ -130,6 +130,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.76294,
       "lng": -83.92843,
       "name": "Vogel State Park",
+      "ramp": null,
       "slug": "vogel",
       "state": "Georgia",
       "terrain": [
@@ -164,6 +165,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.76069,
       "lng": -84.69515,
       "name": "Fort Mountain State Park",
+      "ramp": null,
       "slug": "fort-mountain",
       "state": "Georgia",
       "terrain": [
@@ -207,6 +209,14 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.872,
       "lng": -84.006,
       "name": "Lake Nottely RV Park",
+      "ramp": {
+        "fee": "",
+        "in_park": true,
+        "lat": 34.8736,
+        "lng": -84.00427,
+        "miles": 0.2,
+        "name": "Lake Nottely RV Park boat ramp"
+      },
       "slug": "lake-nottely",
       "state": "Georgia",
       "terrain": [
@@ -242,6 +252,14 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.499,
       "lng": -82.97757,
       "name": "Thousand Trails Carolina Landing",
+      "ramp": {
+        "fee": "Free",
+        "in_park": false,
+        "lat": 34.48826,
+        "lng": -82.94535,
+        "miles": 2.0,
+        "name": "Glenn Ferry boat ramp"
+      },
       "slug": "carolina-landing",
       "state": "South Carolina",
       "terrain": [
@@ -276,6 +294,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 35.04014,
       "lng": -82.44025,
       "name": "Sugar Lake RV Park",
+      "ramp": null,
       "slug": "sugar-lake",
       "state": "South Carolina",
       "terrain": [
@@ -310,6 +329,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 35.89239,
       "lng": -81.97537,
       "name": "Spacious Skies Bear Den",
+      "ramp": null,
       "slug": "bear-den",
       "state": "North Carolina",
       "terrain": [
@@ -344,6 +364,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 35.1438145,
       "lng": -82.930422,
       "name": "Blue Ridge Falls RV & Glamping Resort",
+      "ramp": null,
       "slug": "blue-ridge-falls",
       "state": "North Carolina",
       "terrain": [
@@ -378,6 +399,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 35.72521,
       "lng": -83.48267,
       "name": "Twin Creek RV Resort",
+      "ramp": null,
       "slug": "twin-creek",
       "state": "Tennessee",
       "terrain": [
@@ -412,6 +434,14 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 36.15645,
       "lng": -86.60642,
       "name": "Nashville Shores RV Park",
+      "ramp": {
+        "fee": "",
+        "in_park": true,
+        "lat": 36.15485,
+        "lng": -86.60553,
+        "miles": 0.1,
+        "name": "Nashville Shores marina ramp"
+      },
       "slug": "nashville-shores",
       "state": "Tennessee",
       "terrain": [
@@ -446,6 +476,14 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.46252,
       "lng": -86.18366,
       "name": "Mountain Lakes Resort",
+      "ramp": {
+        "fee": "Free",
+        "in_park": false,
+        "lat": 34.4063,
+        "lng": -86.1781,
+        "miles": 3.9,
+        "name": "Town Creek (Hwy 227) boat ramp"
+      },
       "slug": "mountain-lakes",
       "state": "Alabama",
       "terrain": [
@@ -480,6 +518,14 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.14676,
       "lng": -84.70765,
       "name": "Red Top Mountain State Park",
+      "ramp": {
+        "fee": "Park parking fee",
+        "in_park": true,
+        "lat": 34.14711,
+        "lng": -84.71862,
+        "miles": 0.6,
+        "name": "Red Top Mountain boat ramp"
+      },
       "slug": "red-top-mountain",
       "state": "Georgia",
       "terrain": [
@@ -514,6 +560,14 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.39011,
       "lng": -83.74615,
       "name": "Don Carter State Park",
+      "ramp": {
+        "fee": "Park parking fee",
+        "in_park": true,
+        "lat": 34.39073,
+        "lng": -83.73889,
+        "miles": 0.4,
+        "name": "Don Carter State Park boat ramp"
+      },
       "slug": "don-carter",
       "state": "Georgia",
       "terrain": [
@@ -548,6 +602,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.7135,
       "lng": -83.72616,
       "name": "Unicoi State Park & Lodge",
+      "ramp": null,
       "slug": "unicoi",
       "state": "Georgia",
       "terrain": [
@@ -582,6 +637,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.8385,
       "lng": -85.47664,
       "name": "Cloudland Canyon State Park",
+      "ramp": null,
       "slug": "cloudland-canyon",
       "state": "Georgia",
       "terrain": [
@@ -625,6 +681,14 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.95869,
       "lng": -82.95442,
       "name": "Devils Fork State Park",
+      "ramp": {
+        "fee": "Park entry fee",
+        "in_park": true,
+        "lat": 34.96325,
+        "lng": -82.94961,
+        "miles": 0.4,
+        "name": "Devils Fork main boat ramp"
+      },
       "slug": "devils-fork",
       "state": "South Carolina",
       "terrain": [
@@ -660,6 +724,14 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 35.14751,
       "lng": -85.10395,
       "name": "Harrison Bay State Park",
+      "ramp": {
+        "fee": "Free",
+        "in_park": true,
+        "lat": 35.15016,
+        "lng": -85.10798,
+        "miles": 0.3,
+        "name": "Wolftever Bridge boat launch"
+      },
       "slug": "harrison-bay",
       "state": "Tennessee",
       "terrain": [
@@ -703,6 +775,14 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.39491,
       "lng": -86.20797,
       "name": "Lake Guntersville State Park",
+      "ramp": {
+        "fee": "",
+        "in_park": true,
+        "lat": 34.39957,
+        "lng": -86.20956,
+        "miles": 0.3,
+        "name": "Lake Guntersville State Park ramp"
+      },
       "slug": "lake-guntersville",
       "state": "Alabama",
       "terrain": [
@@ -729,6 +809,7 @@ export const PREVIEW_PARKS: ParksResponse = {
       "lat": 34.38876,
       "lng": -86.86359,
       "name": "Quail Creek Resort",
+      "ramp": null,
       "slug": "quail-creek",
       "state": "Alabama",
       "terrain": [],

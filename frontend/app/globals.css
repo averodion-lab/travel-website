@@ -385,6 +385,65 @@ body {
   font-size: 0.7rem;
   color: var(--color-bark);
 }
+/* Boat ramps: the jet ski launch for each lake park. */
+.pm-ramp {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  margin-top: 0.65rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.5rem;
+  background: #eef4f6;
+  color: #24414c;
+}
+.pm-ramp-icon,
+.pm-ramp-key {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 9999px;
+  background: #2f5d6e;
+  color: #fff;
+}
+.pm-ramp-key svg {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+.pm-ramp-title {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.pm-ramp-where {
+  margin: 0.15rem 0 0;
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+.pm-ramp-where a {
+  color: inherit;
+  text-decoration: underline;
+}
+/* Leaflet gives popup paragraphs a large margin; keep the ramp box tight. */
+.leaflet-popup-content .pm-ramp p {
+  margin: 0;
+}
+.leaflet-popup-content .pm-ramp p + p {
+  margin-top: 0.2rem;
+}
+.pm-ramp-pin {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  background: #2f5d6e;
+  color: #fff;
+  border: 2px solid #fff;
+  box-shadow: 0 3px 8px -2px rgba(0, 0, 0, 0.45);
+}
 .pm-book {
   display: inline-block;
   margin-top: 0.75rem;

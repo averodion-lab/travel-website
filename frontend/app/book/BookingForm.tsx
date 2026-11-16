@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { rampWhere } from "@/lib/parks";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -415,6 +416,14 @@ export default function BookingForm() {
                     <p className="mt-2 leading-relaxed text-bark">
                       {parkInfo.description}
                     </p>
+                    {parkInfo.ramp && (
+                      <p className="mt-3 text-xs leading-relaxed text-bark">
+                        <span className="font-semibold">
+                          Jet ski launch: {parkInfo.ramp.name}
+                        </span>{" "}
+                        ({rampWhere(parkInfo.ramp)})
+                      </p>
+                    )}
                     <a
                       href={parkInfo.url}
                       target="_blank"
