@@ -33,6 +33,7 @@ export default function DateRangeField({
   end,
   onChange,
   className = "",
+  ignore,
 }: {
   camperSlug: string;
   minNights: number;
@@ -40,6 +41,8 @@ export default function DateRangeField({
   end: string;
   onChange: (start: string, end: string) => void;
   className?: string;
+  /** A booking's own dates, shown as free (when moving that booking). */
+  ignore?: { start: string; end: string };
 }) {
   const button = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
@@ -51,12 +54,19 @@ export default function DateRangeField({
 
   useEffect(() => {
     api<{ booked: Booked[] }>(`/api/campers/${camperSlug}/availability`)
-      .then((r) => setBooked(r.booked))
+      .then((r) =>
+        setBooked(
+          ignore
+            ? r.booked.filter((b) => !(b.start === ignore.start && b.end === ignore.end))
+            : r.booked,
+        ),
+      )
       .catch(() =>
         setLoadError(
           "We couldn't load which dates are taken. You'll see them on the next step.",
         ),
       );
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once per camper
   }, [camperSlug]);
 
   const range: DateRange | undefined = useMemo(

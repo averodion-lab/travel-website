@@ -175,12 +175,13 @@ class Booking(db.Model):
         }
 
     def free_change_until(self):
-        """Last day to cancel or change dates free of charge."""
+        """Last day to cancel or change dates free of charge: 24 hours before
+        pickup, i.e. the day before the pickup date."""
         from datetime import timedelta
 
-        from .catalog import FREE_CHANGE_DAYS
+        from .catalog import FREE_CHANGE_HOURS
 
-        return self.start_date - timedelta(days=FREE_CHANGE_DAYS)
+        return self.start_date - timedelta(hours=FREE_CHANGE_HOURS)
 
     def transport_info(self) -> dict:
         from .catalog import PARKS, TRUCK

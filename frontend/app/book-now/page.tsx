@@ -43,7 +43,7 @@ export default function BookNowPage() {
         <p className="script -mt-1 text-5xl sm:text-6xl">in four steps</p>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
           Tap a pin to choose a campground, or pick one in the card below. Free
-          cancellation and date changes up to 24 days before pickup.
+          cancellation and date changes up to 24 hours before pickup.
         </p>
         <div className="mt-10">
           <Suspense

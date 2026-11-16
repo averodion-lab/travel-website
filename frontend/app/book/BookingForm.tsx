@@ -749,7 +749,7 @@ export default function BookingForm() {
                   </span>
                 </label>
                 <p className="mt-3 text-xs leading-relaxed text-muted">
-                  Free cancellation and date changes up to 24 days before
+                  Free cancellation and date changes up to 24 hours before
                   pickup.
                 </p>
 

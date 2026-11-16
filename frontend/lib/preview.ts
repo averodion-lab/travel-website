@@ -947,6 +947,11 @@ export async function previewApi<T>(path: string, init?: RequestInit): Promise<T
     const place = await typedPlace({ name: "place", lat: Number(q.get("lat")), lng: Number(q.get("lng")) });
     const per = Number(PREVIEW_PARKS.transport.delivery.per_mile);
     result = { delivery_miles: place.delivery_miles, delivery_total: fixed(per * place.delivery_miles * PREVIEW_PARKS.transport.delivery.trips) };
+  } else if (route.startsWith("/api/manage/")) {
+    throw new PreviewError(
+      "Managing bookings online goes live together with booking. Nothing was changed.",
+      503,
+    );
   } else if (route === "/api/contact") {
     throw new PreviewError(
       "The contact form goes online together with booking. Nothing was sent; please email or call us for now.",

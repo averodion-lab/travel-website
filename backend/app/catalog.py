@@ -65,9 +65,10 @@ class AddonChoice:
         return self.addon.daily_rate
 
 
-# Guests can cancel or change their dates free of charge up to this many days
-# before pickup. Within that window they contact us.
-FREE_CHANGE_DAYS = 24
+# Guests can cancel or change their dates free of charge up to this many hours
+# before pickup (with no set pickup time, that means until the day before).
+# Within that window they contact us.
+FREE_CHANGE_HOURS = 24
 
 # Where the trailer is kept; delivery miles are counted from here.
 BASE = "Canton / Woodstock, GA"

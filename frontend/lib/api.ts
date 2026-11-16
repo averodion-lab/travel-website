@@ -123,7 +123,7 @@ export type PublicBooking = {
   addons: AddonLine[];
   addons_total: string;
   transport: TransportLine;
-  /** Last day to cancel or change dates free of charge (24 days before pickup). */
+  /** Last day to cancel or change dates free of charge (24 hours before pickup). */
   free_change_until: string;
 };
 

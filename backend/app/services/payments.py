@@ -63,3 +63,24 @@ def parse_webhook(payload: bytes, signature: str | None):
     return stripe.Webhook.construct_event(
         payload, signature or "", current_app.config["STRIPE_WEBHOOK_SECRET"]
     )
+
+
+def refund_deposit(booking: Booking) -> bool:
+    """Refund the deposit paid through Stripe Checkout. Returns True when a
+    refund was made (or simulated in development)."""
+    cfg = current_app.config
+    if payments_mode() == "mock":
+        current_app.logger.warning("MOCK payment: refund for %s simulated", booking.reference)
+        return True
+    if not booking.stripe_session_id:
+        return False
+    try:
+        session = stripe.checkout.Session.retrieve(booking.stripe_session_id, api_key=cfg["STRIPE_SECRET_KEY"])
+        if not session.payment_intent:
+            return False
+        stripe.Refund.create(payment_intent=session.payment_intent, api_key=cfg["STRIPE_SECRET_KEY"])
+        return True
+    except stripe.StripeError:
+        # The booking stays cancelled; the owner refunds by hand in Stripe.
+        current_app.logger.exception("Refund failed for %s", booking.reference)
+        return False

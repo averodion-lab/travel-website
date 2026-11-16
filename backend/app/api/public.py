@@ -14,7 +14,7 @@ from .. import catalog
 from ..errors import ApiError
 from ..extensions import db
 from ..models import Booking, Camper
-from ..services import availability, bookings as booking_service, email as email_service, payments
+from ..services import availability, bookings as booking_service, email as email_service, manage, payments
 from ..services.pricing import quote_for_camper
 
 bp = Blueprint("public", __name__, url_prefix="/api")
@@ -268,3 +268,50 @@ def contact():
 
     email_service.send_contact_message(name, email, phone, dates, message)
     return jsonify({"ok": True})
+
+
+# Managing a booking: at most 20 requests per visitor address per hour, so
+# booking numbers can't be guessed by brute force.
+MANAGE_LIMIT = 20
+_manage_hits: dict[str, deque] = defaultdict(deque)
+
+
+def _manage_guard() -> dict:
+    who = request.headers.get("X-Forwarded-For", request.remote_addr or "").split(",")[0].strip()
+    now = time.monotonic()
+    hits = _manage_hits[who]
+    while hits and now - hits[0] > CONTACT_WINDOW:
+        hits.popleft()
+    if len(hits) >= MANAGE_LIMIT:
+        raise ApiError("Too many tries. Please wait a little, or contact us.", 429)
+    hits.append(now)
+    return request.get_json(silent=True) or {}
+
+
+def _manage_response(b) -> dict:
+    return {"booking": b.public_dict(), "can_change": manage.can_change(b)}
+
+
+@bp.post("/manage/find")
+def manage_find():
+    data = _manage_guard()
+    b = manage.find_for_guest(str(data.get("reference") or ""), str(data.get("email") or ""))
+    return jsonify(_manage_response(b))
+
+
+@bp.post("/manage/cancel")
+def manage_cancel():
+    data = _manage_guard()
+    b = manage.find_for_guest(str(data.get("reference") or ""), str(data.get("email") or ""))
+    manage.cancel(b)
+    return jsonify(_manage_response(b))
+
+
+@bp.post("/manage/change")
+def manage_change():
+    data = _manage_guard()
+    b = manage.find_for_guest(str(data.get("reference") or ""), str(data.get("email") or ""))
+    start = _parse_date(data.get("start"), "pickup")
+    end = _parse_date(data.get("end"), "return")
+    manage.change_dates(b, start, end)
+    return jsonify(_manage_response(b))

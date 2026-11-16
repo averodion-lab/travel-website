@@ -144,11 +144,11 @@ export default function Confirmation() {
           </p>
           <p className="mt-3 rounded-md bg-sand px-4 py-3 text-xs leading-relaxed text-bark">
             <strong className="font-semibold">Free cancellation and date changes</strong> until{" "}
-            {longDate(booking.free_change_until)} (24 days before pickup).{" "}
-            <Link href="/contact" className="underline">
-              Contact us
-            </Link>{" "}
-            to cancel or change.
+            {longDate(booking.free_change_until)} (24 hours before pickup).{" "}
+            <Link href={`/booking/manage?ref=${booking.reference}`} className="underline">
+              Cancel or change online
+            </Link>
+            .
           </p>
         </div>
       </div>

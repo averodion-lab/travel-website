@@ -380,7 +380,7 @@ export default function BookNowForm({
             <p className="mt-3 text-center text-xs text-muted">
               Next: your details and payment. You won&apos;t be charged yet.
               <br />
-              Free cancellation and date changes up to 24 days before pickup.
+              Free cancellation and date changes up to 24 hours before pickup.
             </p>
             <CardLogos className="mt-5 justify-center" />
           </div>

@@ -98,7 +98,7 @@ async function Questions() {
         },
         {
           q: "Can I cancel or change my booking?",
-          a: "Yes. You can cancel or change your dates free of charge up to 24 days before pickup. Just reply to your confirmation email or send us a message. Closer to your trip, please contact us and we'll see what we can do.",
+          a: "Yes. You can cancel or change your dates free of charge up to 24 hours before pickup. Do it online on the Manage booking page (link in your confirmation email and at the bottom of every page) with your booking number and email. Within 24 hours of pickup, please contact us and we'll see what we can do.",
         },
         {
           q: "Why do you need a driver's license?",

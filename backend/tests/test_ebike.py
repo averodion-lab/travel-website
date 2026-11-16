@@ -55,15 +55,15 @@ def test_booking_saves_the_bike_count(client, camper, sent_emails):
     assert "Electric bike x2" in owner["body"]
 
 
-def test_free_cancellation_deadline_is_24_days_before_pickup(client, camper, sent_emails):
+def test_free_cancellation_deadline_is_24_hours_before_pickup(client, camper, sent_emails):
     from datetime import timedelta
 
-    from app.catalog import FREE_CHANGE_DAYS
+    from app.catalog import FREE_CHANGE_HOURS
 
-    assert FREE_CHANGE_DAYS == 24
+    assert FREE_CHANGE_HOURS == 24
     res = post_booking(client, day(40), day(44))
     b = db.session.query(Booking).one()
     public = client.get(f"/api/bookings/{b.reference}").get_json()["booking"]
-    assert public["free_change_until"] == (day(40) - timedelta(days=24)).isoformat()
+    assert public["free_change_until"] == (day(40) - timedelta(days=1)).isoformat()
     customer = next(m for m in sent_emails if m["to"] != "owner@example.com")
-    assert "24 days before pickup" in customer["body"]
+    assert "24 hours before pickup" in customer["body"]

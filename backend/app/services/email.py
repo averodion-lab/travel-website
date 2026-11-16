@@ -86,8 +86,9 @@ Refundable security deposit (held at pickup): {_money(b.security_deposit)}
 
 View your booking: {cfg['FRONTEND_URL']}/booking/confirmation?ref={b.reference}
 
-Need to cancel or change your dates? It's free up to 24 days before pickup
-(until {b.free_change_until():%A, %B %-d, %Y}). Just reply to this email.
+Need to cancel or change your dates? It's free up to 24 hours before pickup
+(until {b.free_change_until():%A, %B %-d, %Y}). Do it online:
+{cfg['FRONTEND_URL']}/booking/manage?ref={b.reference}
 
 We'll be in touch before your trip with pickup instructions. If you have any
 questions, just reply to this email.
@@ -154,3 +155,72 @@ def send_contact_message(name: str, email: str, phone: str, dates: str, message:
         "Reply to this email to answer them.",
     ]
     return send_email(cfg["OWNER_EMAIL"], f"New message from {name}", "\n".join(lines), reply_to=email)
+
+
+def send_cancellation(b: Booking, refunded: bool) -> None:
+    """The guest cancelled online: tell them and the owner."""
+    cfg = current_app.config
+    site = cfg["SITE_NAME"]
+    refund_line = (
+        f"Your deposit of {_money(b.deposit_due)} is being refunded to your card; it can take 5 to 10 days to appear."
+        if refunded
+        else f"We'll refund your deposit of {_money(b.deposit_due)} and email you when it's done."
+    )
+    send_email(
+        crypto.decrypt_str(b.customer.encrypted_email),
+        f"Your {site} booking is cancelled ({b.reference})",
+        f"""Hi {b.customer.first_name},
+
+Your booking {b.reference} ({_dates(b)}) is cancelled.
+
+{refund_line}
+
+We hope to see you another time,
+{site}
+""",
+    )
+    if cfg["OWNER_EMAIL"]:
+        send_email(
+            cfg["OWNER_EMAIL"],
+            f"Booking cancelled by the guest: {b.reference}",
+            f"""Booking {b.reference} was cancelled online by the guest.
+
+Dates (now free again): {_dates(b)}
+Deposit: {_money(b.deposit_due)} ({"refunded automatically through Stripe" if refunded else "NOT refunded automatically: please refund it in Stripe"})
+""",
+        )
+
+
+def send_date_change(b: Booking, old: tuple) -> None:
+    """The guest moved their dates online: tell them and the owner."""
+    cfg = current_app.config
+    site = cfg["SITE_NAME"]
+    old_dates = f"{old[0]:%a %b %-d} to {old[1]:%a %b %-d, %Y}"
+    summary = f"""New dates: {_dates(b)}
+Previous dates: {old_dates}
+{_trip(b)}
+
+New rental total: {_money(b.total_price)}
+Deposit already paid: {_money(b.deposit_due)}
+Balance due at pickup: {_money(b.total_price - b.deposit_due)}"""
+    send_email(
+        crypto.decrypt_str(b.customer.encrypted_email),
+        f"Your {site} booking dates are changed ({b.reference})",
+        f"""Hi {b.customer.first_name},
+
+Your booking {b.reference} has new dates.
+
+{summary}
+
+View your booking: {cfg['FRONTEND_URL']}/booking/confirmation?ref={b.reference}
+
+See you on the road,
+{site}
+""",
+    )
+    if cfg["OWNER_EMAIL"]:
+        send_email(
+            cfg["OWNER_EMAIL"],
+            f"Booking dates changed by the guest: {b.reference}",
+            f"Booking {b.reference} was moved online by the guest.\n\n{summary}\n",
+        )

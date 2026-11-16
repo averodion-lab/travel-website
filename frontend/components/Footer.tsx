@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/destinations", label: "Places" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact" },
+  { href: "/booking/manage", label: "Manage booking" },
   { href: "/book-now", label: "Reserve" },
 ];
 
@@ -25,7 +26,7 @@ export default function Footer() {
           </p>
         </div>
         <nav
-          className="mt-6 flex flex-wrap justify-center gap-x-5 sm:mt-8 sm:gap-x-6 lg:mt-0 lg:max-w-md lg:gap-x-6 lg:gap-y-0"
+          className="mt-6 flex flex-wrap justify-center gap-x-5 sm:mt-8 sm:gap-x-6 lg:mt-0 lg:max-w-xl lg:gap-x-6 lg:gap-y-0"
           aria-label="Footer"
         >
           {LINKS.map((l) => (
