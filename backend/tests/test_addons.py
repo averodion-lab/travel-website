@@ -31,10 +31,10 @@ def test_parks_endpoint_lists_parks_and_what_each_offers(client):
     data = client.get("/api/parks").get_json()
     parks = {p["slug"]: p for p in data["parks"]}
     assert len(parks) == 18
-    assert [a["code"] for a in parks[MOUNTAIN]["addons"]] == ["atv"]
-    assert [a["code"] for a in parks[LAKE]["addons"]] == ["jetski"]
-    assert {a["code"] for a in parks[BOTH]["addons"]} == {"atv", "jetski"}
-    assert {a["code"] for a in data["addons"]} == {"atv", "jetski"}
+    assert [a["code"] for a in parks[MOUNTAIN]["addons"]] == ["atv", "ebike"]
+    assert [a["code"] for a in parks[LAKE]["addons"]] == ["jetski", "ebike"]
+    assert {a["code"] for a in parks[BOTH]["addons"]} == {"atv", "jetski", "ebike"}
+    assert {a["code"] for a in data["addons"]} == {"atv", "jetski", "ebike"}
 
 
 def test_quote_without_park_or_addons_is_unchanged(client, camper):

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Image from "next/image";
+import AmenityIcon from "@/components/AmenityIcon";
 import BookingWidget from "@/components/BookingWidget";
 import Gallery from "@/components/Gallery";
 import MobileBookBar from "@/components/MobileBookBar";
@@ -146,10 +147,10 @@ export default function CamperDetail({ camper }: { camper: Camper }) {
           {camper.amenities.length > 0 && (
             <section>
               <h2 className="font-display text-4xl">What&apos;s included</h2>
-              <ul className="mt-6 grid gap-x-8 gap-y-3 text-sm sm:grid-cols-2">
+              <ul className="mt-6 grid gap-x-6 gap-y-2.5 text-sm sm:grid-cols-2">
                 {camper.amenities.map((a) => (
-                  <li key={a} className="flex items-start gap-3">
-                    <span className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full bg-clay" />
+                  <li key={a} className="flex items-center gap-3">
+                    <AmenityIcon name={a} />
                     {a}
                   </li>
                 ))}

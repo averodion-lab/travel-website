@@ -53,7 +53,8 @@ def _trip(b: Booking) -> str:
     else:
         lines = [f"Campground: {park['name'] if park else 'Not chosen yet'}"]
     for a in b.addons or []:
-        lines.append(f"Extra: {a['name']}, {a['days']} days, {_money(Decimal(a['total']))}")
+        count = f" x{a['qty']}" if a.get("qty", 1) > 1 else ""
+        lines.append(f"Extra: {a['name']}{count}, {a['days']} days, {_money(Decimal(a['total']))}")
     t = b.transport_info()
     getting_there = t["name"]
     if t["code"] == "delivery" and t.get("miles"):
@@ -84,6 +85,9 @@ Balance due at pickup: {_money(b.total_price - b.deposit_due)}
 Refundable security deposit (held at pickup): {_money(b.security_deposit)}
 
 View your booking: {cfg['FRONTEND_URL']}/booking/confirmation?ref={b.reference}
+
+Need to cancel or change your dates? It's free up to 24 days before pickup
+(until {b.free_change_until():%A, %B %-d, %Y}). Just reply to this email.
 
 We'll be in touch before your trip with pickup instructions. If you have any
 questions, just reply to this email.

@@ -38,10 +38,10 @@ CAMPERS = [
             "Outdoor speakers", "Pass-through storage", "Bedding and towels",
             "Cookware and dishes",
         ],
-        "daily_rate": Decimal("249.00"),
+        "daily_rate": Decimal("299.00"),
         "cleaning_fee": Decimal("175.00"),
         "security_deposit": Decimal("2000.00"),
-        "min_nights": 3,
+        "min_nights": 2,
         "image_url": f"{IMG}/exterior.jpg",
         # A file named "floorplan" is shown in its own section, not in the photo grid.
         "gallery": [

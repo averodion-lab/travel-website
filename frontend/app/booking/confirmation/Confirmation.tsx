@@ -119,7 +119,8 @@ export default function Confirmation() {
             {booking.addons.map((a) => (
               <div key={a.code} className="flex justify-between text-muted">
                 <dt>
-                  Includes {a.name}, {a.days} days
+                  Includes {a.name}
+                  {a.qty && a.qty > 1 ? ` ×${a.qty}` : ""}, {a.days} days
                 </dt>
                 <dd>{money(a.total)}</dd>
               </div>
@@ -140,6 +141,14 @@ export default function Confirmation() {
           <p className="mt-4 text-xs leading-relaxed text-muted">
             A refundable {money(booking.security_deposit)} security deposit is held at pickup. Bring the driver&apos;s
             license you uploaded.
+          </p>
+          <p className="mt-3 rounded-md bg-sand px-4 py-3 text-xs leading-relaxed text-bark">
+            <strong className="font-semibold">Free cancellation and date changes</strong> until{" "}
+            {longDate(booking.free_change_until)} (24 days before pickup).{" "}
+            <Link href="/contact" className="underline">
+              Contact us
+            </Link>{" "}
+            to cancel or change.
           </p>
         </div>
       </div>

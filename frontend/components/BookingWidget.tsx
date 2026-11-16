@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { addMonths, differenceInCalendarDays, startOfDay } from "date-fns";
 import { DayPicker, type DateRange } from "react-day-picker";
-import AddonIcon from "@/components/AddonIcon";
+import ExtraOption from "@/components/ExtraOption";
 import CardLogos from "@/components/CardLogos";
 import PlacePicker from "@/components/PlacePicker";
 import TransportPicker, {
@@ -21,6 +21,7 @@ import {
 } from "@/lib/api";
 import { CUSTOM, placeFromParams, setPlaceParams, usePlaceMiles } from "@/lib/place";
 import { STATE_ORDER } from "@/lib/parks";
+import { addonLineLabel, onlyOffered, qtyOf, withQty } from "@/lib/addons";
 import { fromISO, isISODate, money, rate, toISO } from "@/lib/format";
 import {
   bookedNights as takenNights,
@@ -139,7 +140,7 @@ export default function BookingWidget({
     () => (placeReady ? addons.map((a) => a.code) : (parkInfo?.addons.map((a) => a.code) ?? [])),
     [placeReady, addons, parkInfo],
   );
-  const chosen = useMemo(() => picked.filter((c) => offeredCodes.includes(c)), [picked, offeredCodes]);
+  const chosen = useMemo(() => onlyOffered(picked, offeredCodes), [picked, offeredCodes]);
   // Delivery is priced by distance: a campground from the list or a measured place.
   const deliveryTo =
     parkInfo ?? (placeReady && typed ? { name: typed.name, delivery_miles: measured.miles! } : null);
@@ -214,10 +215,6 @@ export default function BookingWidget({
     if (transportCode === "truck" && experience) qs.set("exp", "1");
     router.push(`/book?${qs}`);
   }
-  const toggle = (code: string) =>
-    setPicked((l) =>
-      l.includes(code) ? l.filter((c) => c !== code) : [...l, code],
-    );
   const groups = STATE_ORDER.map((state) => ({
     state,
     parks: parks.filter((p) => p.state === state),
@@ -356,45 +353,17 @@ export default function BookingWidget({
           <fieldset className="mt-4">
             <legend className="label">Extras</legend>
             <div className="space-y-2">
-              {addons.map((a) => {
-                const offered = offeredCodes.includes(a.code);
-                const on = chosen.includes(a.code);
-                return (
-                  <label
-                    key={a.code}
-                    className={`flex items-center gap-3 rounded-xl border-2 bg-white px-3 py-2.5 transition-colors ${
-                      !offered
-                        ? "cursor-not-allowed border-line opacity-55"
-                        : on
-                          ? "cursor-pointer border-pine"
-                          : "cursor-pointer border-line hover:border-pine"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={on}
-                      disabled={!offered}
-                      onChange={() => toggle(a.code)}
-                      className="h-4 w-4 shrink-0 accent-pine"
-                    />
-                    <AddonIcon
-                      code={a.code}
-                      size={34}
-                      className={offered ? "" : "grayscale"}
-                    />
-                    <span className="min-w-0 flex-1 text-sm">
-                      <span className="block font-medium">{a.name}</span>
-                      <span className="block text-xs text-muted">
-                        {offered
-                          ? `+ ${rate(a.daily_rate)}/day`
-                          : parkInfo
-                            ? NEEDS[a.terrain]
-                            : "Choose a campground"}
-                      </span>
-                    </span>
-                  </label>
-                );
-              })}
+              {addons.map((a) => (
+                <ExtraOption
+                  key={a.code}
+                  addon={a}
+                  offered={offeredCodes.includes(a.code)}
+                  qty={qtyOf(chosen, a.code)}
+                  onChange={(n) => setPicked((l) => withQty(l, a.code, n))}
+                  note={a.terrain === "any" || !parkInfo ? "Choose a campground" : NEEDS[a.terrain]}
+                  compact
+                />
+              ))}
             </div>
           </fieldset>
         )}
@@ -417,9 +386,7 @@ export default function BookingWidget({
             </div>
             {estimate.quote.addons.map((a) => (
               <div key={a.code} className="flex justify-between">
-                <dt>
-                  {a.name} × {a.days} days
-                </dt>
+                <dt>{addonLineLabel(a)}</dt>
                 <dd>{money(a.total)}</dd>
               </div>
             ))}

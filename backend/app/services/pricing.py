@@ -57,7 +57,8 @@ def calculate_quote(
     transport_code: str = "self",
     park=None,
 ) -> Quote:
-    """`addons` are catalog Addon objects; each is charged per day of the rental."""
+    """`addons` are catalog AddonChoice (or Addon) objects; each is charged per
+    day of the rental, times how many were picked."""
     today = today or date.today()
     if end <= start:
         raise ApiError("Return date must be after the pickup date.")
@@ -78,7 +79,8 @@ def calculate_quote(
             "name": a.name,
             "daily_rate": Decimal(a.daily_rate).quantize(CENT),
             "days": days,
-            "total": (Decimal(a.daily_rate) * days).quantize(CENT, ROUND_HALF_UP),
+            "qty": getattr(a, "qty", 1),
+            "total": (Decimal(a.daily_rate) * days * getattr(a, "qty", 1)).quantize(CENT, ROUND_HALF_UP),
         }
         for a in addons
     )

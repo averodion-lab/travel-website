@@ -72,6 +72,7 @@ def _summary(b: Booking) -> dict:
         "place": b.place_details(),
         "addons": b.addons or [],
         "addons_total": str(b.addons_total or 0),
+        "free_change_until": b.free_change_until().isoformat(),
         "transport": b.transport_info(),
         "towing_experience": bool(b.towing_experience),
     }

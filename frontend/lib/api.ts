@@ -30,8 +30,13 @@ export type Addon = {
   code: string;
   name: string;
   daily_rate: string;
-  terrain: "mountains" | "lake";
+  /** "any" = offered at every campground. */
+  terrain: "mountains" | "lake" | "any";
   description: string;
+  /** How many a guest may add (e-bikes: up to 3; the others: 1). */
+  max_qty: number;
+  /** Safety gear that comes with it, e.g. "Helmet included". */
+  gear: string;
 };
 
 export type Park = {
@@ -73,7 +78,7 @@ export type TransportLine = {
 };
 
 /** One extra on a quote or booking. */
-export type AddonLine = { code: string; name: string; daily_rate: string; days: number; total: string };
+export type AddonLine = { code: string; name: string; daily_rate: string; days: number; qty?: number; total: string };
 
 export type Quote = {
   days: number;
@@ -118,6 +123,8 @@ export type PublicBooking = {
   addons: AddonLine[];
   addons_total: string;
   transport: TransportLine;
+  /** Last day to cancel or change dates free of charge (24 days before pickup). */
+  free_change_until: string;
 };
 
 export class ApiError extends Error {

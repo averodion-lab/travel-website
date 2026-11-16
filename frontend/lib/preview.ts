@@ -33,7 +33,7 @@ export const PREVIEW_TRAILER: Camper = {
   ],
   "class_type": "Luxury Fifth Wheel",
   "cleaning_fee": "175.00",
-  "daily_rate": "249.00",
+  "daily_rate": "299.00",
   "description": "A 2026 Keystone Montana 3795FK. Four slide-outs open it up into a real home: a raised front kitchen with a residential refrigerator, a living room with theater seating, two sofas and a fireplace, and a private king bedroom with its own closet. It sleeps six, runs two-zone air conditioning on 50 amp service and carries 70 gallons of fresh water. Tow it with your truck, rent ours, or have us deliver it, level it and hook everything up, so you arrive to a home that is ready.",
   "featured": true,
   "gallery": [
@@ -62,7 +62,7 @@ export const PREVIEW_TRAILER: Camper = {
   "image_url": "/images/montana/exterior.jpg",
   "layout": "Front kitchen, central living room, king bedroom",
   "length_ft": 39.9,
-  "min_nights": 3,
+  "min_nights": 2,
   "name": "The Montana",
   "security_deposit": "2000.00",
   "sleeps": 6,
@@ -78,6 +78,8 @@ export const PREVIEW_PARKS: ParksResponse = {
       "code": "atv",
       "daily_rate": "150.00",
       "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+      "gear": "Helmet included",
+      "max_qty": 1,
       "name": "4-wheeler",
       "terrain": "mountains"
     },
@@ -85,8 +87,19 @@ export const PREVIEW_PARKS: ParksResponse = {
       "code": "jetski",
       "daily_rate": "250.00",
       "description": "A jet ski that rides along on the trailer, ready for the lake.",
+      "gear": "Life jacket included",
+      "max_qty": 1,
       "name": "Jet ski",
       "terrain": "lake"
+    },
+    {
+      "code": "ebike",
+      "daily_rate": "50.00",
+      "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+      "gear": "",
+      "max_qty": 3,
+      "name": "Electric bike",
+      "terrain": "any"
     }
   ],
   "parks": [
@@ -96,8 +109,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Blairsville",
@@ -119,8 +143,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Chatsworth",
@@ -142,6 +177,8 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
         },
@@ -149,8 +186,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "gear": "Life jacket included",
+          "max_qty": 1,
           "name": "Jet ski",
           "terrain": "lake"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Blairsville",
@@ -173,8 +221,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "gear": "Life jacket included",
+          "max_qty": 1,
           "name": "Jet ski",
           "terrain": "lake"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Fair Play",
@@ -196,8 +255,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Travelers Rest",
@@ -219,8 +289,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Spruce Pine",
@@ -242,8 +323,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Lake Toxaway",
@@ -265,8 +357,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Gatlinburg",
@@ -288,8 +391,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "gear": "Life jacket included",
+          "max_qty": 1,
           "name": "Jet ski",
           "terrain": "lake"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Hermitage",
@@ -311,8 +425,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "gear": "Life jacket included",
+          "max_qty": 1,
           "name": "Jet ski",
           "terrain": "lake"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Langston",
@@ -334,8 +459,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "gear": "Life jacket included",
+          "max_qty": 1,
           "name": "Jet ski",
           "terrain": "lake"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Acworth",
@@ -357,8 +493,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "gear": "Life jacket included",
+          "max_qty": 1,
           "name": "Jet ski",
           "terrain": "lake"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Gainesville",
@@ -380,8 +527,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Helen",
@@ -403,8 +561,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Rising Fawn",
@@ -426,6 +595,8 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
         },
@@ -433,8 +604,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "gear": "Life jacket included",
+          "max_qty": 1,
           "name": "Jet ski",
           "terrain": "lake"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Salem",
@@ -457,8 +639,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "gear": "Life jacket included",
+          "max_qty": 1,
           "name": "Jet ski",
           "terrain": "lake"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Harrison",
@@ -480,6 +673,8 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "atv",
           "daily_rate": "150.00",
           "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "gear": "Helmet included",
+          "max_qty": 1,
           "name": "4-wheeler",
           "terrain": "mountains"
         },
@@ -487,8 +682,19 @@ export const PREVIEW_PARKS: ParksResponse = {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
+          "gear": "Life jacket included",
+          "max_qty": 1,
           "name": "Jet ski",
           "terrain": "lake"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
         }
       ],
       "city": "Guntersville",
@@ -506,7 +712,17 @@ export const PREVIEW_PARKS: ParksResponse = {
       "url": "https://www.alapark.com/parks/lake-guntersville-state-park"
     },
     {
-      "addons": [],
+      "addons": [
+        {
+          "code": "ebike",
+          "daily_rate": "50.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
+        }
+      ],
       "city": "Hartselle",
       "delivery_miles": 174,
       "description": "A quiet, rural park in the Appalachian foothills with a fishing pond, a golf course and pull-through RV sites.",
@@ -522,7 +738,7 @@ export const PREVIEW_PARKS: ParksResponse = {
   "transport": {
     "base": "Canton / Woodstock, GA",
     "delivery": {
-      "per_mile": "3.50",
+      "per_mile": "4.50",
       "trips": 1
     },
     "truck": {
@@ -601,22 +817,35 @@ async function typedPlace(raw: { name?: string; lat?: number; lng?: number } | u
 
 /** Same checks as catalog.resolve() on the server. */
 function extras(parkSlug: string | undefined, codes: string[] | undefined, nights: number, place?: TypedPlace): AddonLine[] {
-  // A typed place may ask for either extra (the owner confirms).
+  // A typed place may ask for any extra (the owner confirms).
   const park = place
     ? { terrain: ["mountains", "lake"] as string[] }
     : parkSlug
       ? PREVIEW_PARKS.parks.find((p) => p.slug === parkSlug)
       : undefined;
   if (parkSlug && !park) throw new PreviewError("Please choose a campground from the list.");
-  return [...new Set(codes ?? [])].map((code) => {
+  const picked = new Map<string, number>();
+  for (const value of codes ?? []) {
+    if (!value) continue;
+    const [code, qtyText] = value.split(":");
+    const qty = qtyText === undefined ? 1 : Number(qtyText);
+    if (!Number.isInteger(qty)) throw new PreviewError("Please choose how many.");
+    if (!picked.has(code)) picked.set(code, qty);
+  }
+  return [...picked].map(([code, qty]) => {
     const addon = PREVIEW_PARKS.addons.find((a) => a.code === code);
     if (!addon) throw new PreviewError("That extra isn't available.");
     if (!park) throw new PreviewError("Choose your campground to add extras.");
-    if (!(park.terrain as string[]).includes(addon.terrain)) {
+    if (addon.terrain !== "any" && !(park.terrain as string[]).includes(addon.terrain)) {
       throw new PreviewError(`${addon.name}s are only available at ${NEEDS[addon.terrain]}.`);
     }
+    if (qty < 1 || qty > addon.max_qty) {
+      throw new PreviewError(
+        addon.max_qty > 1 ? `You can add up to ${addon.max_qty} ${addon.name.toLowerCase()}s.` : `One ${addon.name.toLowerCase()} per booking.`,
+      );
+    }
     const rate = Number(addon.daily_rate);
-    return { code, name: addon.name, daily_rate: fixed(rate), days: nights, total: fixed(rate * nights) };
+    return { code, name: addon.name, daily_rate: fixed(rate), days: nights, qty, total: fixed(rate * nights * qty) };
   });
 }
 

@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import BookNowForm from "@/components/BookNowForm";
 import Header from "@/components/Header";
+import MapAndBooking from "@/components/MapAndBooking";
 import { getParks } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
 
 export const metadata: Metadata = {
   title: "Book Now",
   description:
-    "Pick your campground and dates, add a 4-wheeler or a jet ski, and book the trailer.",
+    "Pick your campground on the map and your dates, add a 4-wheeler, a jet ski or e-bikes, and book the trailer.",
 };
 
 async function Planner() {
@@ -21,11 +21,12 @@ async function Planner() {
     );
   }
   return (
-    <BookNowForm
+    <MapAndBooking
       camper={trailer}
       parks={data.parks}
       addons={data.addons}
       transport={data.transport}
+      heading={false}
     />
   );
 }
@@ -40,6 +41,10 @@ export default function BookNowPage() {
           Plan your trip
         </h1>
         <p className="script -mt-1 text-5xl sm:text-6xl">in four steps</p>
+        <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
+          Tap a pin to choose a campground, or pick one in the card below. Free
+          cancellation and date changes up to 24 days before pickup.
+        </p>
         <div className="mt-10">
           <Suspense
             fallback={

@@ -4,8 +4,8 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import AddonIcon from "@/components/AddonIcon";
 import CardLogos, { Lock } from "@/components/CardLogos";
+import ExtraOption from "@/components/ExtraOption";
 import PlacePicker from "@/components/PlacePicker";
 import TransportPicker, {
   parseTransport,
@@ -21,6 +21,7 @@ import {
   type TypedPlace,
 } from "@/lib/api";
 import { STATE_ORDER } from "@/lib/parks";
+import { addonLineLabel, onlyOffered, qtyOf, withQty } from "@/lib/addons";
 import { CUSTOM, placeFromParams, setPlaceParams, usePlaceMiles } from "@/lib/place";
 import { isISODate, longDate, money, rate } from "@/lib/format";
 
@@ -92,7 +93,7 @@ export default function BookingForm() {
         : (parkInfo?.addons.map((a) => a.code) ?? []),
     [placeReady, catalog, parkInfo],
   );
-  const chosen = useMemo(() => addons.filter((code) => offeredCodes.includes(code)), [addons, offeredCodes]);
+  const chosen = useMemo(() => onlyOffered(addons, offeredCodes), [addons, offeredCodes]);
   // Delivery is priced by distance: a campground from the list or a measured
   // place. Our truck needs the towing-experience box ticked before it is priced.
   const deliveryTo =
@@ -309,10 +310,6 @@ export default function BookingForm() {
     state,
     parks: catalog.parks.filter((p) => p.state === state),
   })).filter((g) => g.parks.length > 0);
-  const toggle = (code: string) =>
-    setAddons((list) =>
-      list.includes(code) ? list.filter((c) => c !== code) : [...list, code],
-    );
   const needs = { mountains: "mountain parks", lake: "lake parks" } as const;
   const goTo = (next: "trip" | "details") => {
     setStep(next);
@@ -455,62 +452,17 @@ export default function BookingForm() {
                   Optional. They ride along on the trailer and are charged per day of
                   your trip.
                 </p>
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                  {catalog.addons.map((a) => {
-                    const offered = offeredCodes.includes(a.code);
-                    const on = chosen.includes(a.code);
-                    const tripTotal = Number(a.daily_rate) * quote.quote.days;
-                    return (
-                      <button
-                        key={a.code}
-                        type="button"
-                        role="switch"
-                        aria-checked={on}
-                        disabled={!offered}
-                        onClick={() => toggle(a.code)}
-                        className={`flex flex-col rounded-2xl border-2 p-5 text-left transition-colors disabled:cursor-not-allowed ${
-                          on
-                            ? "border-pine bg-pine text-cream"
-                            : offered
-                              ? "border-line bg-white hover:border-pine"
-                              : "border-line bg-white/50 opacity-60"
-                        }`}
-                      >
-                        <span className="flex items-start justify-between gap-3">
-                          <span className="flex items-center gap-3">
-                            <AddonIcon
-                              code={a.code}
-                              size={52}
-                              className={`transition-transform duration-300 ${on ? "scale-110" : ""} ${offered ? "" : "grayscale"}`}
-                            />
-                            <span className="font-display text-3xl leading-none">
-                              {a.name}
-                            </span>
-                          </span>
-                          <span
-                            aria-hidden="true"
-                            className={`relative mt-1 h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-cream/30" : "bg-sand"}`}
-                          >
-                            <span
-                              className={`absolute top-0.5 h-5 w-5 rounded-full shadow transition-all ${on ? "left-[1.375rem] bg-cream" : "left-0.5 bg-white"}`}
-                            />
-                          </span>
-                        </span>
-                        <span
-                          className={`mt-3 text-sm leading-relaxed ${on ? "text-cream/85" : "text-bark"}`}
-                        >
-                          {a.description}
-                        </span>
-                        <span
-                          className={`mt-4 text-sm font-semibold ${on ? "" : "text-ink"}`}
-                        >
-                          {offered
-                            ? `${rate(a.daily_rate)}/day · ${money(tripTotal)} for ${quote.quote.days} days`
-                            : `Only at ${needs[a.terrain]}`}
-                        </span>
-                      </button>
-                    );
-                  })}
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {catalog.addons.map((a) => (
+                    <ExtraOption
+                      key={a.code}
+                      addon={a}
+                      offered={offeredCodes.includes(a.code)}
+                      qty={qtyOf(chosen, a.code)}
+                      onChange={(n) => setAddons((l) => withQty(l, a.code, n))}
+                      note={a.terrain === "any" ? "Choose a campground first" : `Only at ${needs[a.terrain]}`}
+                    />
+                  ))}
                 </div>
                 {!parkInfo && !placeReady && (
                   <p className="mt-4 text-sm text-muted">
@@ -725,7 +677,7 @@ export default function BookingForm() {
                     [
                       "Extras",
                       q.addons.length
-                        ? q.addons.map((a) => a.name).join(", ")
+                        ? q.addons.map((a) => (a.qty && a.qty > 1 ? `${a.name} ×${a.qty}` : a.name)).join(", ")
                         : "None",
                     ],
                     [
@@ -796,6 +748,10 @@ export default function BookingForm() {
                     least 25 years old and holds a valid driver&apos;s license.
                   </span>
                 </label>
+                <p className="mt-3 text-xs leading-relaxed text-muted">
+                  Free cancellation and date changes up to 24 days before
+                  pickup.
+                </p>
 
                 {error && (
                   <p
@@ -882,9 +838,7 @@ export default function BookingForm() {
                 </div>
                 {q.addons.map((a) => (
                   <div key={a.code} className="flex justify-between">
-                    <dt>
-                      {a.name} × {a.days} days
-                    </dt>
+                    <dt>{addonLineLabel(a)}</dt>
                     <dd>{money(a.total)}</dd>
                   </div>
                 ))}

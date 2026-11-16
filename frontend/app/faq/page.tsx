@@ -86,15 +86,19 @@ async function Questions() {
         },
         {
           q: "How much is delivery?",
-          a: "$3.50 a mile, one way: the drive from our base in Canton/Woodstock, GA to your campground. Picking it up afterwards is free. Choose a campground when you book and you'll see the exact price before you pay.",
+          a: "$4.50 a mile, one way: the drive from our base in Canton/Woodstock, GA to your campground. Picking it up afterwards is free. Choose a campground when you book and you'll see the exact price before you pay.",
         },
         {
           q: "Can I tow it myself?",
           a: "Yes, if you have a one-ton truck with a fifth-wheel hitch. The trailer weighs 13,870 lb empty and is rated to 17,070 lb loaded, so smaller trucks are not suitable.",
         },
         {
-          q: "Can I rent a 4-wheeler or a jet ski?",
-          a: "Yes, as an optional extra when you book. 4-wheelers are available at our mountain parks and jet skis at our lake parks. They ride along on the trailer, whether we deliver it or you tow it, and they're charged per day of your trip. The Destinations page shows which park offers what.",
+          q: "Can I rent a 4-wheeler, a jet ski or e-bikes?",
+          a: "Yes, as optional extras when you book, charged per day of your trip. 4-wheelers are available at our mountain parks (helmet included) and jet skis at our lake parks (life jacket included). Electric bikes are $50 a day each and you can add up to three, at any campground. They ride along on the trailer, whether we deliver it or you tow it. The Destinations page shows which park offers what.",
+        },
+        {
+          q: "Can I cancel or change my booking?",
+          a: "Yes. You can cancel or change your dates free of charge up to 24 days before pickup. Just reply to your confirmation email or send us a message. Closer to your trip, please contact us and we'll see what we can do.",
         },
         {
           q: "Why do you need a driver's license?",

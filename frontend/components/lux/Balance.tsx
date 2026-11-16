@@ -9,7 +9,7 @@ const POINTS = [
   { name: "Comfort", text: "A king suite, a fireplace and a full kitchen, ready when you walk in.", angle: -60 },
   { name: "Adventure", text: "A jet ski on the lake or a 4-wheeler in the mountains.", angle: 30 },
   { name: "Rest", text: "Chairs by the fire and nothing on the schedule.", angle: 140 },
-  { name: "Nature", text: "Trails from the door, bikes waiting, the lake a short walk away.", angle: 220 },
+  { name: "Nature", text: "Trails from the door, e-bikes if you want them, the lake a short walk away.", angle: 220 },
 ];
 const R = 110; // circle radius in drawing units (the drawing is 320 wide)
 

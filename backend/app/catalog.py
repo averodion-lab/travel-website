@@ -27,9 +27,11 @@ from .errors import ApiError
 class Addon:
     code: str
     name: str
-    daily_rate: Decimal
-    terrain: str  # the park must have this terrain to offer it
+    daily_rate: Decimal  # per day, per unit
+    terrain: str  # the park must have this terrain to offer it ("any" = everywhere)
     description: str
+    max_qty: int = 1  # how many a guest may add (e-bikes: up to 3)
+    gear: str = ""  # safety gear that comes with it, shown with an icon
 
     def to_dict(self) -> dict:
         return {
@@ -38,8 +40,34 @@ class Addon:
             "daily_rate": str(self.daily_rate),
             "terrain": self.terrain,
             "description": self.description,
+            "max_qty": self.max_qty,
+            "gear": self.gear,
         }
 
+
+@dataclass(frozen=True)
+class AddonChoice:
+    """An extra the guest picked, with how many."""
+
+    addon: Addon
+    qty: int = 1
+
+    @property
+    def code(self) -> str:
+        return self.addon.code
+
+    @property
+    def name(self) -> str:
+        return self.addon.name
+
+    @property
+    def daily_rate(self) -> Decimal:
+        return self.addon.daily_rate
+
+
+# Guests can cancel or change their dates free of charge up to this many days
+# before pickup. Within that window they contact us.
+FREE_CHANGE_DAYS = 24
 
 # Where the trailer is kept; delivery miles are counted from here.
 BASE = "Canton / Woodstock, GA"
@@ -47,7 +75,7 @@ BASE_LAT, BASE_LNG = 34.169, -84.505
 
 # Delivery and setup: per mile, one way (the drive to the campground at
 # drop-off). Picking it up afterwards is not charged.
-DELIVERY_PER_MILE = Decimal("3.50")
+DELIVERY_PER_MILE = Decimal("4.50")
 DELIVERY_TRIPS = 1
 
 
@@ -87,7 +115,7 @@ class Park:
 
     @property
     def addons(self) -> list[Addon]:
-        return [a for a in ADDONS.values() if a.terrain in self.terrain]
+        return [a for a in ADDONS.values() if a.terrain == "any" or a.terrain in self.terrain]
 
     def to_dict(self) -> dict:
         return {
@@ -109,9 +137,14 @@ ADDONS: dict[str, Addon] = {
     a.code: a
     for a in (
         Addon("atv", "4-wheeler", Decimal("150.00"), "mountains",
-              "A 4-wheeler that rides along on the trailer, for exploring mountain trails."),
+              "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+              gear="Helmet included"),
         Addon("jetski", "Jet ski", Decimal("250.00"), "lake",
-              "A jet ski that rides along on the trailer, ready for the lake."),
+              "A jet ski that rides along on the trailer, ready for the lake.",
+              gear="Life jacket included"),
+        Addon("ebike", "Electric bike", Decimal("50.00"), "any",
+              "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+              max_qty=3),
     )
 }
 
@@ -253,9 +286,20 @@ def custom_place(name, lat, lng) -> Place:
     return Place(name=name, lat=lat, lng=lng, delivery_miles=miles)
 
 
+def _parse_addon(value: str) -> tuple[str, int]:
+    """'ebike:2' -> ('ebike', 2); 'jetski' -> ('jetski', 1)."""
+    code, _, qty = value.partition(":")
+    if not qty:
+        return code, 1
+    try:
+        return code, int(qty)
+    except ValueError:
+        raise ApiError("Please choose how many.") from None
+
+
 def resolve(
     park_slug: str | None, addon_codes: list[str] | None, place: Place | None = None
-) -> tuple[Park | Place | None, list[Addon]]:
+) -> tuple[Park | Place | None, list[AddonChoice]]:
     """Validate a park choice (or a typed place) and the extras requested for it."""
     park = None
     if park_slug == CUSTOM_SLUG:
@@ -266,17 +310,28 @@ def resolve(
         park = PARKS.get(park_slug)
         if park is None:
             raise ApiError("Please choose a campground from the list.")
-    codes = list(dict.fromkeys(c for c in (addon_codes or []) if c))  # unique, in order
+    picked: dict[str, int] = {}
+    for value in addon_codes or []:
+        if not value:
+            continue
+        code, qty = _parse_addon(value)
+        picked.setdefault(code, qty)  # first mention wins, order kept
     addons = []
-    for code in codes:
+    for code, qty in picked.items():
         addon = ADDONS.get(code)
         if addon is None:
             raise ApiError("That extra isn't available.")
         if park is None:
             raise ApiError("Choose your campground to add extras.")
-        if addon.terrain not in park.terrain:
+        if addon.terrain != "any" and addon.terrain not in park.terrain:
             raise ApiError(f"{addon.name}s are only available at {_NEEDS[addon.terrain]}.")
-        addons.append(addon)
+        if not 1 <= qty <= addon.max_qty:
+            raise ApiError(
+                f"You can add up to {addon.max_qty} {addon.name.lower()}s."
+                if addon.max_qty > 1
+                else f"One {addon.name.lower()} per booking."
+            )
+        addons.append(AddonChoice(addon, qty))
     return park, addons
 
 

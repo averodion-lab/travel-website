@@ -52,8 +52,8 @@ const WAITING: { title: string; text: string; icon: ReactNode }[] = [
     icon: <path d="M12 3c2 3 5 5 5 9a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-8ZM4 21h16" />,
   },
   {
-    title: "Bikes to explore",
-    text: "Bikes waiting at the trailer for the trails and the lake path.",
+    title: "E-bikes to explore",
+    text: "Add up to three electric bikes, waiting at the trailer for the trails and the lake path.",
     icon: (
       <path d="M5.5 18a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM18.5 18a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM5.5 14.5 9 7h5l4.5 7.5M9 7l3.5 7.5h-7M13 5h3" />
     ),

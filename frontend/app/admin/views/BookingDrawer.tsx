@@ -119,6 +119,7 @@ export default function BookingDrawer({
             <dl className="mt-2 divide-y divide-line/70">
               <Row label={`Total, ${booking.days} nights${booking.addons.length ? " + extras" : ""}`} value={money(booking.total_price)} />
               <Row label="Deposit paid" value={booking.status === "pending" ? "Not yet" : money(booking.deposit_due)} />
+              {booking.free_change_until && <Row label="Free cancel/change until" value={booking.free_change_until} />}
               <Row label="Due at pickup" value={<span className="font-semibold">{money(booking.balance_due)}</span>} />
               <Row label="Security hold" value={money(booking.security_deposit)} />
               <Row label="Emails sent" value={booking.emails_sent ? "Yes" : "No"} />

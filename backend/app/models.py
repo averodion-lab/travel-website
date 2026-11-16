@@ -171,7 +171,16 @@ class Booking(db.Model):
             "addons": self.addons or [],
             "addons_total": str(self.addons_total or 0),
             "transport": self.transport_info(),
+            "free_change_until": self.free_change_until().isoformat(),
         }
+
+    def free_change_until(self):
+        """Last day to cancel or change dates free of charge."""
+        from datetime import timedelta
+
+        from .catalog import FREE_CHANGE_DAYS
+
+        return self.start_date - timedelta(days=FREE_CHANGE_DAYS)
 
     def transport_info(self) -> dict:
         from .catalog import PARKS, TRUCK

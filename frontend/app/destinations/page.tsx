@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import AddonIcon from "@/components/AddonIcon";
+import GearIcon from "@/components/GearIcon";
 import BookCta from "@/components/BookCta";
 import Header from "@/components/Header";
 import PageHero from "@/components/PageHero";
@@ -65,6 +66,7 @@ async function Extras() {
   const data = await getParks();
   const atv = data?.addons.find((a) => a.code === "atv");
   const jetski = data?.addons.find((a) => a.code === "jetski");
+  const ebike = data?.addons.find((a) => a.code === "ebike");
   const cards = [
     {
       code: "atv",
@@ -72,6 +74,7 @@ async function Extras() {
       where: "At mountain parks",
       text: "Take the trails up to the overlooks. The 4-wheeler rides along on the trailer, whoever tows it.",
       price: atv ? `${rate(atv.daily_rate)} a day` : "",
+      gear: atv?.gear ?? "",
       tone: "bg-pine text-cream",
     },
     {
@@ -80,11 +83,21 @@ async function Extras() {
       where: "At lake parks",
       text: "Spend the afternoon out on the water. The jet ski rides along on the trailer, ready to launch.",
       price: jetski ? `${rate(jetski.daily_rate)} a day` : "",
+      gear: jetski?.gear ?? "",
       tone: "bg-[#2f6f8f] text-cream",
+    },
+    {
+      code: "ebike",
+      title: "E-bikes",
+      where: "At every campground",
+      text: "Electric bikes waiting at the trailer for the trails and the lake path. Add up to three.",
+      price: ebike ? `${rate(ebike.daily_rate)} a day each` : "",
+      gear: "",
+      tone: "bg-[#9c7b4b] text-cream",
     },
   ];
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {cards.map((c, i) => (
         <Reveal key={c.title} delay={i * 120}>
           <div
@@ -104,7 +117,8 @@ async function Extras() {
                 {c.text}
               </p>
             </div>
-            <p className="relative mt-4 font-display text-2xl sm:mt-8 sm:text-3xl">{c.price}</p>
+            {c.gear && <GearIcon gear={c.gear} className="relative mt-3 !text-cream/90" />}
+            <p className="relative mt-4 font-display text-2xl sm:mt-6 sm:text-3xl">{c.price}</p>
           </div>
         </Reveal>
       ))}

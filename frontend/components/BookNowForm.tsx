@@ -3,9 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import AddonIcon from "@/components/AddonIcon";
 import CardLogos from "@/components/CardLogos";
 import DateRangeField from "@/components/DateRangeField";
+import ExtraOption from "@/components/ExtraOption";
 import PlacePicker from "@/components/PlacePicker";
 import TransportPicker, {
   parseTransport,
@@ -21,6 +21,7 @@ import {
 } from "@/lib/api";
 import { isISODate, money, rate } from "@/lib/format";
 import { STATE_ORDER } from "@/lib/parks";
+import { addonLineLabel, onlyOffered, qtyOf, withQty } from "@/lib/addons";
 import { CUSTOM, placeFromParams, setPlaceParams, usePlaceMiles } from "@/lib/place";
 
 const NEEDS = {
@@ -84,7 +85,7 @@ export default function BookNowForm({
     () => (placeReady ? addons.map((a) => a.code) : (parkInfo?.addons.map((a) => a.code) ?? [])),
     [placeReady, addons, parkInfo],
   );
-  const chosen = useMemo(() => picked.filter((c) => offeredCodes.includes(c)), [picked, offeredCodes]);
+  const chosen = useMemo(() => onlyOffered(picked, offeredCodes), [picked, offeredCodes]);
   // Delivery is priced by distance: a campground from the list or a measured place.
   const deliveryTo =
     parkInfo ?? (placeReady && typed ? { name: typed.name, delivery_miles: measured.miles! } : null);
@@ -162,11 +163,6 @@ export default function BookNowForm({
     state,
     parks: parks.filter((p) => p.state === state),
   })).filter((g) => g.parks.length);
-  const toggle = (code: string) =>
-    setPicked((l) =>
-      l.includes(code) ? l.filter((c) => c !== code) : [...l, code],
-    );
-
   function next() {
     const qs = new URLSearchParams({
       camper: camper.slug,
@@ -268,57 +264,23 @@ export default function BookNowForm({
           <p className="eyebrow text-clay">(04) Extras</p>
           <p className="mt-2 font-display text-3xl">Add to your trip</p>
           <ul className="mt-5 space-y-3">
-            {addons.map((a) => {
-              const offered = offeredCodes.includes(a.code);
-              const on = chosen.includes(a.code);
-              return (
-                <li key={a.code}>
-                  <label
-                    className={`flex items-center gap-4 rounded-2xl border-2 px-4 py-3 transition-colors ${
-                      !offered
-                        ? "cursor-not-allowed border-line opacity-55"
-                        : on
-                          ? "cursor-pointer border-pine bg-pine/5"
-                          : "cursor-pointer border-line hover:border-pine"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={on}
-                      disabled={!offered}
-                      onChange={() => toggle(a.code)}
-                      className="h-5 w-5 shrink-0 accent-pine"
-                    />
-                    <AddonIcon
-                      code={a.code}
-                      size={44}
-                      className={offered ? "" : "grayscale"}
-                    />
-                    <span className="min-w-0 flex-1">
-                      <span className="flex flex-wrap items-baseline justify-between gap-x-3">
-                        <span className="font-medium">{a.name}</span>
-                        {/* Phones: price next to the name, so the text has room. */}
-                        <span className="text-sm font-semibold sm:hidden">
-                          + {rate(a.daily_rate)}/day
-                        </span>
-                      </span>
-                      <span className="mt-0.5 block text-xs text-muted">
-                        {offered
-                          ? placeReady
-                            ? `${a.description} We'll confirm it for your place.`
-                            : a.description
-                          : parkInfo
-                            ? NEEDS[a.terrain]
-                            : `${NEEDS[a.terrain]} · choose a campground first`}
-                      </span>
-                    </span>
-                    <span className="hidden shrink-0 text-sm font-semibold sm:inline">
-                      + {rate(a.daily_rate)}/day
-                    </span>
-                  </label>
-                </li>
-              );
-            })}
+            {addons.map((a) => (
+              <li key={a.code}>
+                <ExtraOption
+                  addon={a}
+                  offered={offeredCodes.includes(a.code)}
+                  qty={qtyOf(chosen, a.code)}
+                  onChange={(n) => setPicked((l) => withQty(l, a.code, n))}
+                  note={
+                    a.terrain === "any"
+                      ? "Choose a campground first"
+                      : parkInfo
+                        ? NEEDS[a.terrain]
+                        : `${NEEDS[a.terrain]} · choose a campground first`
+                  }
+                />
+              </li>
+            ))}
           </ul>
         </section>
       </div>
@@ -372,9 +334,7 @@ export default function BookNowForm({
                     </div>
                     {q.addons.map((a) => (
                       <div key={a.code} className="flex justify-between">
-                        <dt>
-                          {a.name} × {a.days} days
-                        </dt>
+                        <dt>{addonLineLabel(a)}</dt>
                         <dd>{money(a.total)}</dd>
                       </div>
                     ))}
@@ -419,6 +379,8 @@ export default function BookNowForm({
             </button>
             <p className="mt-3 text-center text-xs text-muted">
               Next: your details and payment. You won&apos;t be charged yet.
+              <br />
+              Free cancellation and date changes up to 24 days before pickup.
             </p>
             <CardLogos className="mt-5 justify-center" />
           </div>
