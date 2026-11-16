@@ -1,60 +1,255 @@
-/** A small 2D line icon for a trailer feature, picked by keywords in its name
- *  ("King bedroom with closet" → bed, "Glass-door shower" → shower …). */
+import type { ReactNode } from "react";
 
-type Rule = [RegExp, string];
+/** A detailed 2D icon for a trailer feature, picked by keywords in its name
+ *  ("King bedroom with closet" → bed, "Glass-door shower" → shower …).
+ *  Two-tone: thin brass outlines with lightly shaded areas. */
 
-// 24×24 line drawings (stroke only).
-const P = {
-  bed: "M3 18v-7h18v7M3 14h18M6 11V8.5A1.5 1.5 0 0 1 7.5 7h3A1.5 1.5 0 0 1 12 8.5V11M3 18v2M21 18v2",
-  sofa: "M4 11V8.5A2.5 2.5 0 0 1 6.5 6h11A2.5 2.5 0 0 1 20 8.5V11M3 12a1.5 1.5 0 0 1 3 0v2h12v-2a1.5 1.5 0 0 1 3 0v5H3v-5ZM5 17v2M19 17v2",
-  armchair: "M7 10V6.5A1.5 1.5 0 0 1 8.5 5h7A1.5 1.5 0 0 1 17 6.5V10M5 11a1.5 1.5 0 0 1 3 0v3h8v-3a1.5 1.5 0 0 1 3 0v5H5v-5ZM7 16v3M17 16v3",
-  flame: "M12 3c2.5 3.5 5 5.5 5 9.5a5 5 0 0 1-10 0c0-2 1-3.5 2.5-4.5 0 2 1 3 2 3 0-3.5-1-5.5.5-8ZM4 21h16",
-  tv: "M3 6h18v11H3zM8 21h8M12 17v4",
-  kitchen: "M4 10h16v10H4zM4 14h16M9 10V6a3 3 0 0 1 6 0v4M8 17h1M15 17h1",
-  fridge: "M6 3h12v18H6zM6 10h12M9 6v2M9 13v3",
-  stove: "M4 4h16v16H4zM4 9h16M8 6.5h.01M12 6.5h.01M16 6.5h.01M8 12h8v5H8z",
-  microwave: "M3 6h18v12H3zM5 8.5h10v7H5zM18 9h.01M18 12h.01M18 15h.01",
-  pantry: "M5 3h14v18H5zM12 3v18M10 11v2M14 11v2",
-  sink: "M4 12h16v1a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6v-1ZM8 12V6a2 2 0 0 1 4 0M12 6h3",
-  shower: "M5 21V8a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4M11 8h8M13 11v1M16 11v1M19 11v1M14 14.5v1M17.5 14.5v1",
-  slideout: "M8 5H4v14h4M16 5h4v14h-4M9 12H3M15 12h6M5 10l-2 2 2 2M19 10l2 2-2 2",
-  climate: "M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0ZM12 9v8M18 5h3M18 8h2M18 11h3",
-  awning: "M3 9l2-4h14l2 4H3ZM3 9c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2c0 1.1.9 2 2 2s2-.9 2-2M5 11v9M19 11v9",
-  speaker: "M4 9h4l5-4v14l-5-4H4zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12",
-  storage: "M3 8l9-4 9 4v10l-9 4-9-4V8ZM3 8l9 4 9-4M12 12v10",
-  linen: "M5 6h14v4H5zM5 10h14v4H5zM5 14h14v4H5zM8 6v12",
-  dishes: "M12 19a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3 3v7M3 7h2M21 3c-1.5 1.5-1.5 5 0 6.5V21",
-  check: "M5 12l4 4 10-10",
+// Shaded areas use this class so they pick up the brass colour at low opacity.
+const F = "fill-current opacity-[0.18]";
+
+const ICONS: Record<string, ReactNode> = {
+  bed: (
+    <>
+      <path className={F} d="M3.5 13.5h17v4h-17z" />
+      <path d="M3.5 18.5V7.5a1.5 1.5 0 0 1 1.5-1.5h14a1.5 1.5 0 0 1 1.5 1.5v11" />
+      <path d="M3.5 13.5h17M3.5 17.5h17M3.5 18.5v1.5M20.5 18.5v1.5" />
+      <rect x="5.5" y="9" width="5.5" height="3.2" rx="1.2" />
+      <rect x="13" y="9" width="5.5" height="3.2" rx="1.2" />
+      <path d="M12 13.5c1.5 1.2 3.5 1.6 8.5 1.2" />
+    </>
+  ),
+  sofa: (
+    <>
+      <path className={F} d="M6 13h12v3.5H6z" />
+      <path d="M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" />
+      <path d="M12 6.5V13" />
+      <path d="M3 12.2a1.6 1.6 0 0 1 3.2 0V13h11.6v-.8a1.6 1.6 0 0 1 3.2 0V17a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4.8Z" />
+      <path d="M6.2 16.5h11.6M5 18v1.6M19 18v1.6" />
+    </>
+  ),
+  armchair: (
+    <>
+      <path className={F} d="M8.5 5.5h6l1 6.5h-8z" />
+      <path d="M8 12 7 5.8A1.4 1.4 0 0 1 8.4 4.2h6.2a1.4 1.4 0 0 1 1.4 1.6L15.2 12" />
+      <path d="M5 13a1.5 1.5 0 0 1 3 0v1h8v-1a1.5 1.5 0 0 1 3 0v4.5H5V13Z" />
+      <path d="M16.5 17.5l2.5 2.5M7.5 17.5 5 20" />
+      <circle cx="20" cy="11.2" r="1.2" />
+      <path d="M19 12.2v1.3h2v-1.3" />
+    </>
+  ),
+  flame: (
+    <>
+      <path className={F} d="M6.5 10h11v8.5h-11z" />
+      <rect x="3.5" y="5.5" width="17" height="15" rx="1" />
+      <path d="M3.5 8.5h17M6.5 10h11v8.5h-11z" />
+      <path d="M12 11.5c1.5 1.8 2.6 2.9 2.6 4.4a2.6 2.6 0 0 1-5.2 0c0-1 .6-1.8 1.3-2.4 0 1 .5 1.6 1 1.6 0-1.4-.3-2.4.3-3.6Z" />
+      <path d="M8 18.5l8-1.5M8.5 17l7.5 1.5" />
+    </>
+  ),
+  tv: (
+    <>
+      <path className={F} d="M4.5 5.5h15v9h-15z" />
+      <rect x="3.5" y="4.5" width="17" height="11" rx="1" />
+      <path d="M6.5 7.5l3-1.5M6.5 10l5.5-3" />
+      <path d="M2.5 18h19v2.5h-19z" />
+      <path d="M9 15.5 8 18M15 15.5l1 2.5M12 18v2.5" />
+    </>
+  ),
+  kitchen: (
+    <>
+      <path className={F} d="M3.5 12.5h17v8h-17z" />
+      <path d="M3.5 12.5h17v8h-17zM12 12.5v8M3.5 15h17" />
+      <path d="M10.5 16.8h-1M14.5 16.8h-1" />
+      <path d="M8 12.5v-1.5h4.5v1.5" />
+      <path d="M14.5 12.5V8.2a1.7 1.7 0 0 1 3.4 0" />
+      <path d="M3.5 3.5h7v5h-7zM13 3.5h7.5" />
+      <path d="M7 5.8v.6" />
+    </>
+  ),
+  fridge: (
+    <>
+      <path className={F} d="M6 3.5h12v6.5H6z" />
+      <rect x="6" y="2.5" width="12" height="19" rx="1.2" />
+      <path d="M6 10.5h12M12 2.5v8" />
+      <path d="M10.6 5.5v3M13.4 5.5v3M9 13v5" />
+      <path d="M6 21.5v1M18 21.5v1" />
+    </>
+  ),
+  stove: (
+    <>
+      <path className={F} d="M6.5 11h11v6.5h-11z" />
+      <rect x="3.5" y="3.5" width="17" height="17.5" rx="1" />
+      <path d="M3.5 8.5h17" />
+      <circle cx="7" cy="6" r="1" />
+      <circle cx="10.3" cy="6" r="1" />
+      <circle cx="13.7" cy="6" r="1" />
+      <circle cx="17" cy="6" r="1" />
+      <rect x="6.5" y="11" width="11" height="6.5" rx=".6" />
+      <path d="M8.5 9.8h7" />
+      <path d="M8.5 13.5l2.5-1.2" />
+    </>
+  ),
+  microwave: (
+    <>
+      <path className={F} d="M4.5 7.5h10v9h-10z" />
+      <rect x="2.5" y="5.5" width="19" height="13" rx="1" />
+      <rect x="4.5" y="7.5" width="10" height="9" rx=".6" />
+      <path d="M16.8 5.5v13" />
+      <path d="M18.3 8h1.6M18.3 10h.5M19.4 10h.5M18.3 12h.5M19.4 12h.5M18.3 14h.5M19.4 14h.5" />
+      <path d="M6.5 10l2.5-1.2M6.5 12.8 11 10.5" />
+    </>
+  ),
+  pantry: (
+    <>
+      <path className={F} d="M5 3h14v18H5z" />
+      <rect x="5" y="3" width="14" height="18" rx=".8" />
+      <path d="M5 8.5h14M5 14h14" />
+      <rect x="7" y="5" width="2.4" height="3.5" rx=".6" />
+      <rect x="10.5" y="6" width="2.4" height="2.5" rx=".6" />
+      <path d="M14.5 8.5V5.5h2.5v3" />
+      <rect x="7" y="10.5" width="4.5" height="3.5" rx=".6" />
+      <circle cx="15" cy="12" r="1.8" />
+      <path d="M7 19.5h10" />
+    </>
+  ),
+  sink: (
+    <>
+      <path className={F} d="M4 13h16v7H4z" />
+      <path d="M3 13h18M4 13v7.5h16V13M12 13v7.5" />
+      <path d="M5.5 11.2c1-.8 4-.8 5 0M13.5 11.2c1-.8 4-.8 5 0" />
+      <path d="M8 11V9.2a1 1 0 0 1 2 0M16 11V9.2a1 1 0 0 1 2 0" />
+      <rect x="5" y="2.5" width="14" height="5" rx="1" />
+      <path d="M9.5 16.5h-1M15.5 16.5h-1" />
+    </>
+  ),
+  shower: (
+    <>
+      <path className={F} d="M11.5 4h9v17h-9z" />
+      <path d="M3.5 21V7.5a3.5 3.5 0 0 1 7 0V9" />
+      <path d="M8 9h5" />
+      <path d="M9 11.5v1M10.5 12.5v1M12 11.5v1M9.5 15v1M11.5 15v1" />
+      <rect x="11.5" y="4" width="9" height="17" rx=".5" />
+      <path d="M13.5 12v3M14 6l3-1.5" />
+      <path d="M3 21h18" />
+    </>
+  ),
+  slideout: (
+    <>
+      <path className={F} d="M8 6h8v12H8z" />
+      <rect x="8" y="6" width="8" height="12" rx=".6" />
+      <path d="M8 8.5H4.5v7H8M16 8.5h3.5v7H16" />
+      <path d="M2.5 12H5M21.5 12H19M3.7 10.8 2.5 12l1.2 1.2M20.3 10.8l1.2 1.2-1.2 1.2" />
+      <path d="M10 9.5h4v3h-4zM11 18v-3h2v3" />
+    </>
+  ),
+  climate: (
+    <>
+      <path className={F} d="M12 6.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Z" />
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="5.5" />
+      <path d="M12 12l2.6-2.6" />
+      <path d="M5.5 4.5v3M4 6h3M4.5 5l2 2M6.5 5l-2 2" />
+      <path d="M18.5 4.2c.9 1.1 1.5 1.8 1.5 2.7a1.5 1.5 0 0 1-3 0c0-.6.3-1 .7-1.4 0 .6.3.9.6.9 0-.8-.1-1.4.2-2.2Z" />
+      <path d="M8 20.5h8" />
+    </>
+  ),
+  awning: (
+    <>
+      <path className={F} d="M3 8.5 5 4.5h14l2 4z" />
+      <path d="M3 8.5 5 4.5h14l2 4H3Z" />
+      <path d="M3 8.5c0 1 .8 1.8 1.8 1.8s1.8-.8 1.8-1.8c0 1 .8 1.8 1.8 1.8s1.8-.8 1.8-1.8c0 1 .8 1.8 1.8 1.8s1.8-.8 1.8-1.8c0 1 .8 1.8 1.8 1.8s1.8-.8 1.8-1.8c0 1 .8 1.8 1.8 1.8S21 9.5 21 8.5" />
+      <path d="M8 4.5 7 8.5M12 4.5v4M16 4.5l1 4" />
+      <path d="M4.8 10.3V20M19.2 10.3V20M3 20h18" />
+    </>
+  ),
+  speaker: (
+    <>
+      <path className={F} d="M6 2.5h12v19H6z" />
+      <rect x="6" y="2.5" width="12" height="19" rx="1.5" />
+      <circle cx="12" cy="7.2" r="2.2" />
+      <circle cx="12" cy="7.2" r=".6" />
+      <circle cx="12" cy="15.5" r="3.6" />
+      <circle cx="12" cy="15.5" r="1.4" />
+      <path d="M8 19.8h.01M16 19.8h.01" />
+    </>
+  ),
+  storage: (
+    <>
+      <path className={F} d="M3.5 8.5h17v11h-17z" />
+      <rect x="2.5" y="5" width="19" height="15" rx="1" />
+      <path d="M2.5 8.5h19" />
+      <path d="M10 6.7h4" />
+      <path d="M6 12h5v5H6zM6 14.5h5" />
+      <path d="M13.5 17v-4.5l2-1.5h2.5V17z" />
+      <path d="M13.5 12.5h4.5" />
+    </>
+  ),
+  linen: (
+    <>
+      <path className={F} d="M4.5 14.5h15v5h-15z" />
+      <path d="M4.5 19.5h15a1 1 0 0 0 1-1V16a1.5 1.5 0 0 0-1.5-1.5H4.5" />
+      <path d="M4.5 14.5a2.5 2.5 0 0 0 0 5" />
+      <path d="M5.5 14.5V11h13a1.5 1.5 0 0 1 1.5 1.5v2" />
+      <path d="M5.5 11a2 2 0 0 0 0 3.5" />
+      <path d="M6.5 11V7.5h11a1.5 1.5 0 0 1 1.5 1.5v2M6.5 7.5a1.8 1.8 0 0 0 0 3.5" />
+      <path d="M10 7.5V4.5M14 7.5V4.5" />
+    </>
+  ),
+  dishes: (
+    <>
+      <path className={F} d="M12 6.5a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Z" />
+      <circle cx="12" cy="12" r="7" />
+      <circle cx="12" cy="12" r="4" />
+      <path d="M2.5 3.5v5.5a1.5 1.5 0 0 0 3 0V3.5M4 3.5v17" />
+      <path d="M21.5 3.5c-1.6 1.2-2 4.5-2 6.5h2v10.5" />
+    </>
+  ),
+  check: (
+    <>
+      <circle className={F} cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="8" />
+      <path d="M8 12.2l2.7 2.7L16.2 9.3" />
+    </>
+  ),
 };
 
-const RULES: Rule[] = [
-  [/bedding|towel|linen/i, P.linen],
-  [/bed(room)?\b|king|queen|bunk/i, P.bed],
-  [/sofa|couch/i, P.sofa],
-  [/theat(er|re)|recliner|seating/i, P.armchair],
-  [/fireplace/i, P.flame],
-  [/tv|entertainment|television/i, P.tv],
-  [/refrigerator|fridge/i, P.fridge],
-  [/range|oven|stove|cooktop/i, P.stove],
-  [/microwave/i, P.microwave],
-  [/pantry|cabinet/i, P.pantry],
-  [/cookware|dishes|utensil/i, P.dishes],
-  [/kitchen/i, P.kitchen],
-  [/shower/i, P.shower],
-  [/bath|sink|toilet/i, P.sink],
-  [/slide/i, P.slideout],
-  [/air condition|furnace|heat|a\/c/i, P.climate],
-  [/awning/i, P.awning],
-  [/speaker|sound|stereo/i, P.speaker],
-  [/storage/i, P.storage],
+const RULES: [RegExp, string][] = [
+  [/bedding|towel|linen/i, "linen"],
+  [/sofa|couch/i, "sofa"],
+  [/bed(room)?\b|king|queen|bunk/i, "bed"],
+  [/theat(er|re)|recliner|seating/i, "armchair"],
+  [/fireplace/i, "flame"],
+  [/tv|entertainment|television/i, "tv"],
+  [/refrigerator|fridge/i, "fridge"],
+  [/range|oven|stove|cooktop/i, "stove"],
+  [/microwave/i, "microwave"],
+  [/pantry|cabinet/i, "pantry"],
+  [/cookware|dishes|utensil/i, "dishes"],
+  [/kitchen/i, "kitchen"],
+  [/shower/i, "shower"],
+  [/bath|sink|toilet/i, "sink"],
+  [/slide/i, "slideout"],
+  [/air condition|furnace|heat|a\/c/i, "climate"],
+  [/awning/i, "awning"],
+  [/speaker|sound|stereo/i, "speaker"],
+  [/storage/i, "storage"],
 ];
 
 export default function AmenityIcon({ name, className = "" }: { name: string; className?: string }) {
-  const d = RULES.find(([re]) => re.test(name))?.[1] ?? P.check;
+  const key = RULES.find(([re]) => re.test(name))?.[1] ?? "check";
   return (
-    <span className={`inline-grid h-9 w-9 shrink-0 place-items-center rounded-full bg-sand text-clay ${className}`}>
-      <svg viewBox="0 0 24 24" className="h-[1.15rem] w-[1.15rem]" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d={d} />
+    <span className={`inline-grid h-14 w-14 shrink-0 place-items-center rounded-full bg-sand text-clay ${className}`}>
+      <svg
+        viewBox="0 0 24 24"
+        className="h-9 w-9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        {ICONS[key]}
       </svg>
     </span>
   );
