@@ -15,7 +15,7 @@ import JsonLd from "@/components/JsonLd";
 import { SITE_NAME } from "@/lib/api";
 import { OG, pageMeta, SITE_URL } from "@/lib/seo";
 import { rate } from "@/lib/format";
-import { getParks } from "@/lib/parks";
+import { getParks, STATE_ORDER } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
 
 /* Home page, design option E: option A's quiet luxury look (ivory, black,
@@ -251,6 +251,40 @@ const BUSINESS_LD = {
   priceRange: "$$$",
 };
 
+/** Every campground as a text link to its page: readable without the map, and
+ *  the way search engines find the park pages. */
+async function ParkLinks() {
+  const data = await getParks();
+  if (!data) return null;
+  return (
+    <div className="mt-12 border-t border-line pt-10">
+      <p className="lux-label text-clay">Where we deliver</p>
+      <p className="mt-3 max-w-2xl leading-relaxed text-muted">
+        Based in Canton, Georgia, north of Atlanta. We deliver the trailer and set it up at these campgrounds, priced
+        by the mile, or anywhere else within 400 miles that fits a 40-foot fifth wheel.
+      </p>
+      <div className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-5">
+        {STATE_ORDER.filter((s) => data.parks.some((p) => p.state === s)).map((state) => (
+          <div key={state}>
+            <p className="eyebrow text-clay">{state}</p>
+            <ul className="mt-2 space-y-1.5">
+              {data.parks
+                .filter((p) => p.state === state)
+                .map((p) => (
+                  <li key={p.slug} className="text-sm leading-snug">
+                    <Link href={`/destinations/${p.slug}`} className="tap text-ink underline-offset-2 hover:text-clay hover:underline">
+                      {p.name}
+                    </Link>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <>
@@ -372,6 +406,9 @@ export default function Home() {
               <Parks />
             </Suspense>
           </div>
+          <Suspense fallback={null}>
+            <ParkLinks />
+          </Suspense>
         </div>
       </section>
 

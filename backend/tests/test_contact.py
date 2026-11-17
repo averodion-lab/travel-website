@@ -6,7 +6,7 @@ from app.api import public
 
 @pytest.fixture(autouse=True)
 def _reset_rate_limit():
-    public._contact_hits.clear()
+    public.CONTACT_LIMIT.clear()
 
 
 def send(client, **overrides):

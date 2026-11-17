@@ -14,7 +14,7 @@ const SITE_URL = (
 ).replace(/\/$/, "");
 
 // Keep in sync with the pages that have pageMeta() (the indexable ones).
-const PAGES = ["/", "/fleet/montana", "/gallery", "/how-it-works", "/destinations", "/book-now", "/faq", "/policies", "/contact"];
+const PAGES = ["/", "/fleet/montana", "/gallery", "/how-it-works", "/destinations", "/book-now", "/faq", "/policies", "/contact", "/privacy", "/terms", "/accessibility"];
 // One page per campground: the slugs come from the built-in park list.
 const preview = await readFile(path.resolve(import.meta.dirname, "..", "lib", "preview.ts"), "utf8");
 const parks = preview.slice(preview.indexOf("export const PREVIEW_PARKS"));

@@ -11,6 +11,7 @@ from sqlalchemy import select
 
 from .. import crypto
 from ..errors import ApiError
+from ..ratelimit import RateLimit
 from ..extensions import db
 from ..models import Booking, BookingStatus, User
 from ..services import availability, bookings as booking_service, reports, storage
@@ -43,8 +44,13 @@ def admin_required(view):
     return wrapper
 
 
+# Password guesses per visitor address per 15 minutes.
+LOGIN_LIMIT = RateLimit(10, 900, "Too many sign-in attempts. Please wait 15 minutes and try again.")
+
+
 @bp.post("/login")
 def login():
+    LOGIN_LIMIT.check()
     data = request.get_json(silent=True) or {}
     email = str(data.get("email", "")).strip().lower()
     password = str(data.get("password", ""))

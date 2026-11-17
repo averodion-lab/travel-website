@@ -15,8 +15,9 @@ EMAIL = "jane@example.com"
 
 @pytest.fixture(autouse=True)
 def _reset_rate_limit():
-    public._contact_hits.clear()
-    public._manage_hits.clear()
+    public.CONTACT_LIMIT.clear()
+    public.MANAGE_LIMIT.clear()
+    public.BOOKING_LIMIT.clear()
 
 
 def book(client, start, end, **extra):

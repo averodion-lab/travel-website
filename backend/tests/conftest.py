@@ -133,3 +133,12 @@ def post_booking(client, start: date, end: date, **overrides):
     return client.post(
         "/api/bookings", data=booking_form(start, end, **overrides), content_type="multipart/form-data"
     )
+
+
+@pytest.fixture(autouse=True)
+def _fresh_rate_limits():
+    """Every test starts with no attempts counted against the test client."""
+    from app.ratelimit import ALL
+
+    for limiter in ALL:
+        limiter.clear()

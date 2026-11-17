@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 import re
-import time
-from collections import defaultdict, deque
 from datetime import date
 from decimal import Decimal, InvalidOperation
 
@@ -14,6 +12,7 @@ from .. import catalog
 from ..errors import ApiError
 from ..extensions import db
 from ..models import Booking, Camper
+from ..ratelimit import RateLimit
 from ..services import availability, bookings as booking_service, email as email_service, manage, payments
 from ..services.pricing import quote_for_camper
 
@@ -163,10 +162,16 @@ def _clean(form, field: str, label: str, max_len: int, required: bool = True) ->
     return value
 
 
+# Booking attempts per visitor address per hour: plenty for a real guest who
+# corrects a typo, too few for a script creating holds on every date.
+BOOKING_LIMIT = RateLimit(12, 3600, "Too many booking attempts from your connection. Please wait a little, or contact us.")
+
+
 @bp.post("/bookings")
 def create_booking():
     """multipart/form-data: camper, start, end, customer fields, license file.
     Any price sent by the client is ignored; we compute it here."""
+    BOOKING_LIMIT.check()
     form = request.form
     camper = _get_camper(_clean(form, "camper", "Camper", 80))
     start = _parse_date(form.get("start"), "pickup")
@@ -226,9 +231,7 @@ def get_booking(reference: str):
 
 # Contact form: at most 5 messages per visitor address per hour (in memory;
 # each server instance counts on its own, which is enough to stop floods).
-CONTACT_LIMIT = 5
-CONTACT_WINDOW = 3600
-_contact_hits: dict[str, deque] = defaultdict(deque)
+CONTACT_LIMIT = RateLimit(5, 3600, "You've sent several messages already. Please wait a little, or email us directly.")
 
 
 def _text(data: dict, key: str, label: str, max_len: int, required: bool = True) -> str:
@@ -257,14 +260,7 @@ def contact():
     dates = _text(data, "dates", "dates", 120, required=False)
     message = _text(data, "message", "message", 4000)
 
-    who = request.headers.get("X-Forwarded-For", request.remote_addr or "").split(",")[0].strip()
-    now = time.monotonic()
-    hits = _contact_hits[who]
-    while hits and now - hits[0] > CONTACT_WINDOW:
-        hits.popleft()
-    if len(hits) >= CONTACT_LIMIT:
-        raise ApiError("You've sent several messages already. Please wait a little, or email us directly.", 429)
-    hits.append(now)
+    CONTACT_LIMIT.check()
 
     email_service.send_contact_message(name, email, phone, dates, message)
     return jsonify({"ok": True})
@@ -272,19 +268,11 @@ def contact():
 
 # Managing a booking: at most 20 requests per visitor address per hour, so
 # booking numbers can't be guessed by brute force.
-MANAGE_LIMIT = 20
-_manage_hits: dict[str, deque] = defaultdict(deque)
+MANAGE_LIMIT = RateLimit(20, 3600, "Too many tries. Please wait a little, or contact us.")
 
 
 def _manage_guard() -> dict:
-    who = request.headers.get("X-Forwarded-For", request.remote_addr or "").split(",")[0].strip()
-    now = time.monotonic()
-    hits = _manage_hits[who]
-    while hits and now - hits[0] > CONTACT_WINDOW:
-        hits.popleft()
-    if len(hits) >= MANAGE_LIMIT:
-        raise ApiError("Too many tries. Please wait a little, or contact us.", 429)
-    hits.append(now)
+    MANAGE_LIMIT.check()
     return request.get_json(silent=True) or {}
 
 

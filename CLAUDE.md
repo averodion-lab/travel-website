@@ -119,6 +119,14 @@ Dates are half-open `[start_date, end_date)`: a return day can be the next custo
 - Site name comes from `NEXT_PUBLIC_SITE_NAME` (frontend) and `SITE_NAME` (backend emails). Currently the placeholder `YourName`.
 - No fake reviews, stats or testimonials. Add real ones when the owner supplies them.
 
+## Rate limits
+
+`backend/app/ratelimit.py` `RateLimit(limit, window, message)` per visitor address (first `X-Forwarded-For` entry): bookings 12/hour (`public.BOOKING_LIMIT`), contact 5/hour, manage 20/hour, admin login 10 per 15 min (`admin.LOGIN_LIMIT`). In memory, per process. `tests/conftest.py` resets them all before every test.
+
+## Legal pages
+
+`/privacy`, `/terms`, `/accessibility` (`components/LegalPage.tsx`), linked on the footer's bottom line and in the sitemap. They describe what the site really does (encrypted PII, license deleted after 30 days, Stripe handles cards, no tracking cookies) and carry `[Business legal name]` / `[Mailing address]` placeholders; a lawyer should review before launch.
+
 ## Search engines and security headers
 
 - `lib/seo.ts`: `SITE_URL` (from `NEXT_PUBLIC_SITE_URL`; the GitHub preview URL when a base path is set; else localhost), `INDEXABLE` (true only with `NEXT_PUBLIC_SITE_URL`: the preview is `noindex`), `pageMeta({title, description, path, image})` gives every page its title, description, canonical, Open Graph/Twitter tags. Titles stay under 60 characters with the site name, descriptions under 155; `npm run check:seo` verifies the built pages (`out/`) and fails otherwise. `/fleet` is canonical to `/fleet/montana` (same content).
@@ -175,7 +183,7 @@ References: [Driveza](https://driveza.framer.website), [Hemlock House](https://r
 
 ## Status
 
-MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 95 backend tests pass; frontend lints, type-checks and builds.
+MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 100 backend tests pass; frontend lints, type-checks and builds.
 
 **Live preview:** https://averodion-lab.github.io/travel-website/ (repo `averodion-lab/travel-website`, public, because GitHub Pages on a free account needs a public repo). Every push to `main` runs `.github/workflows/deploy.yml`, which runs `npm run build:preview` with `BASE_PATH=/travel-website` and publishes `frontend/out/` to GitHub Pages. No backend or database is online.
 

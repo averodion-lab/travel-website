@@ -51,6 +51,17 @@ export default function Footer() {
       <div className="border-t border-cream/10">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-6 px-5 py-3 text-xs text-cream/45 sm:justify-between sm:px-8 sm:py-4 lg:py-1">
           <p>© {SITE_NAME}. All rights reserved.</p>
+          <nav aria-label="Legal" className="flex flex-wrap justify-center gap-x-5">
+            {[
+              ["/privacy", "Privacy"],
+              ["/terms", "Terms"],
+              ["/accessibility", "Accessibility"],
+            ].map(([href, label]) => (
+              <Link key={href} href={href} className="inline-block py-3 hover:text-cream">
+                {label}
+              </Link>
+            ))}
+          </nav>
           <Link href="/admin" className="inline-block py-3 hover:text-cream">
             Owner sign in
           </Link>
