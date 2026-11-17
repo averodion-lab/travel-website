@@ -4,13 +4,16 @@ import BookCta from "@/components/BookCta";
 import Gallery from "@/components/Gallery";
 import Header from "@/components/Header";
 import PageHero from "@/components/PageHero";
+import { OG, pageMeta } from "@/lib/seo";
 import { getTrailer } from "@/lib/trailer";
 
-export const metadata: Metadata = {
-  title: "Gallery",
+export const metadata: Metadata = pageMeta({
+  title: "Photos: Inside the Luxury Fifth Wheel",
   description:
-    "Photos of the trailer inside and out: living room, kitchen, king bedroom and bathroom.",
-};
+    "See every room of the 2026 Keystone Montana: living room with fireplace, front kitchen, king bedroom, bathroom and the outside at the campsite.",
+  path: "/gallery",
+  image: OG.interior,
+});
 
 async function Photos() {
   const trailer = await getTrailer();

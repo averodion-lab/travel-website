@@ -1,5 +1,7 @@
 "use client";
 
+import { photoAlt } from "@/lib/photos";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
@@ -129,7 +131,7 @@ function Carousel({
           >
             <Image
               src={src}
-              alt={`${name}, photo ${i + 1}`}
+              alt={photoAlt(src, name, i)}
               fill
               draggable={false}
               sizes={
@@ -227,7 +229,7 @@ export default function Gallery({
             >
               <Image
                 src={src}
-                alt={`${name}, photo ${i + 1}`}
+                alt={photoAlt(src, name, i)}
                 fill
                 sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -247,7 +249,7 @@ export default function Gallery({
           >
             <Image
               src={hero}
-              alt={name}
+              alt={photoAlt(hero, name, 0)}
               fill
               priority
               sizes="(min-width:1024px) 50vw, 100vw"
@@ -264,7 +266,7 @@ export default function Gallery({
               >
                 <Image
                   src={src}
-                  alt={`${name}, photo ${i + 2}`}
+                  alt={photoAlt(src, name, i + 1)}
                   fill
                   sizes="(min-width:1024px) 25vw, 25vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
@@ -304,7 +306,7 @@ export default function Gallery({
           <div className="relative flex-1" onClick={() => setOpen(null)}>
             <Image
               src={photos[open]}
-              alt={`${name}, photo ${open + 1}`}
+              alt={photoAlt(photos[open], name, open)}
               fill
               sizes="100vw"
               className="object-contain"

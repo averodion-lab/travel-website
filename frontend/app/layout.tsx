@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import Footer from "@/components/Footer";
 import { SITE_NAME } from "@/lib/api";
+import { INDEXABLE, OG, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -21,13 +22,20 @@ export const viewport: Viewport = {
   themeColor: "#f7f3ec",
 };
 
+// Search and link-preview defaults; each page sets its own title,
+// description, canonical link and preview image with lib/seo.ts pageMeta().
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} | Luxury Fifth-Wheel Rental in the Southeast`,
+    default: `Luxury RV Rental, Delivered to Your Campsite | ${SITE_NAME}`,
     template: `%s | ${SITE_NAME}`,
   },
   description:
-    "Rent a 40-foot luxury fifth wheel: tow it yourself, rent our truck, or have it delivered and set up for your trip to the Smoky Mountains, the Blue Ridge and the lakes of the Southeast. Book online in minutes.",
+    "Rent a luxury 40 ft fifth wheel from Canton, GA. We deliver and set it up at campgrounds across Georgia, the Smokies and the Southeast. Book online.",
+  applicationName: SITE_NAME,
+  openGraph: { siteName: SITE_NAME, type: "website", locale: "en_US", images: [OG.home] },
+  twitter: { card: "summary_large_image" },
+  robots: INDEXABLE ? { index: true, follow: true } : { index: false, follow: true },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -1,0 +1,23 @@
+# HTTP security headers for the static site. Cloudflare Pages (and Netlify)
+# read this file; GitHub Pages ignores it. The API server sets its own in
+# backend/app/security.py.
+#
+# The content security policy allows only what the site uses: its own files
+# and inline scripts/styles (Next.js needs them), map tiles from
+# OpenStreetMap, place search (Photon) and road distances (OSRM), and the
+# booking API over HTTPS. Add the API's domain to connect-src at launch if
+# you want it tighter than "https:".
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org; font-src 'self'; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; object-src 'none'; upgrade-insecure-requests
+
+# Hashed build files never change: cache them for a year.
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+/_img/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -6,6 +6,7 @@ from flask_cors import CORS
 from .config import Config, validate
 from .errors import register_error_handlers
 from .extensions import db, migrate
+from .security import register_security_headers
 
 
 def create_app(overrides: dict | None = None) -> Flask:
@@ -30,5 +31,6 @@ def create_app(overrides: dict | None = None) -> Flask:
     app.register_blueprint(webhooks.bp)
     app.register_blueprint(admin.bp)
     register_error_handlers(app)
+    register_security_headers(app)
     register_cli(app)
     return app

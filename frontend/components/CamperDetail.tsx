@@ -3,10 +3,12 @@ import Image from "next/image";
 import AmenityIcon from "@/components/AmenityIcon";
 import BookingWidget from "@/components/BookingWidget";
 import Gallery from "@/components/Gallery";
+import JsonLd from "@/components/JsonLd";
 import MobileBookBar from "@/components/MobileBookBar";
 import type { Camper } from "@/lib/api";
 import { rate } from "@/lib/format";
 import { getParks } from "@/lib/parks";
+import { SITE_URL } from "@/lib/seo";
 
 function Spec({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
@@ -41,9 +43,33 @@ export default function CamperDetail({ camper }: { camper: Camper }) {
   // A gallery file named "floorplan" gets its own section instead of a spot in the photo grid.
   const floorplan = all.find((src) => src.includes("floorplan"));
   const photos = all.filter((src) => src !== floorplan);
+  // The trailer as a product with its nightly price, for search results.
+  const productLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: camper.name,
+    description: camper.description ?? camper.tagline ?? undefined,
+    image: photos.slice(0, 6).map((src) => `${SITE_URL}${src}`),
+    brand: { "@type": "Brand", name: "Keystone" },
+    offers: {
+      "@type": "Offer",
+      url: `${SITE_URL}/fleet/${camper.slug}`,
+      priceCurrency: "USD",
+      price: camper.daily_rate,
+      priceSpecification: {
+        "@type": "UnitPriceSpecification",
+        price: camper.daily_rate,
+        priceCurrency: "USD",
+        unitCode: "DAY",
+        unitText: "per night",
+      },
+      availability: "https://schema.org/InStock",
+    },
+  };
 
   return (
     <>
+      <JsonLd data={productLd} />
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="eyebrow text-clay">{camper.class_type}</p>

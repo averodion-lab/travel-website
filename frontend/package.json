@@ -4,15 +4,16 @@
   "private": true,
   "scripts": {
     "images": "node scripts/optimize-images.mjs",
-    "predev": "node scripts/optimize-images.mjs",
+    "predev": "node scripts/optimize-images.mjs && node scripts/seo-files.mjs",
     "dev": "next dev -p 3210",
-    "prebuild": "node scripts/optimize-images.mjs",
+    "prebuild": "node scripts/optimize-images.mjs && node scripts/seo-files.mjs",
     "build": "next build",
-    "prebuild:preview": "node scripts/optimize-images.mjs",
+    "prebuild:preview": "node scripts/optimize-images.mjs && node scripts/seo-files.mjs",
     "build:preview": "NEXT_PUBLIC_BOOKING_MODE=preview NEXT_OUTPUT=export next build",
     "deploy": "bash scripts/deploy.sh",
     "start": "next start -p 3210",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:seo": "node scripts/check-seo.mjs"
   },
   "dependencies": {
     "date-fns": "^4.4.0",

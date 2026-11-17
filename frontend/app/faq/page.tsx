@@ -3,18 +3,23 @@ import type { Metadata } from "next";
 import BookCta from "@/components/BookCta";
 import CardLogos from "@/components/CardLogos";
 import Header from "@/components/Header";
+import JsonLd from "@/components/JsonLd";
 import PageHero from "@/components/PageHero";
 import { money, rate } from "@/lib/format";
 import Link from "next/link";
+import { OG, pageMeta } from "@/lib/seo";
 import { getTrailer } from "@/lib/trailer";
 
-export const metadata: Metadata = {
-  title: "FAQ",
+export const metadata: Metadata = pageMeta({
+  title: "RV Rental FAQ: Booking, Delivery and Towing",
   description:
-    "Answers about booking, payment, delivery, campsites and what's included.",
-};
+    "How booking and the deposit work, what delivery costs, which campsites fit a 40 ft fifth wheel, pets, cancellations and what's included.",
+  path: "/faq",
+  image: OG.mountains,
+});
 
-type Group = { title: string; items: { q: string; a: React.ReactNode }[] };
+/** `plain` is the answer as text, for search engines, when `a` is JSX. */
+type Group = { title: string; items: { q: string; a: React.ReactNode; plain?: string }[] };
 
 async function Questions() {
   const t = await getTrailer();
@@ -38,6 +43,8 @@ async function Questions() {
         },
         {
           q: "Which cards do you accept?",
+          plain:
+            "Visa, Mastercard and American Express. Payment runs through Stripe's secure checkout, so we never see or store your card number.",
           a: (
             <>
               Visa, Mastercard and American Express. Payment runs through
@@ -55,6 +62,8 @@ async function Questions() {
         },
         {
           q: "Can I cancel or change my booking?",
+          plain:
+            "Yes, online on the Manage booking page. Changing your dates is free up to 24 hours before pickup. Cancellation is free within 24 hours of payment; after that, the deposit is refunded in full up to 14 days before pickup, 50% from 13 to 7 days, and not in the last 7 days. No fees either way.",
           a: (
             <>
               Yes, online on the Manage booking page (link in your confirmation
@@ -86,6 +95,8 @@ async function Questions() {
         },
         {
           q: "Are there trailer rules?",
+          plain:
+            "Just a few: return it clean (dishes done, trash out, fridge emptied), no smoking or vaping inside, and towing experience is required if you tow it yourself.",
           a: (
             <>
               Just a few: return it clean (dishes done, trash out, fridge
@@ -138,8 +149,21 @@ async function Questions() {
     },
   ];
 
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: groups.flatMap((g) =>
+      g.items.map((i) => ({
+        "@type": "Question",
+        name: i.q,
+        acceptedAnswer: { "@type": "Answer", text: i.plain ?? (typeof i.a === "string" ? i.a : "") },
+      })),
+    ),
+  };
+
   return (
     <div className="space-y-10 sm:space-y-12">
+      <JsonLd data={faqLd} />
       {groups.map((group, g) => (
         <section
           key={group.title}

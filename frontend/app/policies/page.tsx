@@ -5,13 +5,16 @@ import BookCta from "@/components/BookCta";
 import Header from "@/components/Header";
 import PageHero from "@/components/PageHero";
 import { money } from "@/lib/format";
+import { OG, pageMeta } from "@/lib/seo";
 import { getTrailer } from "@/lib/trailer";
 
-export const metadata: Metadata = {
-  title: "Policies",
+export const metadata: Metadata = pageMeta({
+  title: "Cancellation Policy and Trailer Rules",
   description:
-    "Cancellation and changes, the security deposit and the trailer rules, in plain words.",
-};
+    "Free cancellation within 24 hours of payment, then a fair refund scale. Free date changes. When a security deposit applies, and the trailer rules.",
+  path: "/policies",
+  image: OG.campfire,
+});
 
 /** The cancellation refunds; keep in sync with catalog.CANCEL_REFUNDS. */
 const REFUNDS = [

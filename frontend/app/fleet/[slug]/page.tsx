@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 import CamperDetail from "@/components/CamperDetail";
 import Header from "@/components/Header";
 import { api, ApiError, type Camper } from "@/lib/api";
+import { rate } from "@/lib/format";
 import { PREVIEW_TRAILER } from "@/lib/preview";
+import { OG, pageMeta } from "@/lib/seo";
 
 async function loadCamper(slug: string): Promise<Camper | null> {
   try {
@@ -29,8 +31,13 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/fleet/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const camper = await loadCamper(slug).catch(() => null);
-  if (!camper) return { title: "Camper" };
-  return { title: camper.name, description: camper.tagline ?? camper.description ?? undefined };
+  if (!camper) return { title: "Camper", robots: { index: false } };
+  return pageMeta({
+    title: `${camper.name} Rental: 2026 Keystone Montana 3795FK`,
+    description: `A 40 ft luxury fifth wheel that sleeps ${camper.sleeps}: king bedroom, theater seating, fireplace and full kitchen. ${rate(camper.daily_rate)} a night. Check dates and book online.`,
+    path: `/fleet/${camper.slug}`,
+    image: OG.trailer,
+  });
 }
 
 async function Detail({ params }: { params: Promise<{ slug: string }> }) {

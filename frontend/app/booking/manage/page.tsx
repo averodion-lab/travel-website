@@ -6,7 +6,7 @@ import ManageBooking from "./ManageBooking";
 export const metadata: Metadata = {
   title: "Manage your booking",
   description: "Change the dates of your booking or cancel it online.",
-  robots: { index: false },
+  robots: { index: false, follow: false },
 };
 
 export default function ManageBookingPage() {

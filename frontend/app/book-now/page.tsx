@@ -3,13 +3,16 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import MapAndBooking from "@/components/MapAndBooking";
 import { getParks } from "@/lib/parks";
+import { OG, pageMeta } from "@/lib/seo";
 import { getTrailer } from "@/lib/trailer";
 
-export const metadata: Metadata = {
-  title: "Book Now",
+export const metadata: Metadata = pageMeta({
+  title: "Book the Luxury Fifth Wheel Online",
   description:
-    "Pick your campground on the map and your dates, add a 4-wheeler, a jet ski or e-bikes, and book the trailer.",
-};
+    "Choose a campground on the map, pick your dates and add extras. See the exact price, pay a deposit by card and get your confirmation by email.",
+  path: "/book-now",
+  image: OG.campfire,
+});
 
 async function Planner() {
   const [trailer, data] = await Promise.all([getTrailer(), getParks()]);

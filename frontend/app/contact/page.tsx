@@ -3,12 +3,16 @@ import Link from "next/link";
 import BookCta from "@/components/BookCta";
 import Header from "@/components/Header";
 import PageHero from "@/components/PageHero";
+import { OG, pageMeta } from "@/lib/seo";
 import ContactForm from "./ContactForm";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description: "Questions about a stay, a campground or your dates? Send us a message and we'll reply within a day.",
-};
+export const metadata: Metadata = pageMeta({
+  title: "Contact Us About Your Stay",
+  description:
+    "Questions about a campground, your dates, extras or a longer stay? Send us a message and we'll reply within a day.",
+  path: "/contact",
+  image: OG.lake,
+});
 
 const TOPICS = [
   ["A campground that isn't listed", "Tell us where; we'll check the site fits a 40-foot trailer and work out delivery."],

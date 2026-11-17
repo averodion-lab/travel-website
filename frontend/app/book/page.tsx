@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import BookingForm from "./BookingForm";
 
-export const metadata: Metadata = { title: "Complete your booking", robots: { index: false } };
+export const metadata: Metadata = { title: "Complete your booking", robots: { index: false, follow: false } };
 
 export default function BookPage() {
   return (

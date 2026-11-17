@@ -104,6 +104,14 @@ cd backend && .venv/bin/python -m pytest -q
 | `flask purge-licenses` | Delete license data 30 days after a rental is completed (run daily) |
 | `flask expire-pending` | Release dates held by unpaid bookings |
 | `flask demo-data` | Add made-up bookings (references `DEMO-…`) to preview the owner dashboard; `--clear` removes them. Refused in production |
+| `npm run check:seo` (frontend, after `npm run build:preview`) | Checks every built page: one H1, title under 60 characters, description under 155, canonical link, preview image, alt text |
+| `node scripts/og-images.mjs` (frontend) | Remakes the link-preview images in `public/images/og/` from the site photos |
+
+### Search engines
+
+Titles, descriptions, canonical links and link previews come from `lib/seo.ts` (`pageMeta()` on each page). `robots.txt` and `sitemap.xml` are generated before every build by `scripts/seo-files.mjs`. The site is **not indexed** until `NEXT_PUBLIC_SITE_URL` is set to the real domain, so the GitHub preview never competes with it. After launch, add the domain in [Google Search Console](https://search.google.com/search-console/about) and submit `/sitemap.xml`.
+
+Security headers for the static site are in `frontend/public/_headers` (read by Cloudflare Pages; GitHub Pages ignores it); the API sets its own in `backend/app/security.py`.
 
 ## Sample data
 

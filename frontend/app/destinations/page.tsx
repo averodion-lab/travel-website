@@ -10,12 +10,15 @@ import ParksMap from "@/components/ParksMap";
 import Reveal from "@/components/Reveal";
 import { rate } from "@/lib/format";
 import { getParks } from "@/lib/parks";
+import { OG, pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Destinations",
+export const metadata: Metadata = pageMeta({
+  title: "Lake and Mountain Campgrounds We Deliver To",
   description:
-    "Mountain and lakeside RV parks in Georgia, the Carolinas, Tennessee and Alabama: tow the trailer there or we deliver it, with 4-wheelers and jet skis as extras.",
-};
+    "18 RV campgrounds in Georgia, Tennessee, the Carolinas and Alabama, from the Smokies to Lake Lanier. We deliver the trailer; add a jet ski or e-bikes.",
+  path: "/destinations",
+  image: OG.lake,
+});
 
 const SITE_NEEDS = [
   ["Site length", "A pull-through or back-in site of 45 feet or more."],

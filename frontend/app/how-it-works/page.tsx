@@ -7,13 +7,16 @@ import CardLogos, { Lock } from "@/components/CardLogos";
 import Header from "@/components/Header";
 import PageHero from "@/components/PageHero";
 import { money } from "@/lib/format";
+import { OG, pageMeta } from "@/lib/seo";
 import { getTrailer } from "@/lib/trailer";
 
-export const metadata: Metadata = {
-  title: "How It Works",
+export const metadata: Metadata = pageMeta({
+  title: "How RV Delivery and Setup Works",
   description:
-    "From picking your dates to settling in at the campsite: how booking, payment and delivery work.",
-};
+    "Pick your dates, pay a deposit, and we deliver the trailer to your campsite, level it and hook it up. Or tow it yourself or rent our truck.",
+  path: "/how-it-works",
+  image: OG.trailer,
+});
 
 const STEPS = [
   {

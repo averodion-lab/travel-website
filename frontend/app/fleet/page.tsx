@@ -4,10 +4,14 @@ import CamperCard from "@/components/CamperCard";
 import CamperDetail from "@/components/CamperDetail";
 import Header from "@/components/Header";
 import { api, type Camper } from "@/lib/api";
+import { SITE_URL, TRAILER_SLUG } from "@/lib/seo";
 
+// Shows the same trailer as /fleet/<slug>, so that page is the one to index.
 export const metadata: Metadata = {
   title: "The Trailer",
   description: "See the trailer, check the calendar and book your dates.",
+  alternates: { canonical: `${SITE_URL}/fleet/${TRAILER_SLUG}` },
+  robots: { index: false, follow: true },
 };
 
 /** With a single trailer this page shows it directly (so links like /fleet#book

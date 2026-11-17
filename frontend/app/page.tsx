@@ -1,4 +1,5 @@
 import { Suspense, type ReactNode } from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import BookCta from "@/components/BookCta";
@@ -10,6 +11,9 @@ import Moments from "@/components/lux/Moments";
 import RollingNumber from "@/components/lux/RollingNumber";
 import { LitStatement } from "@/components/lux/ScrollEffects";
 import StepInside from "@/components/lux/StepInside";
+import JsonLd from "@/components/JsonLd";
+import { SITE_NAME } from "@/lib/api";
+import { OG, pageMeta, SITE_URL } from "@/lib/seo";
 import { rate } from "@/lib/format";
 import { getParks } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
@@ -224,9 +228,33 @@ async function Parks() {
   return <MapAndBooking parks={data.parks} addons={data.addons} camper={trailer} transport={data.transport} />;
 }
 
+export const metadata: Metadata = pageMeta({
+  title: "Luxury RV Rental, Delivered to Your Campsite",
+  description:
+    "Rent a luxury 40 ft fifth wheel from Canton, GA. We deliver and set it up at campgrounds across Georgia, the Smokies and the Southeast. Book online.",
+  path: "/",
+  image: OG.home,
+});
+
+/** The business, for Google's knowledge panel and local results. Phone,
+ *  email and the street address go in here once the owner supplies them. */
+const BUSINESS_LD = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: SITE_NAME,
+  url: `${SITE_URL}/`,
+  image: `${SITE_URL}${OG.home}`,
+  description:
+    "Luxury fifth-wheel RV rental delivered and set up at campgrounds across Georgia, Tennessee, the Carolinas and Alabama.",
+  address: { "@type": "PostalAddress", addressLocality: "Canton", addressRegion: "GA", addressCountry: "US" },
+  areaServed: ["Georgia", "Tennessee", "North Carolina", "South Carolina", "Alabama"],
+  priceRange: "$$$",
+};
+
 export default function Home() {
   return (
     <>
+      <JsonLd data={BUSINESS_LD} />
       <Header overlay />
       <Hero />
 

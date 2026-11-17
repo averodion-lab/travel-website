@@ -119,6 +119,15 @@ Dates are half-open `[start_date, end_date)`: a return day can be the next custo
 - Site name comes from `NEXT_PUBLIC_SITE_NAME` (frontend) and `SITE_NAME` (backend emails). Currently the placeholder `YourName`.
 - No fake reviews, stats or testimonials. Add real ones when the owner supplies them.
 
+## Search engines and security headers
+
+- `lib/seo.ts`: `SITE_URL` (from `NEXT_PUBLIC_SITE_URL`; the GitHub preview URL when a base path is set; else localhost), `INDEXABLE` (true only with `NEXT_PUBLIC_SITE_URL`: the preview is `noindex`), `pageMeta({title, description, path, image})` gives every page its title, description, canonical, Open Graph/Twitter tags. Titles stay under 60 characters with the site name, descriptions under 155; `npm run check:seo` verifies the built pages (`out/`) and fails otherwise. `/fleet` is canonical to `/fleet/montana` (same content).
+- `scripts/seo-files.mjs` writes `public/robots.txt` and `public/sitemap.xml` (git-ignored) before dev and both builds; `app/robots.ts`/`sitemap.ts` can't be used (static export needs `force-static`, which `cacheComponents` forbids). Keep its page list in sync with the pages that call `pageMeta()`.
+- Open Graph images: `public/images/og/*.jpg` (1200×630, committed), made by `scripts/og-images.mjs`. Favicon: `app/icon.svg`.
+- Structured data (`components/JsonLd.tsx`): LocalBusiness on the home page (no phone/email/street yet), Product with the nightly price on the trailer page, FAQPage on `/faq` (JSX answers need a `plain` string).
+- Photo alt text: `lib/photos.ts` maps the Montana's file names to descriptions, used by `Gallery`.
+- Security headers: `public/_headers` for Cloudflare Pages (CSP allows self + inline, OSM tiles, `connect-src https:`), `backend/app/security.py` on every API response (HSTS only when `APP_ENV=production`).
+
 ## Data model (MVP)
 
 - `campers`: id, name, class_type, sleeps, towing_weight_lbs, daily_rate, image_url, is_active (+ specs for detail page: dry weight, hitch, length, hookup compatibility, amenities)
