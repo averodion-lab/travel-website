@@ -444,6 +444,13 @@ body {
   border: 2px solid #fff;
   box-shadow: 0 3px 8px -2px rgba(0, 0, 0, 0.45);
 }
+.pm-more {
+  display: block;
+  margin-top: 0.4rem;
+  font-size: 0.74rem;
+  color: var(--color-bark);
+  text-decoration: underline;
+}
 .pm-book {
   display: inline-block;
   margin-top: 0.75rem;
@@ -531,6 +538,12 @@ body {
    Luxury motion (home page and closing sections). Every effect is off for
    visitors who ask for reduced motion.
    ------------------------------------------------------------------ */
+/* Small brass labels on the light backgrounds use the darker brass, which
+   reads at 5:1 against cream (accessibility); the lighter brass is 3.5:1. */
+.lux-label.text-clay,
+.eyebrow.text-clay {
+  color: var(--color-clay-dark);
+}
 .lux-label {
   font-size: 0.7rem;
   font-weight: 500;

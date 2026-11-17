@@ -57,7 +57,7 @@ function popupHtml(p: Park) {
       const icon = ADDON_ICONS[a.code];
       const img = icon
         ? // Styled inline: popups are plain HTML strings, so they can't use the badge component.
-          `<span style="${BADGE}"><img src="${BASE}${icon.src.replace("/images/", "/_img/640/images/").replace(/\.png$/, ".webp")}" alt="" style="width:92%;height:92%;object-fit:contain;display:block"></span>`
+          `<span style="${BADGE}"><img src="${BASE}${icon.src.replace("/images/", "/_img/320/images/").replace(/\.png$/, ".webp")}" alt="" style="width:92%;height:92%;object-fit:contain;display:block"></span>`
         : "";
       return `<span class="pm-chip">${img}${esc(a.name)} · ${esc(rate(a.daily_rate))}/day</span>`;
     })
@@ -70,6 +70,7 @@ function popupHtml(p: Park) {
       ${extras ? `<div class="pm-chips">${extras}</div>` : ""}
       ${p.ramp ? rampHtml(p.ramp, p.slug) : ""}
       <a class="pm-book" data-pick="${esc(p.slug)}" href="${BASE}/fleet?park=${encodeURIComponent(p.slug)}#book">Book the trailer here →</a>
+      <a class="pm-more" href="${BASE}/destinations/${encodeURIComponent(p.slug)}">Park details, delivery price and extras →</a>
     </div>`;
 }
 

@@ -80,7 +80,7 @@ function Hero() {
     <section className="relative flex h-[100svh] min-h-[38rem] items-end overflow-hidden text-cream">
       {HERO_SLIDES.map((s, i) => (
         <div key={s.src} className="lux-slide absolute inset-0" style={{ animationDelay: `${i * 7}s` }}>
-          <Image src={s.src} alt={i === 0 ? s.alt : ""} fill priority={i === 0} sizes="100vw" className="object-cover" />
+          <Image src={s.src} alt={i === 0 ? s.alt : ""} fill priority={i === 0} fetchPriority={i === 0 ? "high" : undefined} sizes="100vw" className="object-cover" />
         </div>
       ))}
       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-black/40" />

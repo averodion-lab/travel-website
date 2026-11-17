@@ -2,7 +2,7 @@
 // build and `npm run dev`, so both the Node build and the static export serve
 // them. The site address follows lib/seo.ts: NEXT_PUBLIC_SITE_URL for the real
 // domain, the GitHub preview when a base path is set, localhost otherwise.
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 const PUBLIC = path.resolve(import.meta.dirname, "..", "public");
@@ -15,6 +15,10 @@ const SITE_URL = (
 
 // Keep in sync with the pages that have pageMeta() (the indexable ones).
 const PAGES = ["/", "/fleet/montana", "/gallery", "/how-it-works", "/destinations", "/book-now", "/faq", "/policies", "/contact"];
+// One page per campground: the slugs come from the built-in park list.
+const preview = await readFile(path.resolve(import.meta.dirname, "..", "lib", "preview.ts"), "utf8");
+const parks = preview.slice(preview.indexOf("export const PREVIEW_PARKS"));
+for (const m of parks.matchAll(/"slug": "([a-z0-9-]+)"/g)) PAGES.push(`/destinations/${m[1]}`);
 
 const sitemap =
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +

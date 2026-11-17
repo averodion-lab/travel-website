@@ -28,9 +28,12 @@ export async function generateStaticParams() {
   return [{ slug: PREVIEW_TRAILER.slug }];
 }
 
+// Title and description come from the built-in copy of the trailer (kept in
+// sync with seed_data.py) rather than the API: metadata that needs no request
+// is written into <head> at build time, where every crawler reads it.
 export async function generateMetadata({ params }: PageProps<"/fleet/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const camper = await loadCamper(slug).catch(() => null);
+  const camper = slug === PREVIEW_TRAILER.slug ? PREVIEW_TRAILER : null;
   if (!camper) return { title: "Camper", robots: { index: false } };
   return pageMeta({
     title: `${camper.name} Rental: 2026 Keystone Montana 3795FK`,

@@ -126,6 +126,9 @@ Dates are half-open `[start_date, end_date)`: a return day can be the next custo
 - Open Graph images: `public/images/og/*.jpg` (1200×630, committed), made by `scripts/og-images.mjs`. Favicon: `app/icon.svg`.
 - Structured data (`components/JsonLd.tsx`): LocalBusiness on the home page (no phone/email/street yet), Product with the nightly price on the trailer page, FAQPage on `/faq` (JSX answers need a `plain` string).
 - Photo alt text: `lib/photos.ts` maps the Montana's file names to descriptions, used by `Gallery`.
+- **Park pages** `/destinations/[slug]` (one per campground, `generateStaticParams` from the API or `PREVIEW_PARKS`): description, road miles and delivery price, the three ways to get the trailer there, extras offered, jet ski launch, campsite needs, breadcrumbs (JSON-LD too) and a booking card linking to `/book-now?park=`. `/destinations` lists all parks by state with links; map pop-ups link to them. Hero/eyebrow come from `PREVIEW_PARKS` (static), live details from the API inside Suspense. Anything reading `params` must be inside the Suspense boundary (`cacheComponents`).
+- Metadata for the trailer and park pages is built from the built-in copies (`PREVIEW_TRAILER`, `PREVIEW_PARKS`) on purpose: metadata that needs a request is streamed into `<body>` by Next, which Lighthouse and some crawlers miss; built-in data puts it in `<head>`.
+- Lighthouse (mobile, Nov 2026): home 91/97/96, trailer 87/94/96, park pages 93–98. `fetchPriority="high"` on each page's biggest image; a 320 px image bin for small tiles; small brass labels use `clay-dark` on light backgrounds (5:1 contrast). SEO score shows 69 locally only because the preview is `noindex`.
 - Security headers: `public/_headers` for Cloudflare Pages (CSP allows self + inline, OSM tiles, `connect-src https:`), `backend/app/security.py` on every API response (HSTS only when `APP_ENV=production`).
 
 ## Data model (MVP)

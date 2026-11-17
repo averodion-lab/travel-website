@@ -24,6 +24,7 @@ export default function PageHero({
           alt=""
           fill
           priority
+          fetchPriority="high"
           sizes="100vw"
           className="hero-zoom object-cover"
         />

@@ -252,6 +252,7 @@ export default function Gallery({
               alt={photoAlt(hero, name, 0)}
               fill
               priority
+              fetchPriority="high"
               sizes="(min-width:1024px) 50vw, 100vw"
               className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
             />

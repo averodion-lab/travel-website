@@ -9,7 +9,7 @@ import PageHero from "@/components/PageHero";
 import ParksMap from "@/components/ParksMap";
 import Reveal from "@/components/Reveal";
 import { rate } from "@/lib/format";
-import { getParks } from "@/lib/parks";
+import { getParks, SITE_NEEDS, STATE_ORDER, terrainLabel } from "@/lib/parks";
 import { OG, pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
@@ -19,16 +19,6 @@ export const metadata: Metadata = pageMeta({
   path: "/destinations",
   image: OG.lake,
 });
-
-const SITE_NEEDS = [
-  ["Site length", "A pull-through or back-in site of 45 feet or more."],
-  ["Power", "50 amp electric service."],
-  ["Hookups", "Water and sewer at the site for the full-comfort experience."],
-  [
-    "Access",
-    "Paved or well-graded roads without low bridges. The trailer stands 13 ft 4 in tall.",
-  ],
-];
 
 async function Parks() {
   const data = await getParks();
@@ -42,7 +32,30 @@ async function Parks() {
   return (
     <>
       <ParksMap parks={data.parks} compact />
-      {/* In place of a long park list: what to add, depending on where you stay. */}
+      {/* Every park by state, each linking to its own page (readable without the map). */}
+      <div className="mt-10">
+        <h3 className="font-display text-3xl">All eighteen, by state</h3>
+        <div className="mt-5 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
+          {STATE_ORDER.filter((s) => data.parks.some((p) => p.state === s)).map((state) => (
+            <div key={state}>
+              <p className="eyebrow text-clay">{state}</p>
+              <ul className="mt-2 space-y-1.5">
+                {data.parks
+                  .filter((p) => p.state === state)
+                  .map((p) => (
+                    <li key={p.slug} className="text-sm leading-snug">
+                      <Link href={`/destinations/${p.slug}`} className="tap font-medium text-ink underline-offset-2 hover:text-clay hover:underline">
+                        {p.name}
+                      </Link>
+                      <span className="text-muted"> · {p.city} · {terrainLabel(p)}</span>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* What to add, depending on where you stay. */}
       <div className="mt-8 grid gap-3 sm:grid-cols-2">
         <p className="flex items-center gap-4 rounded-2xl bg-white p-5 leading-relaxed text-bark">
           <AddonIcon code="atv" size={52} />

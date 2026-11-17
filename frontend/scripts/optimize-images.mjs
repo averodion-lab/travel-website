@@ -7,7 +7,7 @@ import path from "node:path";
 import sharp from "sharp";
 
 const ROOT = path.resolve(import.meta.dirname, "..", "public");
-const WIDTHS = [640, 1080, 1920]; // keep in sync with lib/image-loader.ts
+const WIDTHS = [320, 640, 1080, 1920]; // keep in sync with lib/image-loader.ts
 const SOURCE = path.join(ROOT, "images");
 
 async function* walk(dir) {

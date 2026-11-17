@@ -1,6 +1,6 @@
 /** <Image> loader for the self-hosted photos: picks the pre-made WebP copy
  *  (from scripts/optimize-images.mjs) that is at least as wide as needed. */
-const WIDTHS = [640, 1080, 1920]; // keep in sync with scripts/optimize-images.mjs
+const WIDTHS = [320, 640, 1080, 1920]; // keep in sync with scripts/optimize-images.mjs
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || process.env.BASE_PATH || "";
 

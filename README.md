@@ -111,6 +111,8 @@ cd backend && .venv/bin/python -m pytest -q
 
 Titles, descriptions, canonical links and link previews come from `lib/seo.ts` (`pageMeta()` on each page). `robots.txt` and `sitemap.xml` are generated before every build by `scripts/seo-files.mjs`. The site is **not indexed** until `NEXT_PUBLIC_SITE_URL` is set to the real domain, so the GitHub preview never competes with it. After launch, add the domain in [Google Search Console](https://search.google.com/search-console/about) and submit `/sitemap.xml`.
 
+Each campground has its own page (`/destinations/<park>`) with the delivery price and extras, so it can be found by name.
+
 Security headers for the static site are in `frontend/public/_headers` (read by Cloudflare Pages; GitHub Pages ignores it); the API sets its own in `backend/app/security.py`.
 
 ## Sample data
