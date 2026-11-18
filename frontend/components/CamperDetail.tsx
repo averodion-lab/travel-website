@@ -48,7 +48,7 @@ export default function CamperDetail({ camper }: { camper: Camper }) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: camper.name,
-    description: camper.description ?? camper.tagline ?? undefined,
+    description: camper.description?.replace(/\n- /g, " ") ?? camper.tagline ?? undefined,
     image: photos.slice(0, 6).map((src) => `${SITE_URL}${src}`),
     brand: { "@type": "Brand", name: "Keystone" },
     offers: {
@@ -141,8 +141,18 @@ export default function CamperDetail({ camper }: { camper: Camper }) {
             <section>
               <h2 className="font-display text-4xl">About this trailer</h2>
               <p className="mt-5 leading-relaxed text-bark">
-                {camper.description}
+                {camper.description.split("\n").filter((l) => !l.startsWith("- ")).join(" ")}
               </p>
+              {camper.description.includes("\n- ") && (
+                <ul className="mt-3 list-disc space-y-1.5 pl-6 leading-relaxed text-bark marker:text-clay">
+                  {camper.description
+                    .split("\n")
+                    .filter((l) => l.startsWith("- "))
+                    .map((l) => (
+                      <li key={l}>{l.slice(2)}</li>
+                    ))}
+                </ul>
+              )}
             </section>
           )}
 

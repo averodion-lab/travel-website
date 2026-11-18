@@ -302,7 +302,7 @@ _NEEDS = {"mountains": "mountain parks", "lake": "lake parks"}
 
 # A destination the guest types in instead of choosing one of our parks.
 CUSTOM_SLUG = "custom"
-MAX_DELIVERY_MILES = 400
+MAX_DELIVERY_MILES = 250
 # Rough box around the Southeast; anything outside is refused before measuring.
 REGION = {"lat": (24.0, 40.0), "lng": (-92.0, -75.0)}
 

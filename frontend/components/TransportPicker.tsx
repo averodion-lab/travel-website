@@ -44,7 +44,7 @@ export default function TransportPicker({
     {
       code: "self",
       title: "Tow it with my truck",
-      detail: "Needs a one-ton truck with a fifth-wheel hitch.",
+      detail: "Needs a fifth-wheel hitch and a truck weighing at least 6,000 lb.",
       price: "Included",
     },
     {

@@ -123,7 +123,7 @@ async function Details({ slug }: { slug: string }) {
                   "We deliver and set it up",
                   `${delivery} one way (${rate(data.transport.delivery.per_mile)} a mile × ${park.delivery_miles} miles). We bring the trailer to your campsite, level it and hook everything up, and collect it after your trip at no charge.`,
                 ],
-                ["Tow it with your own truck", "Free. You need a one-ton truck with a fifth-wheel hitch and experience towing a large trailer."],
+                ["Tow it with your own truck", "Free. You need a fifth-wheel hitch and a truck weighing at least 6,000 lb, plus experience towing a large trailer."],
                 ["Rent our truck", `${rate(truck.daily_rate)} a day. ${truck.description}`],
               ].map(([title, text]) => (
                 <div key={title} className="grid gap-1 py-4 sm:grid-cols-[14rem_1fr] sm:gap-6">

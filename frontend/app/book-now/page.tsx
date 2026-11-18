@@ -44,11 +44,11 @@ export default function BookNowPage() {
           Plan your trip
         </h1>
         <p className="script -mt-1 text-5xl sm:text-6xl">in four steps</p>
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-          Tap a pin to choose a campground, or pick one in the card below.
-          Change or cancel online; cancellation is free within 24 hours of
-          payment.
-        </p>
+        <ul className="mt-4 max-w-xl list-disc space-y-1 pl-5 text-sm leading-relaxed text-muted marker:text-clay">
+          <li>Tap a pin or pick a campground below.</li>
+          <li>Change or cancel online.</li>
+          <li>Free cancellation within 24 hours of payment.</li>
+        </ul>
         <div className="mt-10">
           <Suspense
             fallback={

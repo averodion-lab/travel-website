@@ -33,7 +33,7 @@ const STEPS = [
   },
   {
     title: "Getting it there",
-    text: "Choose when you book: we bring the trailer to your campsite, level it, open the slide-outs and connect power, water and sewer ($4.50 a mile). Or tow it yourself, with your own one-ton truck or our 2026 RAM 2500 Turbo Diesel if you have towing experience.",
+    text: "Choose when you book: we bring the trailer to your campsite, level it, open the slide-outs and connect power, water and sewer ($4.50 a mile). Or tow it yourself, with your own truck (at least 6,000 lb, with a fifth-wheel hitch) or our 2026 RAM 2500 Turbo Diesel if you have towing experience.",
     image: "/images/montana/exterior.jpg",
     alt: "The trailer set up with its slide-outs open",
   },

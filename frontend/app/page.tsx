@@ -79,7 +79,7 @@ function Hero() {
   return (
     <section className="relative flex h-[100svh] min-h-[38rem] items-end overflow-hidden text-cream">
       {HERO_SLIDES.map((s, i) => (
-        <div key={s.src} className="lux-slide absolute inset-0" style={{ animationDelay: `${i * 7}s` }}>
+        <div key={s.src} className="lux-slide absolute inset-0" style={{ animationDelay: `${i * 4}s` }}>
           <Image src={s.src} alt={i === 0 ? s.alt : ""} fill priority={i === 0} fetchPriority={i === 0 ? "high" : undefined} sizes="100vw" className="object-cover" />
         </div>
       ))}
@@ -261,7 +261,7 @@ async function ParkLinks() {
       <p className="lux-label text-clay">Where we deliver</p>
       <p className="mt-3 max-w-2xl leading-relaxed text-muted">
         Based in Canton, Georgia, north of Atlanta. We deliver the trailer and set it up at these campgrounds, priced
-        by the mile, or anywhere else within 400 miles that fits a 40-foot fifth wheel.
+        by the mile, or anywhere else within 250 miles that fits a 40-foot fifth wheel.
       </p>
       <div className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-5">
         {STATE_ORDER.filter((s) => data.parks.some((p) => p.state === s)).map((state) => (
@@ -296,7 +296,8 @@ export default function Home() {
       <section id="experience" className="mx-auto max-w-5xl scroll-mt-24 px-5 py-14 text-center sm:py-24">
         <p className="lux-label text-clay">The experience</p>
         <div className="mt-5 sm:mt-10">
-          <LitStatement text="We bring a forty-foot luxury residence to the mountains or the lake, prepare every detail around it, and hand you the keys. All you do is arrive." />
+          <LitStatement accentClass="text-ink" text="We bring a forty-foot luxury residence to the mountains or the lake, and prepare every detail around it." />
+          <p className="font-display text-[2rem] italic leading-[1.3] text-clay sm:text-[3.2rem]">All you do is enjoy.</p>
         </div>
       </section>
 

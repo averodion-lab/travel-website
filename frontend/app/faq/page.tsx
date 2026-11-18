@@ -135,7 +135,7 @@ async function Questions() {
         },
         {
           q: "Can I tow it myself?",
-          a: "Yes, if you have a one-ton truck with a fifth-wheel hitch and experience towing a large fifth-wheel trailer; you confirm it when you book. The trailer weighs 13,870 lb empty and is rated to 17,070 lb loaded, so smaller trucks are not suitable. Not sure? Choose delivery and we'll set it up for you.",
+          a: "Yes, if you have a fifth-wheel hitch and a truck weighing at least 6,000 lb, and experience towing a large fifth-wheel trailer; you confirm it when you book. The trailer weighs 13,870 lb empty and is rated to 17,070 lb loaded, so lighter trucks are not suitable. Not sure? Choose delivery and we'll set it up for you.",
         },
         {
           q: "Can I rent a 4-wheeler, a jet ski or e-bikes?",

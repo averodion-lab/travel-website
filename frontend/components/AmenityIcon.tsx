@@ -272,6 +272,47 @@ const ICONS: Record<string, ReactNode> = {
       <ellipse cx="36.5" cy="20" rx="3.6" ry="4.6" fill={B} transform="rotate(20 36.5 20)" />
     </>
   ),
+  washer: (
+    <>
+      <rect x="9" y="6" width="30" height="36" rx="3" fill={W} />
+      <path d="M9 14h30" />
+      <circle cx="15" cy="10" r="1.4" fill={B} stroke="none" />
+      <circle cx="20" cy="10" r="1.4" fill={PL} stroke="none" />
+      <circle cx="24" cy="26" r="10" fill={BL} />
+      <circle cx="24" cy="26" r="7" fill={WATER} />
+      <path d="M17.5 27c2-1.8 4-1.8 6 0s4 1.8 6.5 0" stroke={W} fill="none" />
+    </>
+  ),
+  dryer: (
+    <>
+      <rect x="9" y="6" width="30" height="36" rx="3" fill={W} />
+      <path d="M9 14h30" />
+      <circle cx="15" cy="10" r="1.4" fill={B} stroke="none" />
+      <circle cx="20" cy="10" r="1.4" fill={PL} stroke="none" />
+      <circle cx="24" cy="26" r="10" fill={BL} />
+      <circle cx="24" cy="26" r="7" fill={G} />
+      <path d="M21 24c1.5-1.5 3-1.5 4.5 0M22.5 29c1.5-1.5 3-1.5 4.5 0" stroke={GLOW} fill="none" />
+    </>
+  ),
+  hairdryer: (
+    <>
+      <path d="M10 14c0-3 2.5-5 6-5h14c3 0 5.5 2.4 5.5 5.5S33 20 30 20H16c-3.5 0-6-2.2-6-6Z" fill={B} />
+      <path d="M33 11.5h5.5v6H33z" fill={BD} />
+      <path d="M21 20l-3.5 18a2.6 2.6 0 0 0 2.6 3.2h2.9a2.6 2.6 0 0 0 2.5-2L28 20Z" fill={P} />
+      <path d="M41 11c2 1 3 2.3 3 3.5S43 17 41 18M42 8c3 1.5 4.5 3.8 4.5 6.5" stroke={WATER} fill="none" />
+      <circle cx="16" cy="14.5" r="1.4" fill={BL} stroke="none" />
+    </>
+  ),
+  starlink: (
+    <>
+      <ellipse cx="24" cy="30" rx="15" ry="5" fill={W} />
+      <ellipse cx="24" cy="29" rx="15" ry="5" fill={C} />
+      <rect x="15" y="13" width="18" height="14" rx="1.8" fill={W} transform="rotate(-8 24 20)" />
+      <rect x="17" y="15" width="14" height="10" rx="1" fill={G} transform="rotate(-8 24 20)" />
+      <path d="M24 33v7M18 41h12" stroke={BD} />
+      <path d="M8 12c3-4.5 7-6.5 12-7M40 12c-3-4.5-7-6.5-12-7M12 17c2-2.5 4.5-4 7.5-4.5M36 17c-2-2.5-4.5-4-7.5-4.5" stroke={WATER} fill="none" />
+    </>
+  ),
   check: (
     <>
       <circle cx="24" cy="24" r="15" fill={P} />
@@ -281,6 +322,10 @@ const ICONS: Record<string, ReactNode> = {
 };
 
 const RULES: [RegExp, string][] = [
+  [/hair\s*dryer|blow\s*dryer/i, "hairdryer"],
+  [/washer|washing/i, "washer"],
+  [/dryer/i, "dryer"],
+  [/starlink|internet|wi-?fi/i, "starlink"],
   [/pet|dog/i, "pet"],
   [/bedding|towel|linen/i, "linen"],
   [/sofa|couch/i, "sofa"],

@@ -16,18 +16,16 @@ CAMPERS = [
         "class_type": "Luxury Fifth Wheel",
         "tagline": "Forty feet of residential comfort, parked wherever the view is best.",
         "description": (
-            "A 2026 Keystone Montana 3795FK. Four slide-outs open it up into a real home: "
-            "a raised front kitchen with a residential refrigerator, a living room with "
-            "theater seating, two sofas and a fireplace, and a private king bedroom with "
-            "its own closet. It sleeps six, runs two-zone air conditioning on 50 amp "
-            "service and carries 70 gallons of fresh water. Tow it with your truck, rent ours, "
-            "or have us deliver it, level it and hook everything up, so you arrive to a home that is ready."
+            "A 2026 Keystone Montana 3795FK: a 40 ft fifth wheel that sleeps six. Four slide-outs open into a real home, with a raised front kitchen, theater seating, a fireplace and a private king bedroom. Two-zone air conditioning, 50 amp service and 70 gallons of fresh water. Three ways to get it:\n"
+            "- Tow it with your own truck\n"
+            "- Rent ours\n"
+            "- We deliver it, level it and hook everything up, so you arrive to a home that is ready"
         ),
         "layout": "Front kitchen, central living room, king bedroom",
         "sleeps": 6,
         "towing_weight_lbs": 13870,
         "length_ft": Decimal("39.9"),
-        "hitch_type": "Fifth-wheel hitch, one-ton truck (17,070 lb GVWR). Delivery available.",
+        "hitch_type": "Fifth-wheel hitch; truck weighing at least 6,000 lb (trailer 17,070 lb GVWR). Delivery available.",
         "hookups": "Full hookups: 50 amp electric, water, sewer. 70 gal fresh water tank.",
         "amenities": [
             "King bedroom with closet", "Two hide-a-bed sofas", "Theater seating",
@@ -36,7 +34,8 @@ CAMPERS = [
             "Double-sink bathroom", "Glass-door shower", "Four slide-outs",
             "Air conditioning and furnace", "Power awnings", "Outside shower",
             "Outdoor speakers", "Pass-through storage", "Bedding and towels",
-            "Cookware and dishes", "Pet friendly",
+            "Cookware and dishes", "Washer", "Dryer", "Hair dryer",
+            "Starlink high-speed internet", "Pet friendly",
         ],
         "daily_rate": Decimal("299.00"),
         "cleaning_fee": Decimal("175.00"),

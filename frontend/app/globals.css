@@ -567,7 +567,7 @@ body {
   letter-spacing: 0.34em;
   text-transform: uppercase;
 }
-/* Hero photos crossfade and slowly zoom out, one after another (21s loop). */
+/* Hero photos crossfade and slowly zoom out, one after another, 4 s each (12s loop). */
 @keyframes lux-slide {
   0% { opacity: 0; transform: scale(1.14); }
   6% { opacity: 1; }
@@ -575,7 +575,7 @@ body {
   40% { opacity: 0; transform: scale(1); }
   100% { opacity: 0; transform: scale(1); }
 }
-.lux-slide { opacity: 0; animation: lux-slide 21s linear infinite; }
+.lux-slide { opacity: 0; animation: lux-slide 12s linear infinite; }
 .lux-slide:first-child { opacity: 1; }
 /* Headline lines rise out of a mask. */
 @keyframes lux-up { from { transform: translateY(105%); } to { transform: none; } }

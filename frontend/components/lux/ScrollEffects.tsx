@@ -6,7 +6,7 @@ import useScrollProgress from "./useScrollProgress";
 
 /** A paragraph whose words light up one by one as it scrolls through the
  *  screen. The last `accentWords` words are set in brass italics. */
-export function LitStatement({ text, accentWords = 4 }: { text: string; accentWords?: number }) {
+export function LitStatement({ text, accentWords = 4, accentClass = "text-clay" }: { text: string; accentWords?: number; accentClass?: string }) {
   const [ref, p] = useScrollProgress<HTMLParagraphElement>();
   const words = text.split(" ");
   const lit = Math.round(Math.min(1, Math.max(0, (p - 0.2) / 0.4)) * words.length);
@@ -14,7 +14,7 @@ export function LitStatement({ text, accentWords = 4 }: { text: string; accentWo
     <p ref={ref} className="font-display text-[2rem] leading-[1.3] sm:text-[3.2rem]">
       {words.map((w, i) => (
         <span key={i} className="transition-opacity duration-500 motion-reduce:!opacity-100" style={{ opacity: i < lit ? 1 : 0.16 }}>
-          {i >= words.length - accentWords ? <em className="text-clay">{w}</em> : w}{" "}
+          {i >= words.length - accentWords ? <em className={accentClass}>{w}</em> : w}{" "}
         </span>
       ))}
     </p>
