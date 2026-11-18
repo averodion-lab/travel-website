@@ -1,7 +1,8 @@
 """Campgrounds we deliver to, and the extras offered at each.
 
-Mountain parks offer a 4-wheeler; lake parks offer a jet ski. A park can be
-both. Add-on prices are PLACEHOLDERS until the owner confirms them.
+Lake parks offer a jet ski. The 4-wheeler is an extra on any trip, but it is
+not tied to a park or shown on the map (many parks do not allow riding; the
+guest checks with the campground). A park can be mountains, lake or both. Add-on prices are PLACEHOLDERS until the owner confirms them.
 The frontend's preview copy (frontend/lib/preview.ts) mirrors this file.
 
 Coordinates: street addresses geocoded with the US Census geocoder or
@@ -183,8 +184,8 @@ class Park:
 ADDONS: dict[str, Addon] = {
     a.code: a
     for a in (
-        Addon("atv", "4-wheeler", Decimal("150.00"), "mountains",
-              "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+        Addon("atv", "4-wheeler", Decimal("150.00"), "any",
+              "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
               gear="Helmet included"),
         Addon("jetski", "Jet ski", Decimal("250.00"), "lake",
               "A jet ski that rides along on the trailer, ready for the lake.",

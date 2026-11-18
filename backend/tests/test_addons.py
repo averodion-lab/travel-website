@@ -1,4 +1,4 @@
-"""Parks and add-ons: 4-wheelers at mountain parks, jet skis at lake parks.
+"""Parks and add-ons: jet skis at lake parks, 4-wheelers and e-bikes anywhere.
 Add-on prices come from the server catalog, never from the client."""
 from decimal import Decimal
 
@@ -32,7 +32,7 @@ def test_parks_endpoint_lists_parks_and_what_each_offers(client):
     parks = {p["slug"]: p for p in data["parks"]}
     assert len(parks) == 18
     assert [a["code"] for a in parks[MOUNTAIN]["addons"]] == ["atv", "ebike"]
-    assert [a["code"] for a in parks[LAKE]["addons"]] == ["jetski", "ebike"]
+    assert [a["code"] for a in parks[LAKE]["addons"]] == ["atv", "jetski", "ebike"]
     assert {a["code"] for a in parks[BOTH]["addons"]} == {"atv", "jetski", "ebike"}
     assert {a["code"] for a in data["addons"]} == {"atv", "jetski", "ebike"}
 
@@ -54,8 +54,7 @@ def test_addons_are_charged_per_day_and_included_in_deposit(client, camper):
 
 
 def test_addon_must_suit_the_park(client, camper):
-    res = quote(client, park=LAKE, addons=["atv"])
-    assert res.status_code == 400 and "mountain" in res.get_json()["error"]
+    assert quote(client, park=LAKE, addons=["atv"]).status_code == 200  # a 4-wheeler goes anywhere
     res = quote(client, park=MOUNTAIN, addons=["jetski"])
     assert res.status_code == 400 and "lake" in res.get_json()["error"]
 
@@ -83,6 +82,6 @@ def test_booking_saves_park_and_addons_at_server_prices(client, camper, sent_ema
 
 
 def test_booking_rejects_addon_the_park_does_not_offer(client, camper):
-    res = post_booking(client, day(10), day(14), park=LAKE, addons="atv")
+    res = post_booking(client, day(10), day(14), park=MOUNTAIN, addons="jetski")
     assert res.status_code == 400
     assert db.session.query(Booking).count() == 0

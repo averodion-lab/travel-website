@@ -53,6 +53,7 @@ function rampHtml(r: Ramp, slug?: string) {
 
 function popupHtml(p: Park) {
   const extras = p.addons
+    .filter((a) => a.code !== "atv")
     .map((a) => {
       const icon = ADDON_ICONS[a.code];
       const img = icon
@@ -433,9 +434,9 @@ export default function ParksMap({
                 <p className="mt-2 text-sm leading-relaxed text-bark">
                   {p.description}
                 </p>
-                {p.addons.length > 0 && (
+                {p.addons.some((a) => a.code !== "atv") && (
                   <p className="mt-3 flex flex-wrap gap-2">
-                    {p.addons.map((a) => (
+                    {p.addons.filter((a) => a.code !== "atv").map((a) => (
                       <span
                         key={a.code}
                         className="inline-flex items-center gap-1.5 rounded-full bg-cream py-1 pl-1.5 pr-3 text-xs text-bark"

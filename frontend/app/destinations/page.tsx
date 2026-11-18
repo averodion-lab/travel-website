@@ -56,16 +56,7 @@ async function Parks() {
         </div>
       </div>
       {/* What to add, depending on where you stay. */}
-      <div className="mt-8 grid gap-3 sm:grid-cols-2">
-        <p className="flex items-center gap-4 rounded-2xl bg-white p-5 leading-relaxed text-bark">
-          <AddonIcon code="atv" size={52} />
-          <span>
-            <strong className="font-semibold text-ink">
-              In the mountains?
-            </strong>{" "}
-            Add a 4-wheeler and make the trails part of the fun.
-          </span>
-        </p>
+      <div className="mt-8 grid gap-3">
         <p className="flex items-center gap-4 rounded-2xl bg-white p-5 leading-relaxed text-bark">
           <AddonIcon code="jetski" size={52} />
           <span>
@@ -87,8 +78,8 @@ async function Extras() {
     {
       code: "atv",
       title: "4-wheelers",
-      where: "At mountain parks",
-      text: "Take the trails up to the overlooks. The 4-wheeler rides along on the trailer, whoever tows it.",
+      where: "On any trip",
+      text: "The 4-wheeler rides along on the trailer, whoever tows it. Check that your campground allows riding.",
       price: atv ? `${rate(atv.daily_rate)} a day` : "",
       gear: atv?.gear ?? "",
       tone: "bg-pine text-cream",

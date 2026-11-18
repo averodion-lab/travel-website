@@ -15,7 +15,7 @@ export default function StepInside({ rooms }: { rooms: Room[] }) {
   const [s, setS] = useState(0);
   // Starting frame, as % cut from top/bottom and from the sides. Portrait
   // screens (phones) start wider and shorter so it reads as a framed photo.
-  const [frame, setFrame] = useState({ y: 12, x: 20 });
+  const [frame, setFrame] = useState({ y: 4, x: 20 });
   const [still, setStill] = useState(false);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function StepInside({ rooms }: { rooms: Room[] }) {
       if (!frameId) frameId = requestAnimationFrame(update);
     };
     const pick = () => {
-      setFrame(mq.matches ? { y: 12, x: 6 } : { y: 12, x: 20 });
+      setFrame(mq.matches ? { y: 8, x: 6 } : { y: 4, x: 20 });
       setStill(reduce);
       onScroll();
     };

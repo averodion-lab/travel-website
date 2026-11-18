@@ -7,7 +7,7 @@ import InView from "./InView";
 
 const POINTS = [
   { name: "Comfort", text: "A king suite, a fireplace and a full kitchen, ready when you walk in.", angle: -60 },
-  { name: "Adventure", text: "A jet ski on the lake or a 4-wheeler in the mountains.", angle: 30 },
+  { name: "Adventure", text: "A jet ski on the lake, bikes on the trail.", angle: 30 },
   { name: "Rest", text: "Chairs by the fire and nothing on the schedule.", angle: 140 },
   { name: "Nature", text: "Trails from the door, e-bikes if you want them, the lake a short walk away.", angle: 220 },
 ];
@@ -28,7 +28,7 @@ export default function Balance() {
   }, []);
 
   return (
-    <section className="relative flex items-center justify-center overflow-hidden px-5 py-16 text-center text-cream sm:min-h-[72svh] sm:py-16">
+    <section className="relative flex items-center justify-center overflow-hidden px-5 py-12 text-center text-cream sm:min-h-[60svh] sm:py-10">
       <Image src="/images/lake-campsite.jpg" alt="" fill sizes="100vw" className="object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/45 to-black/65" />
       <InView className="balance relative w-full max-w-3xl">

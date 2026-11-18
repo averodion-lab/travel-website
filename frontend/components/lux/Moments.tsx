@@ -59,7 +59,7 @@ function Moment({ n, words, text }: { n: string; words: [string, string, boolean
  *  moments of a stay (after the avenelle reference site). */
 export default function Moments() {
   return (
-    <section className="mx-auto max-w-7xl px-5 pb-14 pt-4 sm:px-8 sm:pb-20 sm:pt-10">
+    <section className="mx-auto max-w-7xl px-5 pb-10 pt-2 sm:px-8 sm:pb-12 sm:pt-6">
       <div className="flex flex-wrap items-end justify-between gap-5 sm:gap-8">
         <InView className="lux-rise">
           <p className="lux-label text-clay">Moments kept</p>

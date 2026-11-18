@@ -82,11 +82,11 @@ export const PREVIEW_PARKS: ParksResponse = {
     {
       "code": "atv",
       "daily_rate": "150.00",
-      "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+      "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
       "gear": "Helmet included",
       "max_qty": 1,
       "name": "4-wheeler",
-      "terrain": "mountains"
+      "terrain": "any"
     },
     {
       "code": "jetski",
@@ -113,11 +113,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "ebike",
@@ -148,11 +148,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "ebike",
@@ -183,11 +183,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "jetski",
@@ -233,6 +233,15 @@ export const PREVIEW_PARKS: ParksResponse = {
     {
       "addons": [
         {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
+        {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
@@ -277,11 +286,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "ebike",
@@ -312,11 +321,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "ebike",
@@ -347,11 +356,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "ebike",
@@ -382,11 +391,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "ebike",
@@ -414,6 +423,15 @@ export const PREVIEW_PARKS: ParksResponse = {
     },
     {
       "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
         {
           "code": "jetski",
           "daily_rate": "250.00",
@@ -457,6 +475,15 @@ export const PREVIEW_PARKS: ParksResponse = {
     {
       "addons": [
         {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
+        {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
@@ -499,6 +526,15 @@ export const PREVIEW_PARKS: ParksResponse = {
     {
       "addons": [
         {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
+        {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
@@ -540,6 +576,15 @@ export const PREVIEW_PARKS: ParksResponse = {
     },
     {
       "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
         {
           "code": "jetski",
           "daily_rate": "250.00",
@@ -585,11 +630,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "ebike",
@@ -620,11 +665,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "ebike",
@@ -655,11 +700,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "jetski",
@@ -705,6 +750,15 @@ export const PREVIEW_PARKS: ParksResponse = {
     {
       "addons": [
         {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
+        {
           "code": "jetski",
           "daily_rate": "250.00",
           "description": "A jet ski that rides along on the trailer, ready for the lake.",
@@ -749,11 +803,11 @@ export const PREVIEW_PARKS: ParksResponse = {
         {
           "code": "atv",
           "daily_rate": "150.00",
-          "description": "A 4-wheeler that rides along on the trailer, for exploring mountain trails.",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
           "gear": "Helmet included",
           "max_qty": 1,
           "name": "4-wheeler",
-          "terrain": "mountains"
+          "terrain": "any"
         },
         {
           "code": "jetski",
@@ -798,6 +852,15 @@ export const PREVIEW_PARKS: ParksResponse = {
     },
     {
       "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
         {
           "code": "ebike",
           "daily_rate": "33.00",

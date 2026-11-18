@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const park = PREVIEW_PARKS.parks.find((p) => p.slug === slug);
   if (!park) return { title: "Campground", robots: { index: false } };
   const data = PREVIEW_PARKS;
-  const extras = park.addons.map((a) => a.name.toLowerCase());
+  const extras = park.addons.filter((a) => a.code !== "atv").map((a) => a.name.toLowerCase());
   const extraText = extras.length ? ` Add ${extras.length > 1 ? extras.slice(0, -1).join(", ") + " or " + extras.at(-1) : extras[0]}.` : "";
   const base = `We deliver and set up a luxury 40 ft fifth wheel at ${park.name} in ${park.city}, ${park.state}: ${deliveryPrice(park, data)} one way from Canton, GA.`;
   return pageMeta({
@@ -136,9 +136,9 @@ async function Details({ slug }: { slug: string }) {
 
           <section>
             <h2 className="font-display text-4xl">What you can add here</h2>
-            {park.addons.length ? (
+            {park.addons.some((a) => a.code !== "atv") ? (
               <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-                {park.addons.map((a) => (
+                {park.addons.filter((a) => a.code !== "atv").map((a) => (
                   <li key={a.code} className="flex items-start gap-4 rounded-md bg-white p-4">
                     <AddonIcon code={a.code} size={48} />
                     <div className="text-sm">

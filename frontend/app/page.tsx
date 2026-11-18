@@ -15,7 +15,7 @@ import JsonLd from "@/components/JsonLd";
 import { SITE_NAME } from "@/lib/api";
 import { OG, pageMeta, SITE_URL } from "@/lib/seo";
 import { rate } from "@/lib/format";
-import { getParks, STATE_ORDER } from "@/lib/parks";
+import { getParks } from "@/lib/parks";
 import { getTrailer } from "@/lib/trailer";
 
 /* Home page, design option E: option A's quiet luxury look (ivory, black,
@@ -64,7 +64,7 @@ const WAITING: { title: string; text: string; icon: ReactNode }[] = [
   },
   {
     title: "Toys, ready to go",
-    text: "Add a 4-wheeler in the mountains or a jet ski on the lake, fuelled and ready.",
+    text: "Add a 4-wheeler or a jet ski, fuelled and ready.",
     icon: <path d="M2 16c2 0 2-1.5 4-1.5S8 16 10 16s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M5 12l3-4h7l4 4H5Z" />,
   },
 ];
@@ -79,7 +79,7 @@ function Hero() {
   return (
     <section className="relative flex h-[100svh] min-h-[38rem] items-end overflow-hidden text-cream">
       {HERO_SLIDES.map((s, i) => (
-        <div key={s.src} className="lux-slide absolute inset-0" style={{ animationDelay: `${i * 4}s` }}>
+        <div key={s.src} className="lux-slide absolute inset-0" style={{ animationDelay: `${i * 3.5}s` }}>
           <Image src={s.src} alt={i === 0 ? s.alt : ""} fill priority={i === 0} fetchPriority={i === 0 ? "high" : undefined} sizes="100vw" className="object-cover" />
         </div>
       ))}
@@ -113,7 +113,7 @@ function Hero() {
 function Waiting() {
   return (
     <section className="bg-sand">
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 sm:gap-14 sm:px-8 sm:py-20 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:py-24">
+      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-8 sm:gap-10 sm:px-8 sm:py-12 lg:grid-cols-[1fr_1.1fr] lg:items-center lg:py-14">
         <InView className="lux-clip relative aspect-[4/5] overflow-hidden lg:aspect-square">
           <Image
             src="/images/lake-jetski.jpg"
@@ -167,7 +167,7 @@ async function Numbers() {
   return (
     <dl className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
       {stats.map(([value, suffix, text], i) => (
-        <InView key={text} delay={i * 120} className="lux-rise px-2 py-6 text-center sm:px-5 sm:py-14">
+        <InView key={text} delay={i * 120} className="lux-rise px-2 py-3 text-center sm:px-5 sm:py-6">
           <dd className="font-display text-5xl sm:text-7xl">
             <RollingNumber value={value} suffix={suffix} delay={i * 150} />
           </dd>
@@ -251,40 +251,6 @@ const BUSINESS_LD = {
   priceRange: "$$$",
 };
 
-/** Every campground as a text link to its page: readable without the map, and
- *  the way search engines find the park pages. */
-async function ParkLinks() {
-  const data = await getParks();
-  if (!data) return null;
-  return (
-    <div className="mt-12 border-t border-line pt-10">
-      <p className="lux-label text-clay">Where we deliver</p>
-      <p className="mt-3 max-w-2xl leading-relaxed text-muted">
-        Based in Canton, Georgia, north of Atlanta. We deliver the trailer and set it up at these campgrounds, priced
-        by the mile, or anywhere else within 250 miles that fits a 40-foot fifth wheel.
-      </p>
-      <div className="mt-6 grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-5">
-        {STATE_ORDER.filter((s) => data.parks.some((p) => p.state === s)).map((state) => (
-          <div key={state}>
-            <p className="eyebrow text-clay">{state}</p>
-            <ul className="mt-2 space-y-1.5">
-              {data.parks
-                .filter((p) => p.state === state)
-                .map((p) => (
-                  <li key={p.slug} className="text-sm leading-snug">
-                    <Link href={`/destinations/${p.slug}`} className="tap text-ink underline-offset-2 hover:text-clay hover:underline">
-                      {p.name}
-                    </Link>
-                  </li>
-                ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
   return (
     <>
@@ -293,7 +259,7 @@ export default function Home() {
       <Hero />
 
       {/* The experience, in one sentence */}
-      <section id="experience" className="mx-auto max-w-5xl scroll-mt-24 px-5 py-14 text-center sm:py-24">
+      <section id="experience" className="mx-auto max-w-5xl scroll-mt-24 px-5 py-10 text-center sm:py-14">
         <p className="lux-label text-clay">The experience</p>
         <div className="mt-5 sm:mt-10">
           <LitStatement accentClass="text-ink" text="We bring a forty-foot luxury residence to the mountains or the lake, and prepare every detail around it." />
@@ -343,7 +309,7 @@ export default function Home() {
         ]}
       />
 
-      <section className="mx-auto max-w-7xl px-5 pb-10 pt-8 sm:px-8 sm:pb-14 sm:pt-12">
+      <section className="mx-auto max-w-7xl px-5 pb-8 pt-6 sm:px-8 sm:pb-10 sm:pt-8">
         <Suspense fallback={<div className="h-[30rem] animate-pulse bg-sand/60" />}>
           <Residence />
         </Suspense>
@@ -354,7 +320,7 @@ export default function Home() {
       <Balance />
 
       {/* How it works */}
-      <section className="mx-auto max-w-7xl px-5 pb-14 pt-12 sm:px-8 sm:py-20">
+      <section className="mx-auto max-w-7xl px-5 pb-10 pt-8 sm:px-8 sm:py-12">
         <p className="lux-label text-center text-clay">How it works</p>
         <h2 className="mt-4 text-center font-display text-4xl sm:mt-5 sm:text-5xl">Three simple steps</h2>
         {/* Phones: numeral beside each step. Larger screens: three centred columns. */}
@@ -386,7 +352,7 @@ export default function Home() {
 
       {/* Where to stay: the parks map, with the booking card under it */}
       <section id="destinations" className="border-t border-line bg-sand/60">
-        <div className="mx-auto max-w-7xl scroll-mt-20 px-5 pb-12 pt-14 sm:px-8 sm:py-20">
+        <div className="mx-auto max-w-7xl scroll-mt-20 px-5 pb-10 pt-10 sm:px-8 sm:py-12">
           <InView className="lux-rise flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-2xl">
               <p className="lux-label text-clay">Where to stay</p>
@@ -407,9 +373,6 @@ export default function Home() {
               <Parks />
             </Suspense>
           </div>
-          <Suspense fallback={null}>
-            <ParkLinks />
-          </Suspense>
         </div>
       </section>
 
