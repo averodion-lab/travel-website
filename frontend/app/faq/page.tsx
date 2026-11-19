@@ -57,8 +57,8 @@ async function Questions() {
         {
           q: "Is there a security deposit?",
           a: t
-            ? `Yes, if you rent our truck or add a jet ski or a 4-wheeler. Then a refundable ${money(t.security_deposit)} is held on your card at pickup and released after everything is returned and checked. Staying with the trailer alone, or adding e-bikes, needs no security deposit.`
-            : "Yes, if you rent our truck or add a jet ski or a 4-wheeler. Then a refundable security deposit is held on your card at pickup and released after everything is returned and checked. Staying with the trailer alone, or adding e-bikes, needs no security deposit.",
+            ? `Yes, on every booking. A refundable ${money(t.security_deposit)} is held on your card at pickup and released after everything is returned and checked.`
+            : "Yes, on every booking. A refundable security deposit is held on your card at pickup and released after everything is returned and checked.",
         },
         {
           q: "Can I cancel or change my booking?",
@@ -96,11 +96,10 @@ async function Questions() {
         {
           q: "Are there trailer rules?",
           plain:
-            "Just a few: return it clean (dishes done, trash out, fridge emptied), no smoking or vaping inside, and towing experience is required if you tow it yourself.",
+            "Just a few: no smoking or vaping inside, and towing experience is required if you tow it yourself.",
           a: (
             <>
-              Just a few: return it clean (dishes done, trash out, fridge
-              emptied), no smoking or vaping inside, and towing experience is
+              Just a few: no smoking or vaping inside, and towing experience is
               required if you tow it yourself.{" "}
               <Link href="/policies#rules" className="tap underline hover:text-clay">
                 See all the rules
@@ -135,7 +134,7 @@ async function Questions() {
         },
         {
           q: "Can I tow it myself?",
-          a: "Yes, if you have a fifth-wheel hitch and a truck weighing at least 6,000 lb, and experience towing a large fifth-wheel trailer; you confirm it when you book. The trailer weighs 13,870 lb empty and is rated to 17,070 lb loaded, so lighter trucks are not suitable. Not sure? Choose delivery and we'll set it up for you.",
+          a: "Yes, if you have a one-ton truck weighing at least 6,000 lb with a fifth-wheel hitch, and experience towing a large fifth-wheel trailer; you confirm it when you book. The trailer weighs 13,870 lb empty and is rated to 17,070 lb loaded, so lighter trucks are not suitable. Not sure? Choose delivery and we'll set it up for you.",
         },
         {
           q: "Can I rent a 4-wheeler, a jet ski or e-bikes?",

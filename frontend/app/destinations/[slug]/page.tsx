@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const park = PREVIEW_PARKS.parks.find((p) => p.slug === slug);
   if (!park) return { title: "Campground", robots: { index: false } };
   const data = PREVIEW_PARKS;
-  const extras = park.addons.filter((a) => a.code !== "atv").map((a) => a.name.toLowerCase());
+  const extras = park.addons.filter((a) => a.code !== "atv" || park.terrain.includes("offroad")).map((a) => a.name.toLowerCase());
   const extraText = extras.length ? ` Add ${extras.length > 1 ? extras.slice(0, -1).join(", ") + " or " + extras.at(-1) : extras[0]}.` : "";
   const base = `We deliver and set up a luxury 40 ft fifth wheel at ${park.name} in ${park.city}, ${park.state}: ${deliveryPrice(park, data)} one way from Canton, GA.`;
   return pageMeta({
@@ -123,7 +123,7 @@ async function Details({ slug }: { slug: string }) {
                   "We deliver and set it up",
                   `${delivery} one way (${rate(data.transport.delivery.per_mile)} a mile × ${park.delivery_miles} miles). We bring the trailer to your campsite, level it and hook everything up, and collect it after your trip at no charge.`,
                 ],
-                ["Tow it with your own truck", "Free. You need a fifth-wheel hitch and a truck weighing at least 6,000 lb, plus experience towing a large trailer."],
+                ["Tow it with your own truck", "Free. You need a one-ton truck weighing at least 6,000 lb with a fifth-wheel hitch, plus experience towing a large trailer."],
                 ["Rent our truck", `${rate(truck.daily_rate)} a day. ${truck.description}`],
               ].map(([title, text]) => (
                 <div key={title} className="grid gap-1 py-4 sm:grid-cols-[14rem_1fr] sm:gap-6">
@@ -136,9 +136,9 @@ async function Details({ slug }: { slug: string }) {
 
           <section>
             <h2 className="font-display text-4xl">What you can add here</h2>
-            {park.addons.some((a) => a.code !== "atv") ? (
+            {park.addons.some((a) => a.code !== "atv" || park.terrain.includes("offroad")) ? (
               <ul className="mt-5 grid gap-3 sm:grid-cols-2">
-                {park.addons.filter((a) => a.code !== "atv").map((a) => (
+                {park.addons.filter((a) => a.code !== "atv" || park.terrain.includes("offroad")).map((a) => (
                   <li key={a.code} className="flex items-start gap-4 rounded-md bg-white p-4">
                     <AddonIcon code={a.code} size={48} />
                     <div className="text-sm">

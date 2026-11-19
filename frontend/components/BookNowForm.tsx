@@ -330,8 +330,8 @@ export default function BookNowForm({
                       <dd>{money(q.subtotal)}</dd>
                     </div>
                     <div className="flex justify-between">
-                      <dt>Cleaning fee</dt>
-                      <dd>{money(q.cleaning_fee)}</dd>
+                      {Number(q.cleaning_fee) > 0 && (<><dt>Cleaning fee</dt>
+                      <dd>{money(q.cleaning_fee)}</dd></>)}
                     </div>
                     {q.addons.map((a) => (
                       <div key={a.code} className="flex justify-between">

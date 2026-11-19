@@ -20,8 +20,9 @@ export const SITE_NEEDS: [string, string][] = [
   ["Access", "Paved or well-graded roads without low bridges. The trailer stands 13 ft 4 in tall."],
 ];
 
-/** "Mountains and lake", "Mountains", "Lake" or "Foothills". */
+/** "Mountains and lake", "Mountains", "Lake", "Off-road riding" or "Foothills". */
 export function terrainLabel(p: Pick<Park, "terrain">): string {
+  if (p.terrain.includes("offroad")) return "Off-road riding";
   const m = p.terrain.includes("mountains");
   const l = p.terrain.includes("lake");
   return m && l ? "Mountains and lake" : m ? "Mountains" : l ? "Lake" : "Foothills";
@@ -29,6 +30,7 @@ export function terrainLabel(p: Pick<Park, "terrain">): string {
 
 /** Banner photo for a park page, by what the park offers. */
 export function parkHero(terrain: readonly string[]): string {
+  if (terrain.includes("offroad")) return "/images/blueridge-road.jpg";
   const m = terrain.includes("mountains");
   const l = terrain.includes("lake");
   return m && l ? "/images/lake-fall.jpg" : l ? "/images/lake-campsite.jpg" : m ? "/images/blueridge-rays.jpg" : "/images/smoky-meadow.jpg";

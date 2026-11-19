@@ -1,5 +1,7 @@
 """Campgrounds we deliver to, and the extras offered at each.
 
+Off-road parks (terrain "offroad") are private ATV/UTV parks with an RV campground.
+
 Lake parks offer a jet ski. The 4-wheeler is an extra on any trip, but it is
 not tied to a park or shown on the map (many parks do not allow riding; the
 guest checks with the campground). A park can be mountains, lake or both. Add-on prices are PLACEHOLDERS until the owner confirms them.
@@ -77,16 +79,8 @@ FREE_CANCEL_HOURS = 24
 # usually refund in full only 30+ days out and add processing fees.
 CANCEL_REFUNDS: tuple[tuple[int, int], ...] = ((14, 100), (7, 50), (0, 0))
 
-# The refundable security deposit (held at pickup) applies only when the guest
-# takes something motorized of ours: the truck, a 4-wheeler or a jet ski.
-SECURITY_DEPOSIT_TRANSPORT = frozenset({"truck"})
-SECURITY_DEPOSIT_ADDONS = frozenset({"atv", "jetski"})
-
-
-def needs_security_deposit(transport_code: str | None, addon_codes) -> bool:
-    return (transport_code or "self") in SECURITY_DEPOSIT_TRANSPORT or any(
-        c in SECURITY_DEPOSIT_ADDONS for c in addon_codes
-    )
+# The refundable security deposit (held at pickup) applies to every booking,
+# including the trailer on its own.
 
 # Where the trailer is kept; delivery miles are counted from here.
 BASE = "Canton / Woodstock, GA"
@@ -196,7 +190,7 @@ ADDONS: dict[str, Addon] = {
     )
 }
 
-M, L = "mountains", "lake"
+M, L, O = "mountains", "lake", "offroad"
 
 PARKS: dict[str, Park] = {
     p.slug: p
@@ -280,6 +274,31 @@ PARKS: dict[str, Park] = {
              "A quiet, rural park in the Appalachian foothills with a fishing pond, a golf course and "
              "pull-through RV sites.",
              34.38876, -86.86359, frozenset(), 174),
+        # Off-road riding parks: private ATV/UTV parks with an RV campground. Pins are checked
+        # against the parks' own pages (Nov 2026); Windrock also answered our questions by email.
+        Park("windrock", "Windrock Park", "Tennessee", "Oliver Springs", "https://windrockpark.com/",
+             "A privately owned off-road park with hundreds of miles of ATV and off-road trails, open around the "
+             "clock. The campground has dry camping and full-hookup sites, and rigs well over 40 feet are "
+             "regulars (the road up is steep and winding: gear down). A land-use permit is needed to ride.",
+             36.054454, -84.329461, frozenset({O}), 179),
+        Park("top-trails", "Top Trails Outdoor Park", "Alabama", "Talladega", "https://toptrails.net/",
+             "A 2,800-acre off-road park with more than 100 miles of ATV, UTV and dirt-bike trails. Its website "
+             "lists primitive camping and full RV hookups.",
+             33.469817, -86.063624, frozenset({O}), 130),
+        Park("carolina-adventure-world", "Carolina Adventure World", "South Carolina", "Winnsboro",
+             "https://carolinaadventureworld.com/",
+             "A 2,600-acre off-road park with 100+ miles of ATV, UTV and dirt-bike trails. Its website lists RV "
+             "sites with water and electric and an improved dry-camping option.",
+             34.48654, -80.954798, frozenset({O}), 285),
+        Park("durhamtown", "Durhamtown Off Road Resort", "Georgia", "Union Point", "https://durhamtown.com/",
+             "A big off-road resort east of Atlanta, with more than 100 miles of trails for ATVs, side-by-sides "
+             "and 4x4s, and RV parks and cabins on site.",
+             33.672104, -82.997593, frozenset({O}), 128),
+        Park("choccolocco", "Choccolocco Mountain ORV Park", "Alabama", "Jacksonville",
+             "https://www.alabama.travel/places-to-go/choccolocco-mountain-off-road-vehicle-park",
+             "A mountain off-road park with ATV trails and an on-site campground; directory listings mention "
+             "primitive camping and RV hookups.",
+             33.811295, -85.741722, frozenset({O}), 98),
     )
 }
 
@@ -303,7 +322,7 @@ _NEEDS = {"mountains": "mountain parks", "lake": "lake parks"}
 
 # A destination the guest types in instead of choosing one of our parks.
 CUSTOM_SLUG = "custom"
-MAX_DELIVERY_MILES = 250
+MAX_DELIVERY_MILES = 400
 # Rough box around the Southeast; anything outside is refused before measuring.
 REGION = {"lat": (24.0, 40.0), "lng": (-92.0, -75.0)}
 

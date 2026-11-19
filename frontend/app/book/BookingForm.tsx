@@ -410,7 +410,7 @@ export default function BookingForm() {
                       {parkInfo.city}, {parkInfo.state} ·{" "}
                       {parkInfo.terrain.length
                         ? parkInfo.terrain
-                            .map((t) => (t === "lake" ? "Lake" : "Mountains"))
+                            .map((t) => (t === "lake" ? "Lake" : t === "offroad" ? "Off-road riding" : "Mountains"))
                             .join(" and ")
                         : "Foothills"}
                     </p>
@@ -762,7 +762,7 @@ export default function BookingForm() {
                     >
                       policies and trailer rules
                     </Link>{" "}
-                    (return it clean, no smoking inside, towing experience if
+                    (no smoking inside, towing experience if
                     you tow it yourself), and I confirm the driver is at least
                     25 years old and holds a valid driver&apos;s license.
                   </span>
@@ -851,8 +851,8 @@ export default function BookingForm() {
                   <dd>{money(q.subtotal)}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt>Cleaning fee</dt>
-                  <dd>{money(q.cleaning_fee)}</dd>
+                  {Number(q.cleaning_fee) > 0 && (<><dt>Cleaning fee</dt>
+                  <dd>{money(q.cleaning_fee)}</dd></>)}
                 </div>
                 {q.addons.map((a) => (
                   <div key={a.code} className="flex justify-between">

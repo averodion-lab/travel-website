@@ -1,7 +1,7 @@
 """The fleet: one 2026 Keystone Montana 3795FK luxury fifth wheel.
 
 Specs come from the dealer listing. The nightly rate was set by the owner;
-the minimum stay, cleaning fee and security deposit are PLACEHOLDERS until
+the minimum stay and security deposit are PLACEHOLDERS (the $120 cleaning fee is the owner's) until
 the owner confirms them. Photos are the dealer's listing photos and must be
 replaced with the owner's own (or used with written permission) before launch.
 """
@@ -25,7 +25,7 @@ CAMPERS = [
         "sleeps": 6,
         "towing_weight_lbs": 13870,
         "length_ft": Decimal("39.9"),
-        "hitch_type": "Fifth-wheel hitch; truck weighing at least 6,000 lb (trailer 17,070 lb GVWR). Delivery available.",
+        "hitch_type": "Fifth-wheel hitch; one-ton truck weighing at least 6,000 lb (trailer 17,070 lb GVWR). Delivery available.",
         "hookups": "Full hookups: 50 amp electric, water, sewer. 70 gal fresh water tank.",
         "amenities": [
             "King bedroom with closet", "Two hide-a-bed sofas", "Theater seating",
@@ -38,7 +38,7 @@ CAMPERS = [
             "Starlink high-speed internet", "Pet friendly",
         ],
         "daily_rate": Decimal("299.00"),
-        "cleaning_fee": Decimal("175.00"),
+        "cleaning_fee": Decimal("120.00"),
         "security_deposit": Decimal("2000.00"),
         "min_nights": 2,
         "image_url": f"{IMG}/exterior.jpg",

@@ -14,10 +14,9 @@ export default function CancelNote({ className = "" }: { className?: string }) {
   );
 }
 
-/** "A refundable $2,000 security deposit…" only when one applies (our truck,
- *  a 4-wheeler or a jet ski); otherwise nothing. */
+/** "A refundable $2,000 security deposit…" (every booking has one); nothing if the amount is 0. */
 export function securityDepositText(amount: string, money: (v: string) => string) {
   return Number(amount) > 0
-    ? `A refundable ${money(amount)} security deposit (for our truck, 4-wheeler or jet ski) is held at pickup and released after everything is returned and checked.`
+    ? `A refundable ${money(amount)} security deposit is held at pickup and released after everything is returned and checked.`
     : "";
 }

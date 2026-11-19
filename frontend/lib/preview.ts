@@ -37,7 +37,7 @@ export const PREVIEW_TRAILER: Camper = {
     "Pet friendly"
   ],
   "class_type": "Luxury Fifth Wheel",
-  "cleaning_fee": "175.00",
+  "cleaning_fee": "120.00",
   "daily_rate": "299.00",
   "description": "A 2026 Keystone Montana 3795FK: a 40 ft fifth wheel that sleeps six. Four slide-outs open into a real home, with a raised front kitchen, theater seating, a fireplace and a private king bedroom. Two-zone air conditioning, 50 amp service and 70 gallons of fresh water. Three ways to get it:\n- Tow it with your own truck\n- Rent ours\n- We deliver it, level it and hook everything up, so you arrive to a home that is ready",
   "featured": true,
@@ -61,7 +61,7 @@ export const PREVIEW_TRAILER: Camper = {
     "/images/montana/pass-through-storage.jpg",
     "/images/montana/floorplan.jpg"
   ],
-  "hitch_type": "Fifth-wheel hitch; truck weighing at least 6,000 lb (trailer 17,070 lb GVWR). Delivery available.",
+  "hitch_type": "Fifth-wheel hitch; one-ton truck weighing at least 6,000 lb (trailer 17,070 lb GVWR). Delivery available.",
   "hookups": "Full hookups: 50 amp electric, water, sewer. 70 gal fresh water tank.",
   "id": 7,
   "image_url": "/images/montana/exterior.jpg",
@@ -882,6 +882,181 @@ export const PREVIEW_PARKS: ParksResponse = {
       "state": "Alabama",
       "terrain": [],
       "url": "https://www.qcresort.com/"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "33.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
+        }
+      ],
+      "city": "Oliver Springs",
+      "delivery_miles": 179,
+      "description": "A privately owned off-road park with hundreds of miles of ATV and off-road trails, open around the clock. The campground has dry camping and full-hookup sites, and rigs well over 40 feet are regulars (the road up is steep and winding: gear down). A land-use permit is needed to ride.",
+      "lat": 36.054454,
+      "lng": -84.329461,
+      "name": "Windrock Park",
+      "ramp": null,
+      "slug": "windrock",
+      "state": "Tennessee",
+      "terrain": [
+        "offroad"
+      ],
+      "url": "https://windrockpark.com/"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "33.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
+        }
+      ],
+      "city": "Talladega",
+      "delivery_miles": 130,
+      "description": "A 2,800-acre off-road park with more than 100 miles of ATV, UTV and dirt-bike trails. Its website lists primitive camping and full RV hookups.",
+      "lat": 33.469817,
+      "lng": -86.063624,
+      "name": "Top Trails Outdoor Park",
+      "ramp": null,
+      "slug": "top-trails",
+      "state": "Alabama",
+      "terrain": [
+        "offroad"
+      ],
+      "url": "https://toptrails.net/"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "33.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
+        }
+      ],
+      "city": "Winnsboro",
+      "delivery_miles": 285,
+      "description": "A 2,600-acre off-road park with 100+ miles of ATV, UTV and dirt-bike trails. Its website lists RV sites with water and electric and an improved dry-camping option.",
+      "lat": 34.48654,
+      "lng": -80.954798,
+      "name": "Carolina Adventure World",
+      "ramp": null,
+      "slug": "carolina-adventure-world",
+      "state": "South Carolina",
+      "terrain": [
+        "offroad"
+      ],
+      "url": "https://carolinaadventureworld.com/"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "33.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
+        }
+      ],
+      "city": "Union Point",
+      "delivery_miles": 128,
+      "description": "A big off-road resort east of Atlanta, with more than 100 miles of trails for ATVs, side-by-sides and 4x4s, and RV parks and cabins on site.",
+      "lat": 33.672104,
+      "lng": -82.997593,
+      "name": "Durhamtown Off Road Resort",
+      "ramp": null,
+      "slug": "durhamtown",
+      "state": "Georgia",
+      "terrain": [
+        "offroad"
+      ],
+      "url": "https://durhamtown.com/"
+    },
+    {
+      "addons": [
+        {
+          "code": "atv",
+          "daily_rate": "150.00",
+          "description": "A 4-wheeler that rides along on the trailer. Check that your campground allows riding.",
+          "gear": "Helmet included",
+          "max_qty": 1,
+          "name": "4-wheeler",
+          "terrain": "any"
+        },
+        {
+          "code": "ebike",
+          "daily_rate": "33.00",
+          "description": "Electric bikes waiting at the trailer, for the trails and the lake path. Up to three.",
+          "gear": "",
+          "max_qty": 3,
+          "name": "Electric bike",
+          "terrain": "any"
+        }
+      ],
+      "city": "Jacksonville",
+      "delivery_miles": 98,
+      "description": "A mountain off-road park with ATV trails and an on-site campground; directory listings mention primitive camping and RV hookups.",
+      "lat": 33.811295,
+      "lng": -85.741722,
+      "name": "Choccolocco Mountain ORV Park",
+      "ramp": null,
+      "slug": "choccolocco",
+      "state": "Alabama",
+      "terrain": [
+        "offroad"
+      ],
+      "url": "https://www.alabama.travel/places-to-go/choccolocco-mountain-off-road-vehicle-park"
     }
   ],
   "transport": {
@@ -922,7 +1097,7 @@ const NEEDS = { mountains: "mountain parks", lake: "lake parks" } as const;
    server. The preview has no server, so the browser measures the road miles
    from the same routing service. */
 const BASE = { lat: 34.169, lng: -84.505 };
-const MAX_DELIVERY_MILES = 250;
+const MAX_DELIVERY_MILES = 400;
 const REGION = { lat: [24, 40], lng: [-92, -75] };
 const milesCache = new Map<string, number>();
 
@@ -1073,12 +1248,8 @@ async function quote(body: {
       total: fixed(total),
       deposit_due: fixed(deposit),
       balance_due: fixed(total - deposit),
-      // Only with our truck, a 4-wheeler or a jet ski (catalog.needs_security_deposit).
-      security_deposit: fixed(
-        transport.code === "truck" || lines.some((l) => l.code === "atv" || l.code === "jetski")
-          ? Number(t.security_deposit)
-          : 0,
-      ),
+      // On every booking, the trailer alone included.
+      security_deposit: fixed(Number(t.security_deposit)),
       addons: lines,
       addons_total: fixed(addonsTotal),
       transport,

@@ -11,12 +11,13 @@ const NAV = [
   { href: "/how-it-works", label: "Experience" },
   { href: "/destinations", label: "Places" },
   { href: "/faq", label: "FAQ" },
+  { href: "/policies", label: "Policies" },
   { href: "/contact", label: "Contact" },
 ];
 
-// Desktop: three links left of the name, three to its right.
-const LEFT = NAV.slice(0, 3);
-const RIGHT = NAV.slice(3);
+// Desktop: four links left of the name, three to its right (plus Reserve).
+const LEFT = NAV.slice(0, 4);
+const RIGHT = NAV.slice(4);
 
 function NavLinks({ pathname, items = NAV }: { pathname: string; items?: typeof NAV }) {
   return (

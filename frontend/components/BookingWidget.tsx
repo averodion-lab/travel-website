@@ -382,8 +382,8 @@ export default function BookingWidget({
               <dd>{money(estimate.quote.subtotal)}</dd>
             </div>
             <div className="flex justify-between">
-              <dt>Cleaning fee</dt>
-              <dd>{money(estimate.quote.cleaning_fee)}</dd>
+              {Number(estimate.quote.cleaning_fee) > 0 && (<><dt>Cleaning fee</dt>
+              <dd>{money(estimate.quote.cleaning_fee)}</dd></>)}
             </div>
             {estimate.quote.addons.map((a) => (
               <div key={a.code} className="flex justify-between">
@@ -412,7 +412,7 @@ export default function BookingWidget({
               The balance of {money(estimate.quote.balance_due)} is due at
               pickup
               {Number(estimate.quote.security_deposit) > 0
-                ? `, along with a refundable ${money(estimate.quote.security_deposit)} security deposit (for our truck, 4-wheeler or jet ski).`
+                ? `, along with a refundable ${money(estimate.quote.security_deposit)} security deposit.`
                 : "."}
             </p>
             <p className="pt-1 text-xs leading-relaxed text-muted">

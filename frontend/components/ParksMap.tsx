@@ -12,7 +12,8 @@ import { STATE_ORDER, rampWhere } from "@/lib/parks";
 const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 /** Pin colour by what the park offers. */
-function kind(p: Park): "both" | "mountains" | "lake" | "none" {
+function kind(p: Park): "both" | "mountains" | "lake" | "offroad" | "none" {
+  if (p.terrain.includes("offroad")) return "offroad";
   const m = p.terrain.includes("mountains");
   const l = p.terrain.includes("lake");
   return m && l ? "both" : m ? "mountains" : l ? "lake" : "none";
@@ -21,6 +22,7 @@ const KIND_LABEL = {
   both: "Mountains and lake",
   mountains: "Mountains",
   lake: "Lake",
+  offroad: "Off-road riding",
   none: "Foothills",
 };
 
@@ -53,7 +55,7 @@ function rampHtml(r: Ramp, slug?: string) {
 
 function popupHtml(p: Park) {
   const extras = p.addons
-    .filter((a) => a.code !== "atv")
+    .filter((a) => a.code !== "atv" || p.terrain.includes("offroad"))
     .map((a) => {
       const icon = ADDON_ICONS[a.code];
       const img = icon
@@ -386,7 +388,7 @@ export default function ParksMap({
           </p>
           {/* Colour key: under the map on phones, over its corner on bigger screens. */}
           <ul className="pointer-events-none mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-bark sm:absolute sm:bottom-4 sm:left-4 sm:z-[400] sm:mt-0 sm:rounded-xl sm:bg-cream/95 sm:px-4 sm:py-2.5 sm:shadow-md">
-            {(["mountains", "lake", "both", "none"] as const).map((k) => (
+            {(["mountains", "lake", "both", "offroad", "none"] as const).map((k) => (
               <li key={k} className="flex items-center gap-2">
                 <span className={`pm-dot pm-${k}`} /> {KIND_LABEL[k]}
               </li>
@@ -434,9 +436,9 @@ export default function ParksMap({
                 <p className="mt-2 text-sm leading-relaxed text-bark">
                   {p.description}
                 </p>
-                {p.addons.some((a) => a.code !== "atv") && (
+                {p.addons.some((a) => a.code !== "atv" || p.terrain.includes("offroad")) && (
                   <p className="mt-3 flex flex-wrap gap-2">
-                    {p.addons.filter((a) => a.code !== "atv").map((a) => (
+                    {p.addons.filter((a) => a.code !== "atv" || p.terrain.includes("offroad")).map((a) => (
                       <span
                         key={a.code}
                         className="inline-flex items-center gap-1.5 rounded-full bg-cream py-1 pl-1.5 pr-3 text-xs text-bark"

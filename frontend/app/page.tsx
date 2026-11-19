@@ -70,7 +70,7 @@ const WAITING: { title: string; text: string; icon: ReactNode }[] = [
 ];
 
 const STEPS = [
-  ["Choose your place", "One of eighteen mountain and lakeside parks, or anywhere else you choose."],
+  ["Choose your place", "One of 23 mountain, lakeside and off-road parks, or anywhere else you choose."],
   ["We prepare everything", "We deliver the residence and set up your campsite before you arrive."],
   ["Arrive and unwind", "Walk in to a home that is ready. We stay a phone call away."],
 ];
@@ -157,11 +157,11 @@ function Waiting() {
 
 /** Numbers that count up, from the trailer's live data. */
 async function Numbers() {
-  const camper = await getTrailer();
+  const [camper, parkData] = await Promise.all([getTrailer(), getParks()]);
   const stats: [number, string, string][] = [
     [camper?.length_ft ? Math.round(camper.length_ft) : 40, " ft", "of private residence"],
     [camper?.sleeps ?? 6, "", "guests, two bedrooms"],
-    [18, "", "mountain and lake places"],
+    [parkData?.parks.length ?? 23, "", "mountain, lake and trail places"],
     [4, "", "slide-outs of open space"],
   ];
   return (
@@ -360,7 +360,7 @@ export default function Home() {
                 Choose your place, <em>we&apos;ll prepare it.</em>
               </h2>
               <p className="mt-5 max-w-xl leading-relaxed text-muted">
-                Eighteen mountain and lakeside parks across the Southeast, or type your own place when you book. Tap a pin to see the park, then reserve right
+                23 mountain, lakeside and off-road parks across the Southeast, or type your own place when you book. Tap a pin to see the park, then reserve right
                 below the map.
               </p>
             </div>

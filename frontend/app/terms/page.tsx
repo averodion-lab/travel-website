@@ -54,9 +54,9 @@ export default function TermsPage() {
 
         <LegalSection title="3. Security deposit">
           <p>
-            When you rent our truck, a 4-wheeler or a jet ski, a refundable security deposit (the amount is shown
+            On every booking, a refundable security deposit (the amount is shown
             before you pay) is held on your card at pickup. It is released after everything is returned and
-            checked. Damage, loss, missing fuel, fines or extra cleaning caused during your rental may be deducted
+            checked. Damage, loss, missing fuel or fines caused during your rental may be deducted
             from it; if the cost is higher than the deposit, you agree to pay the difference. We&apos;ll show you
             what was found before anything is charged.
           </p>
@@ -66,7 +66,7 @@ export default function TermsPage() {
           <ul>
             <li>
               Use them only as intended and in line with the <Link href="/policies#rules">trailer rules</Link>: no
-              smoking inside, return it clean, follow the campground&apos;s rules, and keep to the campsite you
+              smoking inside, follow the campground&apos;s rules, and keep to the campsite you
               booked.
             </li>
             <li>

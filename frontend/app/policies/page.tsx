@@ -11,7 +11,7 @@ import { getTrailer } from "@/lib/trailer";
 export const metadata: Metadata = pageMeta({
   title: "Cancellation Policy and Trailer Rules",
   description:
-    "Free cancellation within 24 hours of payment, then a fair refund scale. Free date changes. When a security deposit applies, and the trailer rules.",
+    "Free cancellation within 24 hours of payment, then a fair refund scale. Free date changes. The security deposit, and the trailer rules.",
   path: "/policies",
   image: OG.campfire,
 });
@@ -52,10 +52,6 @@ async function DepositAmount() {
 }
 
 const RULES: { title: string; text: React.ReactNode }[] = [
-  {
-    title: "Return it clean",
-    text: "Leave the trailer tidy, the way you found it: dishes washed and put away, trash taken out, the fridge emptied. Our cleaning fee covers the deep clean and fresh linens. If it ever needs much more than that, we'll show you photos and talk with you before any extra cleaning charge.",
-  },
   {
     title: "Towing experience required if you tow it yourself",
     text: "Whether you use your own truck or rent ours, the driver must have experience towing a large fifth-wheel trailer (about 40 ft, up to 17,070 lb loaded); you confirm it when you book. Not sure? Choose delivery and we'll bring it, level it and hook everything up.",
@@ -141,14 +137,12 @@ export default function PoliciesPage() {
 
         <Section id="security-deposit" number="02" title="Security deposit">
           <p>
-            Only when you take something motorized of ours: our truck, a 4-wheeler or a jet ski. Then a
-            refundable{" "}
+            Every booking has one, the trailer on its own included. A refundable{" "}
             <Suspense fallback="security deposit">
               <DepositAmount />
             </Suspense>{" "}
             is held on your card at pickup and released after everything is returned and checked.
           </p>
-          <p>Staying with the trailer alone, or adding e-bikes, needs no security deposit.</p>
         </Section>
 
         <Section id="rules" number="03" title="Trailer rules">

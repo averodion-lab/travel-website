@@ -62,7 +62,7 @@ export type Park = {
   description: string;
   lat: number;
   lng: number;
-  terrain: ("mountains" | "lake")[];
+  terrain: ("mountains" | "lake" | "offroad")[];
   addons: Addon[];
   /** Road miles from the base, for delivery pricing. */
   delivery_miles: number;

@@ -19,18 +19,18 @@ def quote(client, **extra):
 
 
 def test_every_park_has_a_location_link_and_terrain():
-    assert len(PARKS) == 18
+    assert len(PARKS) == 23
     for park in PARKS.values():
         assert park.url.startswith("https://")
-        assert 30 < park.lat < 37 and -88 < park.lng < -81  # the Southeast
+        assert 30 < park.lat < 37 and -88 < park.lng < -80  # the Southeast
         assert park.state in {"Georgia", "South Carolina", "North Carolina", "Tennessee", "Alabama"}
-        assert park.terrain <= {"mountains", "lake"}
+        assert park.terrain <= {"mountains", "lake", "offroad"}
 
 
 def test_parks_endpoint_lists_parks_and_what_each_offers(client):
     data = client.get("/api/parks").get_json()
     parks = {p["slug"]: p for p in data["parks"]}
-    assert len(parks) == 18
+    assert len(parks) == 23
     assert [a["code"] for a in parks[MOUNTAIN]["addons"]] == ["atv", "ebike"]
     assert [a["code"] for a in parks[LAKE]["addons"]] == ["atv", "jetski", "ebike"]
     assert {a["code"] for a in parks[BOTH]["addons"]} == {"atv", "jetski", "ebike"}

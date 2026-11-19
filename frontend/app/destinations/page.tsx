@@ -15,7 +15,7 @@ import { OG, pageMeta } from "@/lib/seo";
 export const metadata: Metadata = pageMeta({
   title: "Lake and Mountain Campgrounds We Deliver To",
   description:
-    "18 RV campgrounds in Georgia, Tennessee, the Carolinas and Alabama, from the Smokies to Lake Lanier. We deliver the trailer; add a jet ski or e-bikes.",
+    "23 RV campgrounds in Georgia, Tennessee, the Carolinas and Alabama, from the Smokies to off-road parks. We deliver the trailer; add a jet ski or e-bikes.",
   path: "/destinations",
   image: OG.lake,
 });
@@ -34,7 +34,7 @@ async function Parks() {
       <ParksMap parks={data.parks} compact />
       {/* Every park by state, each linking to its own page (readable without the map). */}
       <div className="mt-10">
-        <h3 className="font-display text-3xl">All eighteen, by state</h3>
+        <h3 className="font-display text-3xl">All 23, by state</h3>
         <div className="mt-5 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-3">
           {STATE_ORDER.filter((s) => data.parks.some((p) => p.state === s)).map((state) => (
             <div key={state}>
@@ -143,7 +143,7 @@ export default function DestinationsPage() {
         eyebrow="Where to go"
         title="Mountains, lakes"
         accent="and open road"
-        text="Eighteen RV parks across five states, or anywhere else you choose. Tow the trailer there, or we deliver and set it up. Tap a pin to see the park."
+        text="Twenty-three RV parks across five states, or anywhere else you choose. Tow the trailer there, or we deliver and set it up. Tap a pin to see the park."
       />
 
       <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-14">

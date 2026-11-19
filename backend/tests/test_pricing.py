@@ -29,18 +29,18 @@ def test_daily_rate_times_days_plus_cleaning_fee():
     assert q.total == Decimal("680.00")
     assert q.deposit_due == Decimal("204.00")
     assert q.balance_due == Decimal("476.00")
-    assert q.security_deposit == Decimal("0.00")  # own truck, no motorized extras
+    assert q.security_deposit == Decimal("500.00")  # held on every booking, the trailer alone included
 
 
-def test_security_deposit_only_with_our_truck_a_4_wheeler_or_a_jet_ski():
+def test_security_deposit_applies_to_every_booking():
     from app.catalog import ADDONS, AddonChoice
 
     d = date(2026, 6, 10), date(2026, 6, 14)
+    assert quote(*d).security_deposit == Decimal("500.00")
     assert quote(*d, transport_code="truck").security_deposit == Decimal("500.00")
+    assert quote(*d, transport_code="delivery").security_deposit == Decimal("500.00")
     assert quote(*d, addons=[AddonChoice(ADDONS["jetski"], 1)]).security_deposit == Decimal("500.00")
-    assert quote(*d, addons=[AddonChoice(ADDONS["atv"], 1)]).security_deposit == Decimal("500.00")
-    assert quote(*d, addons=[AddonChoice(ADDONS["ebike"], 2)]).security_deposit == Decimal("0.00")
-    assert quote(*d, transport_code="delivery").security_deposit == Decimal("0.00")
+    assert quote(*d, addons=[AddonChoice(ADDONS["ebike"], 2)]).security_deposit == Decimal("500.00")
 
 
 def test_deposit_rounds_to_the_cent_and_parts_add_up():

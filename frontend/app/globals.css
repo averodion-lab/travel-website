@@ -329,6 +329,9 @@ body {
 .pm-both {
   background: var(--color-clay);
 }
+.pm-offroad {
+  background: #b4532a;
+}
 .pm-none {
   background: #8a8073;
 }

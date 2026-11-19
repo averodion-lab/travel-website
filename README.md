@@ -117,4 +117,4 @@ Security headers for the static site are in `frontend/public/_headers` (read by 
 
 ## Sample data
 
-The fleet is one 2026 Keystone Montana 3795FK (`backend/app/seed_data.py`). Specs are from the dealer listing and the nightly rate is the owner's. The minimum stay, cleaning fee and security deposit are placeholders, and the photos in `frontend/public/images/montana/` are the dealer's listing photos: replace them with your own (or get written permission) before launch.
+The fleet is one 2026 Keystone Montana 3795FK (`backend/app/seed_data.py`). Specs are from the dealer listing and the nightly rate is the owner's. The minimum stay and security deposit are placeholders; the cleaning fee is $120 (the owner's), and the photos in `frontend/public/images/montana/` are the dealer's listing photos: replace them with your own (or get written permission) before launch.
