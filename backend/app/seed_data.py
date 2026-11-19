@@ -25,7 +25,7 @@ CAMPERS = [
         "sleeps": 6,
         "towing_weight_lbs": 13870,
         "length_ft": Decimal("39.9"),
-        "hitch_type": "Fifth-wheel hitch; one-ton truck weighing at least 6,000 lb (trailer 17,070 lb GVWR). Delivery available.",
+        "hitch_type": "Fifth wheel; one-ton truck, 6,000 lb+ (17,070 lb GVWR). Delivery available.",
         "hookups": "Full hookups: 50 amp electric, water, sewer. 70 gal fresh water tank.",
         "amenities": [
             "King bedroom with closet", "Two hide-a-bed sofas", "Theater seating",

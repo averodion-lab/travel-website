@@ -183,7 +183,7 @@ References: [Driveza](https://driveza.framer.website), [Hemlock House](https://r
 
 ## Status
 
-MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 100 backend tests pass; frontend lints, type-checks and builds.
+MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 101 backend tests pass; frontend lints, type-checks and builds.
 
 **Live preview:** https://averodion-lab.github.io/travel-website/ (repo `averodion-lab/travel-website`, public, because GitHub Pages on a free account needs a public repo). Every push to `main` runs `.github/workflows/deploy.yml`, which runs `npm run build:preview` with `BASE_PATH=/travel-website` and publishes `frontend/out/` to GitHub Pages. No backend or database is online.
 
@@ -193,9 +193,9 @@ MVP built and working locally end to end (browse, pick dates, book, confirmation
 
 Not done yet:
 1. **Accounts and deployment:** the live preview runs on GitHub Pages, but GitHub's terms don't allow Pages to be used mainly for a commercial business, so the real launch should move to Cloudflare as planned. Also needed: Stripe keys + webhook, Gmail app password + `OWNER_EMAIL`, Neon, Cloud Run, Cloudflare (frontend needs the OpenNext Cloudflare adapter), R2 for license files (`services/storage.py` is local-disk only), GitHub Actions cron for `flask purge-licenses`.
-2. **Real content:** company name, the owner's own photos (`public/images/montana/` holds the Camping World listing photos as local placeholders: they are the dealer's copyright and must be replaced or licensed in writing before launch), confirm the placeholder fees in `seed_data.py` (3-night minimum, $2,000 security deposit; the $120 cleaning fee is the owner's) and the delivery/self-tow policy the copy assumes, rental terms page (the checkout checkbox mentions terms that don't exist yet), contact details.
-3. **Hardening before launch:** rate limiting on `/api/admin/login` and `/api/bookings`, two-factor for admin, refund flow (cancelling in admin does not refund in Stripe), balance collection at pickup is manual.
-4. **Later PRD features:** 3D showcase, destination map, add-ons, blog, About/Contact pages (Contact waits on real contact details), rental terms page.
+2. **Real content:** company name, the owner's own photos (`public/images/montana/` holds the Camping World listing photos as local placeholders: they are the dealer's copyright and must be replaced or licensed in writing before launch), confirm the placeholder fees in `seed_data.py` (2-night minimum, $2,000 security deposit; the $120 cleaning fee is the owner's) and the delivery/self-tow policy the copy assumes, contact details, the legal name and address on `/terms` and `/privacy`.
+3. **Hardening before launch:** rate limits are in memory per process (move to Postgres), two-factor for admin, refunds from the admin drawer (guests can already cancel with a refund at `/booking/manage`), balance collection at pickup is manual.
+4. **Later PRD features:** 3D showcase, blog, About page. (Destination map, add-ons, contact form and terms/policies pages are done.)
 5. The local database holds made-up bookings (references `DEMO-…`) so the dashboard has data; remove with `flask demo-data --clear`. The owner cannot yet block dates for personal use or add a booking taken by phone.
 6. Unconfirmed by the owner: truck rental $175/day (placeholder, based on what heavy-duty diesel pickups rent for), add-on prices ($150/day 4-wheeler, $250/day jet ski; e-bikes are $33/day each, 3 bikes, confirmed) and which parks count as mountain or lake (see `catalog.py`; Quail Creek offers neither; small park lakes like Vogel's are not treated as jet-ski lakes). The map uses OpenStreetMap's free tiles, which are meant for light use; switch to a tile provider (Mapbox is in the plan) before heavy traffic.
 7. The FAQ, How It Works and Destinations copy assumes delivery and setup by the owner and a 45 ft / 50 amp site requirement; the owner has not confirmed these.
