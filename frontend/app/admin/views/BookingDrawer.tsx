@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { money, longDate } from "@/lib/format";
-import { StatusPill, type Detail } from "../types";
+import { StatusPill, pillStatus, type Detail } from "../types";
 
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -13,17 +13,58 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   );
 }
 
+/** Phone bookings: the owner records what the guest has paid so far. */
+function PaidSoFar({ booking, onAmountPaid }: { booking: Detail; onAmountPaid: (id: number, amount: string) => Promise<void> }) {
+  const [editing, setEditing] = useState(false);
+  const [busy, setBusy] = useState(false);
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    await onAmountPaid(booking.id, String(new FormData(event.currentTarget).get("amount") ?? "0"));
+    setBusy(false);
+    setEditing(false);
+  }
+
+  if (!editing) {
+    return (
+      <Row
+        label="Paid so far"
+        value={
+          <span>
+            {money(booking.deposit_due)}{" "}
+            {booking.status === "confirmed" && (
+              <button type="button" onClick={() => setEditing(true)} className="tap ml-2 text-clay-dark underline">Change</button>
+            )}
+          </span>
+        }
+      />
+    );
+  }
+  return (
+    <form onSubmit={submit} className="flex items-center justify-between gap-3 py-2.5">
+      <label htmlFor="paid-so-far" className="text-muted">Paid so far ($)</label>
+      <span className="flex items-center gap-2">
+        <input id="paid-so-far" name="amount" type="number" min="0" step="0.01" max={booking.total_price} defaultValue={booking.deposit_due} className="w-28 border border-line bg-white px-2 py-1 text-right" autoFocus />
+        <button type="submit" disabled={busy} className="btn btn-dark !px-3 !py-1">Save</button>
+      </span>
+    </form>
+  );
+}
+
 /** Slide-over with everything about one booking, including the customer's contact details. */
 export default function BookingDrawer({
   booking,
   onClose,
   onStatus,
   onLicense,
+  onAmountPaid,
 }: {
   booking: Detail;
   onClose: () => void;
-  onStatus: (id: number, next: "completed" | "cancelled") => void;
+  onStatus: (id: number, next: "completed" | "cancelled", kind: Detail["kind"]) => void;
   onLicense: (id: number) => void;
+  onAmountPaid: (id: number, amount: string) => Promise<void>;
 }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -32,6 +73,7 @@ export default function BookingDrawer({
   }, [onClose]);
 
   const c = booking.customer;
+  const isBlock = booking.kind === "block";
   return (
     <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-label={`Booking ${booking.reference}`}>
       <button type="button" aria-label="Close" onClick={onClose} className="absolute inset-0 bg-ink/40 backdrop-blur-[2px]" />
@@ -41,22 +83,37 @@ export default function BookingDrawer({
             <p className="font-mono text-xs text-cream/70">{booking.reference}</p>
             <button type="button" onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full border border-cream/30 text-lg hover:bg-cream hover:text-ink" aria-label="Close">×</button>
           </div>
-          <p className="mt-5 font-display text-4xl leading-none">{booking.customer_name}</p>
-          <div className="mt-4"><StatusPill status={booking.status} /></div>
+          <p className="mt-5 font-display text-4xl leading-none">{isBlock ? "Blocked dates" : booking.customer_name}</p>
+          <div className="mt-4 flex items-center gap-3">
+            <StatusPill status={pillStatus(booking)} />
+            {booking.kind === "phone" && <span className="text-xs text-cream/70">Taken by phone</span>}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-px bg-line text-sm">
           <div className="bg-white px-7 py-4">
-            <p className="label !mb-1">Pickup</p>
+            <p className="label !mb-1">{isBlock ? "First night" : "Pickup"}</p>
             <p>{longDate(booking.start_date)}</p>
           </div>
           <div className="bg-white px-7 py-4">
-            <p className="label !mb-1">Return</p>
+            <p className="label !mb-1">{isBlock ? "Free again on" : "Return"}</p>
             <p>{longDate(booking.end_date)}</p>
           </div>
         </div>
 
         <div className="flex-1 space-y-7 px-7 py-7 text-sm">
+          {booking.note && (
+            <section>
+              <h3 className="eyebrow text-clay">Your note</h3>
+              <p className="mt-2 whitespace-pre-line">{booking.note}</p>
+            </section>
+          )}
+          {isBlock && (
+            <p className="text-muted">
+              {booking.days} {booking.days === 1 ? "night" : "nights"} kept for you. Guests see these dates as taken.
+            </p>
+          )}
+          {c && (
           <section>
             <h3 className="eyebrow text-clay">Contact</h3>
             <dl className="mt-2 divide-y divide-line/70">
@@ -66,7 +123,10 @@ export default function BookingDrawer({
               <Row label="License no." value={c.license_purged ? "Deleted (retention period ended)" : c.license_number} />
             </dl>
           </section>
+          )}
 
+          {!isBlock && (
+          <>
           <section>
             <h3 className="eyebrow text-clay">Trip</h3>
             <dl className="mt-2 divide-y divide-line/70">
@@ -118,25 +178,33 @@ export default function BookingDrawer({
             <h3 className="eyebrow text-clay">Money</h3>
             <dl className="mt-2 divide-y divide-line/70">
               <Row label={`Total, ${booking.days} nights${booking.addons.length ? " + extras" : ""}`} value={money(booking.total_price)} />
-              <Row label="Deposit paid" value={booking.status === "pending" ? "Not yet" : money(booking.deposit_due)} />
-              {booking.free_change_until && <Row label="Free date changes until" value={booking.free_change_until} />}
+              {booking.kind === "phone" ? (
+                <PaidSoFar key={booking.deposit_due} booking={booking} onAmountPaid={onAmountPaid} />
+              ) : (
+                <Row label="Deposit paid" value={booking.status === "pending" ? "Not yet" : money(booking.deposit_due)} />
+              )}
+              {booking.free_change_until && booking.kind === "guest" && <Row label="Free date changes until" value={booking.free_change_until} />}
               {booking.refunded_amount != null && <Row label="Refunded on cancelling" value={`$${booking.refunded_amount}`} />}
               <Row label="Due at pickup" value={<span className="font-semibold">{money(booking.balance_due)}</span>} />
               <Row label="Security hold" value={money(booking.security_deposit)} />
               <Row label="Emails sent" value={booking.emails_sent ? "Yes" : "No"} />
             </dl>
           </section>
+          </>
+          )}
         </div>
 
         <div className="space-y-2 border-t border-line bg-white px-7 py-5">
-          {c.has_license_file && (
+          {c?.has_license_file && (
             <button type="button" onClick={() => onLicense(booking.id)} className="btn btn-outline w-full">View license photo</button>
           )}
-          {booking.status === "confirmed" && (
-            <button type="button" onClick={() => onStatus(booking.id, "completed")} className="btn btn-dark w-full">Mark returned &amp; inspected</button>
+          {booking.status === "confirmed" && !isBlock && (
+            <button type="button" onClick={() => onStatus(booking.id, "completed", booking.kind)} className="btn btn-dark w-full">Mark returned &amp; inspected</button>
           )}
           {(booking.status === "confirmed" || booking.status === "pending") && (
-            <button type="button" onClick={() => onStatus(booking.id, "cancelled")} className="btn w-full text-clay-dark hover:underline">Cancel booking</button>
+            <button type="button" onClick={() => onStatus(booking.id, "cancelled", booking.kind)} className="btn w-full text-clay-dark hover:underline">
+              {isBlock ? "Remove block (open these dates)" : "Cancel booking"}
+            </button>
           )}
         </div>
       </aside>

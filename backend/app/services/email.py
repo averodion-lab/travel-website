@@ -67,6 +67,35 @@ def _trip(b: Booking) -> str:
     return "\n".join(lines)
 
 
+def _payment_and_changes(b: Booking) -> str:
+    """Money lines and how to change plans. Bookings taken by phone are
+    changed through the owner, not the online page."""
+    from ..models import BookingKind
+
+    cfg = current_app.config
+    if b.kind == BookingKind.PHONE:
+        return f"""Rental total: {_money(b.total_price)}
+Paid so far: {_money(b.deposit_due)}
+Balance due at pickup: {_money(b.total_price - b.deposit_due)}
+Refundable security deposit (held at pickup): {_money(b.security_deposit)}
+
+Change of plans? Just reply to this email or call us. Our cancellation
+policy is here: {cfg['FRONTEND_URL']}/policies"""
+    return f"""Rental total: {_money(b.total_price)}
+Deposit paid today: {_money(b.deposit_due)}
+Balance due at pickup: {_money(b.total_price - b.deposit_due)}
+Refundable security deposit (held at pickup): {_money(b.security_deposit)}
+
+View your booking: {cfg['FRONTEND_URL']}/booking/confirmation?ref={b.reference}
+
+Change of plans? You can change your dates or cancel online:
+{cfg['FRONTEND_URL']}/booking/manage?ref={b.reference}
+- Changing dates is free up to 24 hours before pickup (until {b.free_change_until():%A, %B %-d, %Y}).
+- Cancelling is free for 24 hours after payment. After that, your deposit is
+  refunded in full up to 14 days before pickup, 50% from 13 to 7 days, and not
+  refunded in the last 7 days. Full policy: {cfg['FRONTEND_URL']}/policies"""
+
+
 def send_customer_confirmation(b: Booking) -> bool:
     cfg = current_app.config
     site = cfg["SITE_NAME"]
@@ -79,19 +108,7 @@ Camper: {b.camper.name}
 Dates: {_dates(b)}
 {_trip(b)}
 
-Rental total: {_money(b.total_price)}
-Deposit paid today: {_money(b.deposit_due)}
-Balance due at pickup: {_money(b.total_price - b.deposit_due)}
-Refundable security deposit (held at pickup): {_money(b.security_deposit)}
-
-View your booking: {cfg['FRONTEND_URL']}/booking/confirmation?ref={b.reference}
-
-Change of plans? You can change your dates or cancel online:
-{cfg['FRONTEND_URL']}/booking/manage?ref={b.reference}
-- Changing dates is free up to 24 hours before pickup (until {b.free_change_until():%A, %B %-d, %Y}).
-- Cancelling is free for 24 hours after payment. After that, your deposit is
-  refunded in full up to 14 days before pickup, 50% from 13 to 7 days, and not
-  refunded in the last 7 days. Full policy: {cfg['FRONTEND_URL']}/policies
+{_payment_and_changes(b)}
 
 We'll be in touch before your trip with pickup instructions. If you have any
 questions, just reply to this email.

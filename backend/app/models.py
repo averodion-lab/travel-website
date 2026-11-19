@@ -71,7 +71,7 @@ class Customer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80), nullable=False)
     last_name = db.Column(db.String(80), nullable=False)
-    encrypted_email = db.Column(db.Text, nullable=False)
+    encrypted_email = db.Column(db.Text)  # a phone booking may have no email
     encrypted_phone = db.Column(db.Text, nullable=False)
     encrypted_address = db.Column(db.Text)
     encrypted_license_data = db.Column(db.Text)  # license number
@@ -88,13 +88,21 @@ class BookingStatus:
     ALL = (PENDING, CONFIRMED, COMPLETED, CANCELLED)
 
 
+class BookingKind:
+    GUEST = "guest"  # booked and paid online
+    PHONE = "phone"  # added by the owner in the dashboard
+    BLOCK = "block"  # dates the owner keeps for themselves; no customer
+    ALL = (GUEST, PHONE, BLOCK)
+
+
 class Booking(db.Model):
     __tablename__ = "bookings"
 
     id = db.Column(db.Integer, primary_key=True)
     reference = db.Column(db.String(20), unique=True, nullable=False)
     camper_id = db.Column(db.Integer, db.ForeignKey("campers.id"), nullable=False)
-    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"), nullable=False)
+    kind = db.Column(db.String(10), nullable=False, default=BookingKind.GUEST, server_default=BookingKind.GUEST)
+    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"), nullable=True)  # null for blocks
     # Half-open range [start_date, end_date): pickup day to return day, so one
     # customer's return day can be the next customer's pickup day.
     start_date = db.Column(db.Date, nullable=False)
@@ -128,6 +136,8 @@ class Booking(db.Model):
     notified_at = db.Column(db.DateTime(timezone=True))  # emails sent
     # Deposit refunded when the guest cancelled (cancellation policy).
     refunded_amount = db.Column(db.Numeric(10, 2), nullable=True)
+    # Owner's note (block reason, phone discount reason). Encrypted: it may name people.
+    encrypted_note = db.Column(db.Text, nullable=True)
 
     camper = db.relationship("Camper", lazy="joined")
     customer = db.relationship("Customer", lazy="joined", backref="bookings")
@@ -138,6 +148,8 @@ class Booking(db.Model):
             "status IN ('pending','confirmed','completed','cancelled')",
             name="bookings_status_valid",
         ),
+        CheckConstraint("kind IN ('guest','phone','block')", name="bookings_kind_valid"),
+        CheckConstraint("kind = 'block' OR customer_id IS NOT NULL", name="bookings_customer_unless_block"),
         # The database itself refuses overlapping bookings for the same camper.
         # Requires the btree_gist extension (created in the first migration).
         ExcludeConstraint(
@@ -177,6 +189,12 @@ class Booking(db.Model):
             "free_cancel_until": self.free_cancel_until().isoformat() if self.confirmed_at else None,
             "refunded_amount": str(self.refunded_amount) if self.refunded_amount is not None else None,
         }
+
+    def note(self) -> str | None:
+        """The owner's note, decrypted. Admin only."""
+        from .crypto import decrypt_str
+
+        return decrypt_str(self.encrypted_note)
 
     def free_cancel_until(self):
         """Cancelling is free (full deposit refund) for 24 hours after payment."""

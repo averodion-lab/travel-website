@@ -2,6 +2,8 @@ export type Brief = {
   id: number;
   reference: string;
   status: string;
+  /** "guest" booked online, "phone" added by the owner, "block" dates the owner keeps. */
+  kind: "guest" | "phone" | "block";
   customer_name: string;
   start_date: string;
   end_date: string;
@@ -24,12 +26,15 @@ export type Summary = Brief & {
   free_change_until?: string;
   refunded_amount?: string | null;
   towing_experience?: boolean;
+  /** Owner's own note (block reason, phone price reason). */
+  note: string | null;
+  emails_sent: boolean;
 };
 
 export type Detail = Summary & {
   security_deposit: string;
-  emails_sent: boolean;
-  customer: {
+  /** Null for blocked dates. */
+  customer: null | {
     email: string | null;
     phone: string | null;
     address: string | null;
@@ -45,7 +50,7 @@ export type Overview = {
   today: string;
   revenue: { booked: string; collected: string; outstanding: string; average_booking: string };
   counts: { upcoming: number; pending: number; completed: number; total: number };
-  occupancy: { days: number; nights_booked: number; percent: number };
+  occupancy: { days: number; nights_booked: number; nights_blocked: number; percent: number };
   months: Month[];
   open_windows: { start: string; end: string; nights: number }[];
   open_until: string;
@@ -76,9 +81,16 @@ export const STATUS_LABEL: Record<string, string> = {
   pending: "Awaiting payment",
   completed: "Completed",
   cancelled: "Cancelled",
+  blocked: "Blocked",
 };
 
+/** The pill for a booking: blocks read "Blocked" whatever their status. */
+export function pillStatus(b: { kind: string; status: string }): string {
+  return b.kind === "block" && b.status !== "cancelled" ? "blocked" : b.status;
+}
+
 export const STATUS_STYLE: Record<string, string> = {
+  blocked: "bg-[#8a8170] text-cream",
   confirmed: "bg-pine text-cream",
   pending: "bg-[#e9c46a] text-ink",
   completed: "bg-bark/15 text-bark",

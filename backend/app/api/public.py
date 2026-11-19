@@ -224,7 +224,7 @@ def get_booking(reference: str):
     booking = db.session.execute(
         select(Booking).where(Booking.reference == reference.upper())
     ).scalar_one_or_none()
-    if booking is None:
+    if booking is None or booking.customer is None:  # owner's blocked dates are not public
         raise ApiError("Booking not found.", 404)
     return jsonify({"booking": booking.public_dict()})
 

@@ -10,6 +10,7 @@ import BookingsView from "./views/BookingsView";
 import CalendarView from "./views/CalendarView";
 import CustomersView from "./views/CustomersView";
 import OverviewView from "./views/OverviewView";
+import { BlockForm, PhoneBookingForm } from "./views/OwnerForms";
 
 const TOKEN_KEY = "admin_token";
 
@@ -109,6 +110,7 @@ function Dashboard({ token, signOut }: { token: string; signOut: () => void }) {
   const [bookings, setBookings] = useState<Summary[] | null>(null);
   const [selected, setSelected] = useState<Detail | null>(null);
   const [error, setError] = useState("");
+  const [form, setForm] = useState<"block" | "phone" | null>(null);
 
   const call = useCallback<Call>(
     async (path, init) => {
@@ -151,12 +153,17 @@ function Dashboard({ token, signOut }: { token: string; signOut: () => void }) {
     [call],
   );
   const close = useCallback(() => setSelected(null), []);
+  const closeForm = useCallback(() => setForm(null), []);
 
-  async function setBookingStatus(id: number, next: "completed" | "cancelled") {
+  async function setBookingStatus(id: number, next: "completed" | "cancelled", kind: Detail["kind"]) {
     const question =
-      next === "cancelled"
-        ? "Cancel this booking? The dates will open up for other customers. Refund the deposit in Stripe separately."
-        : "Mark as completed? Do this once the trailer is returned and inspected.";
+      next === "completed"
+        ? "Mark as completed? Do this once the trailer is returned and inspected."
+        : kind === "block"
+          ? "Remove this block? Guests will be able to book these dates."
+          : kind === "phone"
+            ? "Cancel this booking? The dates will open up for other customers. Settle any money with the guest yourself."
+            : "Cancel this booking? The dates will open up for other customers. Refund the deposit in Stripe separately.";
     if (!window.confirm(question)) return;
     try {
       await call(`/api/admin/bookings/${id}`, {
@@ -169,6 +176,27 @@ function Dashboard({ token, signOut }: { token: string; signOut: () => void }) {
     } catch (e) {
       setError(e instanceof Error ? e.message : "Update failed.");
     }
+  }
+
+  async function setAmountPaid(id: number, amount: string) {
+    setError("");
+    try {
+      await call(`/api/admin/bookings/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount_paid: amount }),
+      });
+      load();
+      await open(id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Update failed.");
+    }
+  }
+
+  async function saved(booking: Summary) {
+    setForm(null);
+    load();
+    await open(booking.id);
   }
 
   async function viewLicense(id: number) {
@@ -238,7 +266,13 @@ function Dashboard({ token, signOut }: { token: string; signOut: () => void }) {
             </p>
             <h1 className="mt-2 font-display text-5xl sm:text-6xl">{title}</h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={() => setForm("phone")} className="rounded-full bg-ink px-5 py-2.5 text-sm text-cream hover:bg-ink/85">
+              + Phone booking
+            </button>
+            <button type="button" onClick={() => setForm("block")} className="rounded-full border border-line bg-white px-5 py-2.5 text-sm hover:bg-cream">
+              Block dates
+            </button>
             <button type="button" onClick={load} className="rounded-full border border-line bg-white px-5 py-2.5 text-sm hover:bg-cream">
               Refresh
             </button>
@@ -264,7 +298,11 @@ function Dashboard({ token, signOut }: { token: string; signOut: () => void }) {
         )}
       </main>
 
-      {selected && <BookingDrawer booking={selected} onClose={close} onStatus={setBookingStatus} onLicense={viewLicense} />}
+      {selected && (
+        <BookingDrawer booking={selected} onClose={close} onStatus={setBookingStatus} onLicense={viewLicense} onAmountPaid={setAmountPaid} />
+      )}
+      {form === "block" && <BlockForm call={call} onClose={closeForm} onSaved={saved} />}
+      {form === "phone" && <PhoneBookingForm call={call} onClose={closeForm} onSaved={saved} />}
     </div>
   );
 }

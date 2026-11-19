@@ -3,12 +3,13 @@
 import { useMemo, useState } from "react";
 import { addMonths, eachDayOfInterval, endOfMonth, format, getDay, parseISO, startOfMonth } from "date-fns";
 import { toISO } from "@/lib/format";
-import { STATUS_LABEL, type Brief, type Overview } from "../types";
+import { STATUS_LABEL, pillStatus, type Brief, type Overview } from "../types";
 
 const DAY_STYLE: Record<string, string> = {
   confirmed: "bg-pine text-cream hover:bg-pine-dark",
   pending: "bg-[#e9c46a] text-ink hover:bg-[#ddb450]",
   completed: "bg-bark/15 text-bark hover:bg-bark/25",
+  blocked: "bg-[#8a8170] text-cream hover:bg-[#776f5f]",
 };
 
 /** A year at a glance: every night coloured by the booking that holds it. */
@@ -37,7 +38,7 @@ export default function CalendarView({ data, onOpen }: { data: Overview; onOpen:
             {format(months[0], "MMM yyyy")} to {format(months[11], "MMM yyyy")}
           </h2>
           <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-xs text-muted">
-            {(["confirmed", "pending", "completed"] as const).map((s) => (
+            {(["confirmed", "pending", "completed", "blocked"] as const).map((s) => (
               <li key={s} className="flex items-center gap-2">
                 <span className={`h-3 w-3 rounded-[3px] ${DAY_STYLE[s].split(" ")[0]}`} /> {STATUS_LABEL[s]}
               </li>
@@ -88,8 +89,8 @@ export default function CalendarView({ data, onOpen }: { data: Overview; onOpen:
                       onClick={() => onOpen(booking.id)}
                       onMouseEnter={() => setHover(booking.id)}
                       onMouseLeave={() => setHover(null)}
-                      title={`${booking.customer_name} · ${format(parseISO(booking.start_date), "MMM d")} to ${format(parseISO(booking.end_date), "MMM d")} · ${STATUS_LABEL[booking.status]}`}
-                      className={`flex aspect-square items-center justify-center rounded-[5px] font-medium tabular-nums transition-colors ${DAY_STYLE[booking.status] ?? ""} ${hover === booking.id ? "brightness-90" : ""} ${ring}`}
+                      title={`${booking.customer_name} · ${format(parseISO(booking.start_date), "MMM d")} to ${format(parseISO(booking.end_date), "MMM d")} · ${STATUS_LABEL[pillStatus(booking)]}`}
+                      className={`flex aspect-square items-center justify-center rounded-[5px] font-medium tabular-nums transition-colors ${DAY_STYLE[pillStatus(booking)] ?? ""} ${hover === booking.id ? "brightness-90" : ""} ${ring}`}
                     >
                       {day.getDate()}
                     </button>

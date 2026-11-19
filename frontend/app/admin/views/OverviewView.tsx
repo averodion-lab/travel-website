@@ -162,7 +162,7 @@ export default function OverviewView({ data, onOpen }: { data: Overview; onOpen:
         <Tile label="Booked revenue" value={whole.format(Number(revenue.booked))} note={`${counts.total} paid bookings · ${whole.format(Number(revenue.average_booking))} average`} />
         <Tile label="Collected" value={whole.format(Number(revenue.collected))} note="Deposits, plus completed trips in full" />
         <Tile label="Due at pickup" value={whole.format(Number(revenue.outstanding))} note={`${counts.upcoming} upcoming ${counts.upcoming === 1 ? "trip" : "trips"}${counts.pending ? ` · ${counts.pending} awaiting payment` : ""}`} />
-        <Tile label="Occupancy" value={`${occupancy.percent}%`} note={`${occupancy.nights_booked} of the next ${occupancy.days} nights booked`}>
+        <Tile label="Occupancy" value={`${occupancy.percent}%`} note={`${occupancy.nights_booked} of the next ${occupancy.days} nights booked${occupancy.nights_blocked ? `, ${occupancy.nights_blocked} blocked by you` : ""}`}>
           <Ring percent={occupancy.percent} />
         </Tile>
       </div>

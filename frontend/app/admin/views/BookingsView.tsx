@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { money, shortDate } from "@/lib/format";
-import { StatusPill, type Summary } from "../types";
+import { StatusPill, pillStatus, type Summary } from "../types";
 
 const FILTERS = [
   ["", "All"],
@@ -10,6 +10,7 @@ const FILTERS = [
   ["pending", "Awaiting payment"],
   ["completed", "Completed"],
   ["cancelled", "Cancelled"],
+  ["blocked", "Blocked"],
 ] as const;
 
 export default function BookingsView({ bookings, selectedId, onOpen }: { bookings: Summary[]; selectedId: number | null; onOpen: (id: number) => void }) {
@@ -20,7 +21,7 @@ export default function BookingsView({ bookings, selectedId, onOpen }: { booking
     const q = search.trim().toLowerCase();
     return bookings.filter(
       (b) =>
-        (!status || b.status === status) &&
+        (!status || pillStatus(b) === status) &&
         (!q || b.customer_name.toLowerCase().includes(q) || b.reference.toLowerCase().includes(q)),
     );
   }, [bookings, status, search]);
@@ -30,7 +31,7 @@ export default function BookingsView({ bookings, selectedId, onOpen }: { booking
       <div className="flex flex-wrap items-center justify-between gap-4 p-5">
         <div className="flex flex-wrap gap-2">
           {FILTERS.map(([value, label]) => {
-            const count = value ? bookings.filter((b) => b.status === value).length : bookings.length;
+            const count = value ? bookings.filter((b) => pillStatus(b) === value).length : bookings.length;
             return (
               <button
                 key={value}
@@ -64,7 +65,11 @@ export default function BookingsView({ bookings, selectedId, onOpen }: { booking
           <tbody className="divide-y divide-line/60">
             {rows.map((b) => (
               <tr key={b.id} onClick={() => onOpen(b.id)} className={`cursor-pointer transition-colors hover:bg-cream ${selectedId === b.id ? "bg-cream" : ""}`}>
-                <td className="px-5 py-4 font-medium">{b.customer_name}</td>
+                <td className="px-5 py-4 font-medium">
+                  {b.customer_name}
+                  {b.kind === "phone" && <span className="ml-2 text-xs font-normal text-muted">by phone</span>}
+                  {b.kind === "block" && b.note && <span className="block max-w-[14rem] truncate text-xs font-normal text-muted">{b.note}</span>}
+                </td>
                 <td className="px-5 py-4 font-mono text-xs text-muted">{b.reference}</td>
                 <td className="px-5 py-4">
                   <span className="block max-w-[12rem] truncate">{b.park?.name ?? "—"}</span>
@@ -72,9 +77,9 @@ export default function BookingsView({ bookings, selectedId, onOpen }: { booking
                 </td>
                 <td className="px-5 py-4 whitespace-nowrap">{shortDate(b.start_date)} to {shortDate(b.end_date)}</td>
                 <td className="px-5 py-4 tabular-nums">{b.days}</td>
-                <td className="px-5 py-4 tabular-nums">{money(b.total_price)}</td>
-                <td className="px-5 py-4 tabular-nums text-muted">{b.status === "confirmed" ? money(b.balance_due) : "—"}</td>
-                <td className="px-5 py-4"><StatusPill status={b.status} /></td>
+                <td className="px-5 py-4 tabular-nums">{b.kind === "block" ? "—" : money(b.total_price)}</td>
+                <td className="px-5 py-4 tabular-nums text-muted">{b.status === "confirmed" && b.kind !== "block" ? money(b.balance_due) : "—"}</td>
+                <td className="px-5 py-4"><StatusPill status={pillStatus(b)} /></td>
               </tr>
             ))}
           </tbody>

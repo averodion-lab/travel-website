@@ -94,6 +94,7 @@ Ports 3000 and 3100 are used by the owner's other projects on this machine; this
 3. Stripe Checkout (30 min session). `POST /api/webhooks/stripe` verifies the signature and calls `confirm_booking`, which marks it **confirmed** and sends the customer + owner emails. Idempotent.
 4. `/booking/confirmation?ref=...` polls `GET /api/bookings/<ref>` (no contact details in that response).
 5. Owner dashboard at `/admin` (full-screen, covers the site footer): Overview (revenue, occupancy, who has the trailer, open dates), Calendar (year view by status), Bookings, Customers. Data comes from `GET /api/admin/overview` and `/api/admin/customers`. Revenue definitions are at the top of `services/reports.py`. Owner marks a booking **completed** there; `flask purge-licenses` deletes license data 30 days later.
+6. **Owner tools** (dashboard header buttons, `views/OwnerForms.tsx`): **Block dates** (`POST /api/admin/blocks`) and **+ Phone booking** (`POST /api/admin/bookings`). Both are rows in `bookings` with `kind` = `block` | `phone` (online ones are `guest`), so the exclusion constraint covers them. A block has no customer (`bookings_customer_unless_block`), zero money, no minimum stay, status `confirmed`; removing it = cancelling it; it is never public (`GET /api/bookings/<ref>` 404s) and never revenue (`reports.py`: `nights_blocked`, grey in the calendar). A phone booking is priced by `quote_for_camper` like online ones (owner may set `total_override`, which needs a `note`), confirmed at once, and its `deposit_due` means "paid so far" (editable via `PATCH {amount_paid}`), so balance/revenue maths stay the same. Email is optional (`customers.encrypted_email` is nullable); the confirmation email for phone bookings says to call instead of linking `/booking/manage`, and `/api/manage/find` refuses phone bookings (409 "by phone", only after the email matches). Owner notes are encrypted (`bookings.encrypted_note`).
 
 **Development fallbacks** (refused when `APP_ENV=production`): with no `STRIPE_SECRET_KEY`, checkout is mocked and bookings confirm instantly; with no SMTP credentials, emails are skipped and only the subject is logged.
 
@@ -183,7 +184,7 @@ References: [Driveza](https://driveza.framer.website), [Hemlock House](https://r
 
 ## Status
 
-MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 101 backend tests pass; frontend lints, type-checks and builds.
+MVP built and working locally end to end (browse, pick dates, book, confirmation, admin). 128 backend tests pass; frontend lints, type-checks and builds.
 
 **Live preview:** https://averodion-lab.github.io/travel-website/ (repo `averodion-lab/travel-website`, public, because GitHub Pages on a free account needs a public repo). Every push to `main` runs `.github/workflows/deploy.yml`, which runs `npm run build:preview` with `BASE_PATH=/travel-website` and publishes `frontend/out/` to GitHub Pages. No backend or database is online.
 
@@ -196,6 +197,6 @@ Not done yet:
 2. **Real content:** company name, the owner's own photos (`public/images/montana/` holds the Camping World listing photos as local placeholders: they are the dealer's copyright and must be replaced or licensed in writing before launch), confirm the placeholder fees in `seed_data.py` (2-night minimum, $2,000 security deposit; the $120 cleaning fee is the owner's) and the delivery/self-tow policy the copy assumes, contact details, the legal name and address on `/terms` and `/privacy`.
 3. **Hardening before launch:** rate limits are in memory per process (move to Postgres), two-factor for admin, refunds from the admin drawer (guests can already cancel with a refund at `/booking/manage`), balance collection at pickup is manual.
 4. **Later PRD features:** 3D showcase, blog, About page. (Destination map, add-ons, contact form and terms/policies pages are done.)
-5. The local database holds made-up bookings (references `DEMO-…`) so the dashboard has data; remove with `flask demo-data --clear`. The owner cannot yet block dates for personal use or add a booking taken by phone.
+5. The local database holds made-up bookings (references `DEMO-…`) so the dashboard has data; remove with `flask demo-data --clear`. 
 6. Unconfirmed by the owner: truck rental $175/day (placeholder, based on what heavy-duty diesel pickups rent for), add-on prices ($150/day 4-wheeler, $250/day jet ski; e-bikes are $33/day each, 3 bikes, confirmed) and which parks count as mountain or lake (see `catalog.py`; Quail Creek offers neither; small park lakes like Vogel's are not treated as jet-ski lakes). The map uses OpenStreetMap's free tiles, which are meant for light use; switch to a tile provider (Mapbox is in the plan) before heavy traffic.
 7. The FAQ, How It Works and Destinations copy assumes delivery and setup by the owner and a 45 ft / 50 amp site requirement; the owner has not confirmed these.

@@ -5,6 +5,9 @@ can only know about it once the owner marks the booking completed):
   booked      = total of confirmed + completed bookings
   collected   = deposits of confirmed bookings + full total of completed ones
   outstanding = balances of confirmed bookings, due at pickup
+For a booking taken by phone, `deposit_due` is what the guest has paid so far.
+The owner's blocked dates (kind "block") are never revenue or bookings; they
+hold their dates and are counted as blocked nights.
 """
 from __future__ import annotations
 
@@ -15,7 +18,7 @@ from sqlalchemy import select
 
 from .. import crypto
 from ..extensions import db
-from ..models import Booking, BookingStatus, Camper, Customer
+from ..models import Booking, BookingKind, BookingStatus, Camper, Customer
 
 PAID = (BookingStatus.CONFIRMED, BookingStatus.COMPLETED)
 HOLDING = (BookingStatus.PENDING, BookingStatus.CONFIRMED, BookingStatus.COMPLETED)
@@ -33,7 +36,8 @@ def _brief(b: Booking) -> dict:
         "id": b.id,
         "reference": b.reference,
         "status": b.status,
-        "customer_name": f"{b.customer.first_name} {b.customer.last_name}",
+        "kind": b.kind,
+        "customer_name": f"{b.customer.first_name} {b.customer.last_name}" if b.customer else "Blocked",
         "start_date": b.start_date.isoformat(),
         "end_date": b.end_date.isoformat(),
         "days": b.days,
@@ -57,9 +61,11 @@ def overview(today: date | None = None) -> dict:
     bookings = db.session.execute(
         select(Booking).where(Booking.status != BookingStatus.CANCELLED).order_by(Booking.start_date)
     ).scalars().all()
-    paid = [b for b in bookings if b.status in PAID]
-    confirmed = [b for b in bookings if b.status == BookingStatus.CONFIRMED]
-    completed = [b for b in bookings if b.status == BookingStatus.COMPLETED]
+    blocks = [b for b in bookings if b.kind == BookingKind.BLOCK]
+    rentals = [b for b in bookings if b.kind != BookingKind.BLOCK]
+    paid = [b for b in rentals if b.status in PAID]
+    confirmed = [b for b in rentals if b.status == BookingStatus.CONFIRMED]
+    completed = [b for b in rentals if b.status == BookingStatus.COMPLETED]
 
     booked = sum((b.total_price for b in paid), ZERO)
     collected = sum((b.deposit_due for b in confirmed), ZERO) + sum((b.total_price for b in completed), ZERO)
@@ -81,6 +87,7 @@ def overview(today: date | None = None) -> dict:
 
     horizon = today + timedelta(days=OCCUPANCY_DAYS)
     nights_booked = sum(_nights_between(b, today, horizon) for b in paid)
+    nights_blocked = sum(_nights_between(b, today, horizon) for b in blocks)
 
     min_nights = db.session.execute(
         select(Camper.min_nights).where(Camper.is_active.is_(True)).order_by(Camper.id).limit(1)
@@ -109,13 +116,14 @@ def overview(today: date | None = None) -> dict:
         },
         "counts": {
             "upcoming": len(upcoming),
-            "pending": sum(1 for b in bookings if b.status == BookingStatus.PENDING),
+            "pending": sum(1 for b in rentals if b.status == BookingStatus.PENDING),
             "completed": len(completed),
             "total": len(paid),
         },
         "occupancy": {
             "days": OCCUPANCY_DAYS,
             "nights_booked": nights_booked,
+            "nights_blocked": nights_blocked,
             "percent": round(nights_booked * 100 / OCCUPANCY_DAYS),
         },
         "months": months,

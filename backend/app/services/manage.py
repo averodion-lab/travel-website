@@ -19,11 +19,12 @@ from sqlalchemy.exc import IntegrityError
 from .. import catalog, crypto
 from ..errors import ApiError
 from ..extensions import db
-from ..models import Booking, BookingStatus, utcnow
+from ..models import Booking, BookingKind, BookingStatus, utcnow
 from . import availability, email, payments
 from .bookings import DATES_TAKEN
 from .pricing import quote_for_camper
 
+BY_PHONE = "This booking was made by phone, so please call or email us to change or cancel it."
 NOT_FOUND = "We couldn't find a booking with that number and email. Please check both."
 TOO_LATE = "Date changes online end 24 hours before pickup. Please contact us and we'll see what we can do."
 TOO_LATE_CANCEL = "Your trip starts today, so please contact us to cancel."
@@ -33,11 +34,13 @@ def find_for_guest(reference: str, email_address: str) -> Booking:
     reference = (reference or "").strip().upper()
     given = (email_address or "").strip().lower()
     b = db.session.execute(select(Booking).where(Booking.reference == reference)).scalar_one_or_none()
-    if b is None or not given:
+    if b is None or b.customer is None or not given:  # blocks have no customer
         raise ApiError(NOT_FOUND, 404)
     stored = (crypto.decrypt_str(b.customer.encrypted_email) or "").strip().lower()
-    if not hmac.compare_digest(stored.encode(), given.encode()):
+    if not stored or not hmac.compare_digest(stored.encode(), given.encode()):
         raise ApiError(NOT_FOUND, 404)
+    if b.kind == BookingKind.PHONE:
+        raise ApiError(BY_PHONE, 409, "by_phone")
     return b
 
 

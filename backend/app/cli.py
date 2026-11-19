@@ -99,7 +99,8 @@ def register_cli(app: Flask) -> None:
             customer = booking.customer
             db.session.delete(booking)
             db.session.flush()
-            db.session.delete(customer)
+            if customer is not None:
+                db.session.delete(customer)
         db.session.commit()
         if clear:
             click.echo(f"Removed {len(old)} demo bookings.")
