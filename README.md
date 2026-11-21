@@ -89,6 +89,17 @@ npm run dev
 
 Without Stripe keys, checkout is simulated and bookings confirm instantly. Without Gmail credentials, emails are skipped. Both fallbacks are disabled in production.
 
+**Real Stripe test payments locally:** put the test secret key (`sk_test_…`, Stripe dashboard → Developers → API keys, Test mode) in `backend/.env` as `STRIPE_SECRET_KEY`. Stripe's payment notices reach your machine through the [Stripe CLI](https://github.com/stripe/stripe-cli/releases):
+
+```bash
+stripe listen --api-key "$STRIPE_SECRET_KEY" --print-secret   # once: copy into STRIPE_WEBHOOK_SECRET
+stripe listen --api-key "$STRIPE_SECRET_KEY" \
+  --events checkout.session.completed,checkout.session.async_payment_succeeded,checkout.session.expired \
+  --forward-to localhost:5001/api/webhooks/stripe            # keep running while testing
+```
+
+Pay with card `4242 4242 4242 4242`, any future date and CVC. Bookings only confirm while `stripe listen` is running. In production, add a webhook endpoint in the Stripe dashboard instead (same three events) and use its signing secret.
+
 ### Tests
 
 ```bash
