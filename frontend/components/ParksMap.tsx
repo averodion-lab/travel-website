@@ -376,7 +376,7 @@ export default function ParksMap({
         {["All", ...states].map((s) => {
           const count =
             s === "All"
-              ? parks.length
+              ? parks.filter((p) => matches(p, only)).length
               : parks.filter((p) => p.state === s && matches(p, only)).length;
           return (
             <button
@@ -387,6 +387,57 @@ export default function ParksMap({
               className={`rounded-full px-4 py-2 text-sm transition-colors ${state === s ? "bg-ink text-cream" : "bg-white text-bark hover:bg-sand"}`}
             >
               {s === "All" ? "All states" : s}{" "}
+              <span className="tabular-nums opacity-60">{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Kind of park: pill buttons like the states above, each with its pin
+          colour, so this row is the map's colour key too. */}
+      <div
+        className="mt-3 flex flex-wrap gap-2"
+        role="group"
+        aria-label="Show only"
+      >
+        {(
+          [
+            null,
+            "mountains",
+            "lake",
+            "both",
+            "offroad",
+            "none",
+            "ramp",
+          ] as const
+        ).map((k) => {
+          const on = only === k;
+          const count = parks.filter(
+            (p) => (state === "All" || p.state === state) && matches(p, k),
+          ).length;
+          return (
+            <button
+              key={k ?? "all"}
+              type="button"
+              onClick={() => setOnly(k)}
+              aria-pressed={on}
+              className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-colors ${on ? "bg-ink text-cream" : "bg-white text-bark hover:bg-sand"}`}
+            >
+              {k === "ramp" ? (
+                <span
+                  className="pm-ramp-key"
+                  dangerouslySetInnerHTML={{ __html: ANCHOR_SVG }}
+                />
+              ) : k ? (
+                <span
+                  className={`pm-dot pm-${k} ${on ? "ring-2 ring-cream/80" : ""}`}
+                />
+              ) : null}
+              {k === null
+                ? "All parks"
+                : k === "ramp"
+                  ? "Boat ramps"
+                  : KIND_LABEL[k]}
               <span className="tabular-nums opacity-60">{count}</span>
             </button>
           );
@@ -422,43 +473,6 @@ export default function ParksMap({
           >
             {hint}
           </p>
-          {/* Colour key and filter: each entry shows only that kind of park
-              (click again for all). Under the map on phones, over its corner
-              on bigger screens. */}
-          <ul
-            aria-label="Show only"
-            className="mt-3 flex flex-wrap gap-1 text-xs text-bark sm:absolute sm:bottom-4 sm:left-4 sm:right-4 sm:z-[400] sm:mt-0 sm:w-max sm:max-w-[calc(100%-2rem)] sm:rounded-xl sm:bg-cream/95 sm:px-2 sm:py-1.5 sm:shadow-md"
-          >
-            {(
-              ["mountains", "lake", "both", "offroad", "none", "ramp"] as const
-            ).map((k) => {
-              const on = only === k;
-              return (
-                <li key={k}>
-                  <button
-                    type="button"
-                    aria-pressed={on}
-                    onClick={() => setOnly(on ? null : k)}
-                    title={on ? "Show all parks" : undefined}
-                    className={`flex min-h-8 items-center gap-2 rounded-full px-2.5 py-1 transition-[background-color,color,opacity] ${on ? "bg-ink text-cream" : `hover:bg-sand ${only ? "opacity-55 hover:opacity-100" : ""}`}`}
-                  >
-                    {k === "ramp" ? (
-                      <span
-                        className="pm-ramp-key"
-                        dangerouslySetInnerHTML={{ __html: ANCHOR_SVG }}
-                      />
-                    ) : (
-                      <span
-                        className={`pm-dot pm-${k} ${on ? "ring-2 ring-cream/80" : ""}`}
-                      />
-                    )}
-                    {k === "ramp" ? "Boat ramps" : KIND_LABEL[k]}
-                    {on && <span aria-hidden="true">×</span>}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
         </div>
 
         {!compact && (
