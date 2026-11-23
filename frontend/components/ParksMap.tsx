@@ -5,6 +5,7 @@ import { preconnect } from "react-dom";
 import Link from "next/link";
 import type { Map as LeafletMap, Marker } from "leaflet";
 import AddonIcon, { ADDON_ICONS } from "@/components/AddonIcon";
+import FilterSelect from "@/components/FilterSelect";
 import type { Park, Ramp } from "@/lib/api";
 import { rate } from "@/lib/format";
 import { STATE_ORDER, rampWhere } from "@/lib/parks";
@@ -368,80 +369,59 @@ export default function ParksMap({
 
   return (
     <div>
-      <div
-        className="flex flex-wrap gap-2"
-        role="group"
-        aria-label="Show parks in"
-      >
-        {["All", ...states].map((s) => {
-          const count =
-            s === "All"
-              ? parks.filter((p) => matches(p, only)).length
-              : parks.filter((p) => p.state === s && matches(p, only)).length;
-          return (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setState(s)}
-              aria-pressed={state === s}
-              className={`rounded-full px-4 py-2 text-sm transition-colors ${state === s ? "bg-ink text-cream" : "bg-white text-bark hover:bg-sand"}`}
-            >
-              {s === "All" ? "All states" : s}{" "}
-              <span className="tabular-nums opacity-60">{count}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Kind of park: pill buttons like the states above, each with its pin
-          colour, so this row is the map's colour key too. */}
-      <div
-        className="mt-3 flex flex-wrap gap-2"
-        role="group"
-        aria-label="Show only"
-      >
-        {(
-          [
-            null,
-            "mountains",
-            "lake",
-            "both",
-            "offroad",
-            "none",
-            "ramp",
-          ] as const
-        ).map((k) => {
-          const on = only === k;
-          const count = parks.filter(
-            (p) => (state === "All" || p.state === state) && matches(p, k),
-          ).length;
-          return (
-            <button
-              key={k ?? "all"}
-              type="button"
-              onClick={() => setOnly(k)}
-              aria-pressed={on}
-              className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-colors ${on ? "bg-ink text-cream" : "bg-white text-bark hover:bg-sand"}`}
-            >
-              {k === "ramp" ? (
+      {/* Two drop-downs: state, and kind of park (each kind with its pin
+          colour, so the list is the map's colour key too). */}
+      <div className="flex flex-wrap gap-3">
+        <FilterSelect
+          label="State"
+          value={state}
+          onChange={setState}
+          options={["All", ...states].map((s) => ({
+            value: s,
+            label: s === "All" ? "All states" : s,
+            count: parks.filter(
+              (p) => (s === "All" || p.state === s) && matches(p, only),
+            ).length,
+          }))}
+        />
+        <FilterSelect
+          label="Kind of park"
+          value={only ?? "all"}
+          onChange={(v) => setOnly(v === "all" ? null : v)}
+          options={(
+            [
+              "all",
+              "mountains",
+              "lake",
+              "both",
+              "offroad",
+              "none",
+              "ramp",
+            ] as const
+          ).map((k) => ({
+            value: k,
+            label:
+              k === "all"
+                ? "All parks"
+                : k === "ramp"
+                  ? "Boat ramps"
+                  : KIND_LABEL[k],
+            count: parks.filter(
+              (p) =>
+                (state === "All" || p.state === state) &&
+                matches(p, k === "all" ? null : k),
+            ).length,
+            icon:
+              k === "ramp" ? (
                 <span
                   className="pm-ramp-key"
                   dangerouslySetInnerHTML={{ __html: ANCHOR_SVG }}
                 />
-              ) : k ? (
-                <span
-                  className={`pm-dot pm-${k} ${on ? "ring-2 ring-cream/80" : ""}`}
-                />
-              ) : null}
-              {k === null
-                ? "All parks"
-                : k === "ramp"
-                  ? "Boat ramps"
-                  : KIND_LABEL[k]}
-              <span className="tabular-nums opacity-60">{count}</span>
-            </button>
-          );
-        })}
+              ) : k === "all" ? undefined : (
+                <span className={`pm-dot pm-${k}`} />
+              ),
+          }))}
+        />
       </div>
 
       <div
