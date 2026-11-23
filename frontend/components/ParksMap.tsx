@@ -26,6 +26,18 @@ const KIND_LABEL = {
   none: "Foothills",
 };
 
+/** Legend buttons: show only one kind of park. "Mountains" and "Lake" include
+ * the parks that have both; "ramp" keeps parks with a jet ski launch. */
+type Only = keyof typeof KIND_LABEL | "ramp" | null;
+function matches(p: Park, only: Only) {
+  if (!only) return true;
+  if (only === "ramp") return !!p.ramp;
+  const k = kind(p);
+  if (only === "mountains" || only === "lake")
+    return k === only || k === "both";
+  return k === only;
+}
+
 const TILES = "https://tile.openstreetmap.org";
 const reducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -40,7 +52,6 @@ const esc = (s: string) =>
 /** A small anchor: the boat-ramp symbol on the map and in park details. */
 const ANCHOR_SVG =
   '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2.2"/><path d="M12 7.2V21M8 11h8M4.5 14a7.5 7.5 0 0 0 15 0"/></svg>';
-
 
 const directions = (r: Ramp) =>
   `https://www.google.com/maps/dir/?api=1&destination=${r.lat},${r.lng}`;
@@ -94,6 +105,9 @@ export default function ParksMap({
   const markers = useRef(new Map<string, Marker>());
   const rampMarkers = useRef(new Map<string, Marker>());
   const [state, setState] = useState("All");
+  const [only, setOnly] = useState<Only>(null);
+  const onlyRef = useRef<Only>(null);
+  const showRampsRef = useRef<() => void>(() => {});
   const [ready, setReady] = useState(false);
   // Short tip shown over the map ("use two fingers", "click to zoom").
   const [hint, setHint] = useState("");
@@ -106,8 +120,11 @@ export default function ParksMap({
 
   const states = STATE_ORDER.filter((s) => parks.some((p) => p.state === s));
   const shown = useMemo(
-    () => (state === "All" ? parks : parks.filter((p) => p.state === state)),
-    [parks, state],
+    () =>
+      parks.filter(
+        (p) => (state === "All" || p.state === state) && matches(p, only),
+      ),
+    [parks, state, only],
   );
 
   // On the home page the popup's "Book" link fills in the booking card below
@@ -236,35 +253,40 @@ export default function ParksMap({
         pins.set(p.slug, marker);
       }
       // Boat ramps (where the jet ski goes in): shown once zoomed in on an area,
-      // so at state level they don't crowd the park pins.
-      const ramps = L.layerGroup(
-        parks
-          .filter((p) => p.ramp)
-          .map((p) => {
-            const r = p.ramp!;
-            const rm = L.marker([r.lat, r.lng], {
-              icon: L.divIcon({
-                className: "",
-                html: `<span class="pm-ramp-pin">${ANCHOR_SVG}</span>`,
-                iconSize: [26, 26],
-                iconAnchor: [13, 13],
-                popupAnchor: [0, -12],
-              }),
-              title: `${r.name} (boat ramp for ${p.name})`,
-              alt: r.name,
-              keyboard: true,
-            }).bindPopup(
-              `<div class="pm-popup"><p class="pm-place">Boat ramp · ${esc(p.name)}</p>${rampHtml(r)}</div>`,
-              { maxWidth: narrow ? 230 : 280, className: "pm-leaflet-popup" },
-            );
-            rampMarkers.current.set(p.slug, rm);
-            return rm;
-          }),
-      );
+      // so at state level they don't crowd the park pins, or always when the
+      // "Boat ramps" button is on.
+      parks
+        .filter((p) => p.ramp)
+        .forEach((p) => {
+          const r = p.ramp!;
+          const rm = L.marker([r.lat, r.lng], {
+            icon: L.divIcon({
+              className: "",
+              html: `<span class="pm-ramp-pin">${ANCHOR_SVG}</span>`,
+              iconSize: [26, 26],
+              iconAnchor: [13, 13],
+              popupAnchor: [0, -12],
+            }),
+            title: `${r.name} (boat ramp for ${p.name})`,
+            alt: r.name,
+            keyboard: true,
+          }).bindPopup(
+            `<div class="pm-popup"><p class="pm-place">Boat ramp · ${esc(p.name)}</p>${rampHtml(r)}</div>`,
+            { maxWidth: narrow ? 230 : 280, className: "pm-leaflet-popup" },
+          );
+          rampMarkers.current.set(p.slug, rm);
+        });
       const showRamps = () => {
-        if (m.getZoom() >= 10.5) ramps.addTo(m);
-        else ramps.remove();
+        const f = onlyRef.current;
+        const near = m.getZoom() >= 10.5 || f === "ramp";
+        for (const p of parks) {
+          const rm = rampMarkers.current.get(p.slug);
+          if (!rm) continue;
+          if (near && matches(p, f)) rm.addTo(m);
+          else rm.remove();
+        }
       };
+      showRampsRef.current = showRamps;
       m.on("zoomend", showRamps);
       m.fitBounds(L.latLngBounds(parks.map((p) => [p.lat, p.lng])), {
         padding: [40, 40],
@@ -281,6 +303,20 @@ export default function ParksMap({
       clearTimeout(hintTimer.current);
     };
   }, [parks]);
+
+  // Legend buttons: hide the pins (and ramps) of other kinds of park.
+  useEffect(() => {
+    onlyRef.current = only;
+    const m = map.current;
+    if (!ready || !m) return;
+    for (const p of parks) {
+      const pin = markers.current.get(p.slug);
+      if (!pin) continue;
+      if (matches(p, only)) pin.addTo(m);
+      else pin.remove();
+    }
+    showRampsRef.current();
+  }, [only, ready, parks]);
 
   // Zoom to the chosen state.
   useEffect(() => {
@@ -341,7 +377,7 @@ export default function ParksMap({
           const count =
             s === "All"
               ? parks.length
-              : parks.filter((p) => p.state === s).length;
+              : parks.filter((p) => p.state === s && matches(p, only)).length;
           return (
             <button
               key={s}
@@ -386,25 +422,59 @@ export default function ParksMap({
           >
             {hint}
           </p>
-          {/* Colour key: under the map on phones, over its corner on bigger screens. */}
-          <ul className="pointer-events-none mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-bark sm:absolute sm:bottom-4 sm:left-4 sm:z-[400] sm:mt-0 sm:rounded-xl sm:bg-cream/95 sm:px-4 sm:py-2.5 sm:shadow-md">
-            {(["mountains", "lake", "both", "offroad", "none"] as const).map((k) => (
-              <li key={k} className="flex items-center gap-2">
-                <span className={`pm-dot pm-${k}`} /> {KIND_LABEL[k]}
-              </li>
-            ))}
-            <li className="flex items-center gap-2">
-              <span
-                className="pm-ramp-key"
-                dangerouslySetInnerHTML={{ __html: ANCHOR_SVG }}
-              />{" "}
-              Boat ramp (zoom in)
-            </li>
+          {/* Colour key and filter: each entry shows only that kind of park
+              (click again for all). Under the map on phones, over its corner
+              on bigger screens. */}
+          <ul
+            aria-label="Show only"
+            className="mt-3 flex flex-wrap gap-1 text-xs text-bark sm:absolute sm:bottom-4 sm:left-4 sm:right-4 sm:z-[400] sm:mt-0 sm:w-max sm:max-w-[calc(100%-2rem)] sm:rounded-xl sm:bg-cream/95 sm:px-2 sm:py-1.5 sm:shadow-md"
+          >
+            {(
+              ["mountains", "lake", "both", "offroad", "none", "ramp"] as const
+            ).map((k) => {
+              const on = only === k;
+              return (
+                <li key={k}>
+                  <button
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => setOnly(on ? null : k)}
+                    title={on ? "Show all parks" : undefined}
+                    className={`flex min-h-8 items-center gap-2 rounded-full px-2.5 py-1 transition-[background-color,color,opacity] ${on ? "bg-ink text-cream" : `hover:bg-sand ${only ? "opacity-55 hover:opacity-100" : ""}`}`}
+                  >
+                    {k === "ramp" ? (
+                      <span
+                        className="pm-ramp-key"
+                        dangerouslySetInnerHTML={{ __html: ANCHOR_SVG }}
+                      />
+                    ) : (
+                      <span
+                        className={`pm-dot pm-${k} ${on ? "ring-2 ring-cream/80" : ""}`}
+                      />
+                    )}
+                    {k === "ramp" ? "Boat ramps" : KIND_LABEL[k]}
+                    {on && <span aria-hidden="true">×</span>}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
         {!compact && (
           <ul className="space-y-3 lg:h-[32rem] lg:overflow-y-auto lg:pr-1">
+            {shown.length === 0 && (
+              <li className="rounded-2xl bg-white p-5 text-sm text-bark">
+                No parks of that kind here.{" "}
+                <button
+                  type="button"
+                  onClick={() => setOnly(null)}
+                  className="tap underline"
+                >
+                  Show all parks
+                </button>
+              </li>
+            )}
             {shown.map((p) => (
               <li key={p.slug} className="rounded-2xl bg-white p-5">
                 <div className="flex items-start justify-between gap-3">
@@ -436,17 +506,24 @@ export default function ParksMap({
                 <p className="mt-2 text-sm leading-relaxed text-bark">
                   {p.description}
                 </p>
-                {p.addons.some((a) => a.code !== "atv" || p.terrain.includes("offroad")) && (
+                {p.addons.some(
+                  (a) => a.code !== "atv" || p.terrain.includes("offroad"),
+                ) && (
                   <p className="mt-3 flex flex-wrap gap-2">
-                    {p.addons.filter((a) => a.code !== "atv" || p.terrain.includes("offroad")).map((a) => (
-                      <span
-                        key={a.code}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-cream py-1 pl-1.5 pr-3 text-xs text-bark"
-                      >
-                        <AddonIcon code={a.code} size={24} />
-                        {a.name} available · {rate(a.daily_rate)}/day
-                      </span>
-                    ))}
+                    {p.addons
+                      .filter(
+                        (a) =>
+                          a.code !== "atv" || p.terrain.includes("offroad"),
+                      )
+                      .map((a) => (
+                        <span
+                          key={a.code}
+                          className="inline-flex items-center gap-1.5 rounded-full bg-cream py-1 pl-1.5 pr-3 text-xs text-bark"
+                        >
+                          <AddonIcon code={a.code} size={24} />
+                          {a.name} available · {rate(a.daily_rate)}/day
+                        </span>
+                      ))}
                   </p>
                 )}
                 {p.ramp && (
